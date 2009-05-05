@@ -1,0 +1,4 @@
+old usb-driverstacks for serial
+byte: copies only byte; very slow
+buffer: copies buffer,but based on usb.byte; faster
+zerocopy: use pointer to buffer. fastest.
