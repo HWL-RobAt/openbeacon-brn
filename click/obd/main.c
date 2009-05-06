@@ -24,13 +24,18 @@ void *tx_from_click_to_ob_thread(void *p)
 {
 //pthread_mutex_lock(&(pluginInfo->pluginInfo_mutex));
 //pthread_mutex_unlock(&(pluginInfo->pluginInfo_mutex));
-  int readbytes;
+  int readbytes,i;
   char buffer[BUFFERSIZE];
   int index = 0;
   struct packet_header *ph = (struct packet_header *)buffer;
 
   while( tx_running == 1 ) {
     readbytes = recv_from_peer(con, &buffer[sizeof(struct packet_header)], BUFFERSIZE - sizeof(struct packet_header));  //read header
+
+    printf("SOCKET: Read %d Bytes: ",readbytes); 
+    for ( i = 0; i < readbytes; i++) printf("%d ",buffer[sizeof(struct packet_header) + i]); 
+    printf("\n");
+
     ph->type = PACKET_DATA;
     ph->length = readbytes;
     write_obd_serial(fd, buffer, ph->length + sizeof(struct packet_header));
@@ -50,19 +55,14 @@ void *rx_from_ob_to_click_thread(void *p)
   struct packet_header *ph = NULL;
 
   int i;
-/*
+
   while( rx_running == 1 ) {
-    readbytes = read_obd_serial(fd, buffer, 2000);
-    send_to_peer(con, buffer, readbytes);
-  }
- */
-  while( rx_running == 1 ) {
-  	if ( ph == NULL ) {
-  	  printf("Start reading\n");
+    if ( ph == NULL ) {
+      printf("Serial: Wait for new frame\n");
       readbytes = read_obd_serial(fd, &buffer[index], sizeof(struct packet_header) - index);  //read header
       
+      printf("Serial: Read %d Bytes: ",readbytes);
       for ( i = 0; i < readbytes; i++) printf("%d ",buffer[index + i]); 
-	
       printf("\n");
       
       index += readbytes;
@@ -71,6 +71,8 @@ void *rx_from_ob_to_click_thread(void *p)
       }
     } else {
       readbytes = read_obd_serial(fd, &buffer[index], (ph->length - index + sizeof(struct packet_header)));
+      
+      printf("Serial: Read %d Bytes: ",readbytes);
       for ( i = 0; i < readbytes; i++) printf("%d ",buffer[index + i]); 
       printf("\n");
 
@@ -115,9 +117,9 @@ int main( int argc, char *argv[])
   threadResult = pthread_create(&rxThread,(pthread_attr_t*)NULL,(void *)&rx_from_ob_to_click_thread,(void*)NULL);  //use last arg (pointer) for arguments for thread
   threadResult = pthread_create(&txThread,(pthread_attr_t*)NULL,(void *)&tx_from_click_to_ob_thread,(void*)NULL);
 
-  sleep(2);	
-  printf("Fire\n");
-  write_obd_serial(fd, "fire\n", 6);
+//  sleep(2);	
+//  printf("Fire\n");
+//  write_obd_serial(fd, "fire\n", 6);
 
   pthread_join(rxThread,&rxThreadJoin);
   pthread_join(txThread,&txThreadJoin);
