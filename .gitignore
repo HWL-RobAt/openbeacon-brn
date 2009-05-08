@@ -1,0 +1,3 @@
+*.o
+click/obd/obd
+click/obd/obd_test
