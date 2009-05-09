@@ -83,7 +83,7 @@ void *rx_from_ob_to_click_thread(void *p)
           send_to_peer(con, &buffer[sizeof(struct packet_header)], ph->length);
       	} else if ( ph->type == DEBUG_PRINT ) {
       	  buffer[sizeof(struct packet_header) + ph->length] = 0;
-      	  printf("%s",buffer);
+      	  printf("%s",&(buffer[sizeof(struct packet_header)]));
 	    }	
           
         index = 0;  
