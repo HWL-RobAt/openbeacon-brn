@@ -56,39 +56,46 @@ void *rx_from_ob_to_click_thread(void *p)
 
   int i;
 
+  readbytes = 1;
+
   while( rx_running == 1 ) {
     if ( ph == NULL ) {
-      printf("Serial: Wait for new frame\n");
+      if ( readbytes > 0 ) printf("Serial: Wait for new frame\n");
+      
       readbytes = read_obd_serial(fd, &buffer[index], sizeof(struct packet_header) - index);  //read header
       
-      printf("Serial: Read %d Bytes: ",readbytes);
-      for ( i = 0; i < readbytes; i++) printf("%d ",buffer[index + i]); 
-      printf("\n");
+      if ( readbytes > 0 ) {
+        printf("Serial: Read %d Bytes: ",readbytes);
+        for ( i = 0; i < readbytes; i++) printf("%d ",buffer[index + i]); 
+        printf("\n");
       
-      index += readbytes;
-      if ( index == sizeof(struct packet_header) ) {
-        ph = (struct packet_header *)buffer;
+        index += readbytes;
+        if ( index == sizeof(struct packet_header) ) {
+          ph = (struct packet_header *)buffer;
+        }
       }
     } else {
       readbytes = read_obd_serial(fd, &buffer[index], (ph->length - index + sizeof(struct packet_header)));
       
-      printf("Serial: Read %d Bytes: ",readbytes);
-      for ( i = 0; i < readbytes; i++) printf("%d ",buffer[index + i]); 
-      printf("\n");
+      if ( readbytes > 0 ) {
+        printf("Serial: Read %d Bytes: ",readbytes);
+        for ( i = 0; i < readbytes; i++) printf("%d ",buffer[index + i]); 
+        printf("\n");
 
-      index+=readbytes;
+        index+=readbytes;
       
-      if ( index == (ph->length + sizeof(struct packet_header)) ) {
-      	if ( ph->type == PACKET_DATA ) {
-          send_to_peer(con, &buffer[sizeof(struct packet_header)], ph->length);
-      	} else if ( ph->type == DEBUG_PRINT ) {
-      	  buffer[sizeof(struct packet_header) + ph->length] = 0;
-      	  printf("%s",&(buffer[sizeof(struct packet_header)]));
-	    }	
-          
-        index = 0;  
-        ph = NULL;
-      }
+        if ( index == (ph->length + sizeof(struct packet_header)) ) {
+          if ( ph->type == PACKET_DATA ) {
+            send_to_peer(con, &buffer[sizeof(struct packet_header)], ph->length);
+       	  } else if ( ph->type == DEBUG_PRINT ) {
+      	    buffer[sizeof(struct packet_header) + ph->length] = 0;
+      	    printf("%s",&(buffer[sizeof(struct packet_header)]));
+	  }	
+ 
+          index = 0;  
+          ph = NULL;
+        }
+      }	
     }
   }
   
