@@ -1,0 +1,1 @@
+../gcc-3.4.6/configure --srcdir=../gcc-3.4.6 --target=arm-elf --with-cpu=arm9 --with-newlib --prefix=/usr/local/toolchains/arm-elf --disable-threads --disable-multilib --disable-nls --enable-languages=c,c++

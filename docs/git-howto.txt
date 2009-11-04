@@ -1,0 +1,65 @@
+***********
+*git+ssh*
+***********
+
+A. von zentralen server aus zu arbeiten
+
+1. git repository anlegen auf dem Server anlegen
+auf dem Server
+ cd /home/git
+ git init --shared=all
+
+1b. erste Datei anlegen und einchecken, sonst läßt es sich nicht per git clone holen
+ touch README
+ git add README
+ git commit -m "init repository"
+
+ README kan nun wieder gelöscht werden
+ rm README
+
+1c umbenennen des git-verzeichnissen
+Hintergrund: git legt das repository in .git. bei einem lokalen repository ist das sinvoll. man hat dass auch seine ganzen anderen dateien dort.
+   z.B. /home/user/project/.git
+          /home/user/project/file.c 
+          
+  auf dem Server hat man nur das repository. was dort gehen würde wäre folgendes:     /home/git/project/.git
+  der ordner project würde dann nur den ordner .git enthalten. um das zu sparen benennt man den .git-ordner unterhalb 
+  von /home/git um in project.git. So können unter /home/git mehrere projecte liegen und man spart sich projectverzeichnisse
+  die nur den ordner .git enthalten. Also besser /home/git/.git -> /home/git/project.git
+
+ mv .git gittestrepository.git
+
+ das repository kann nun von usern der gleichen gruppe wie der anlegende user beschrieben werden
+ um es für alle zur verfügung zu stellen
+
+ chmod -R o+w gittestrepository.git
+
+
+
+ 
+
+2. auschecken auf dem lokalen rechner
+ cd ./versioncontrol/git
+ git clone ssh://user@192.168.10.3/home/git/gittestrepository.git
+
+
+3. Datei hinzufügen
+  git-gui
+ 
+4. loakles Repository mit dem server abgleichen
+ git pull                //neues holen
+ git push              //eigenes hinsenden
+
+5. lokalen branch erzeugen  (man hat als standart immer einen master-branch)
+ git branch working          //legt neuen branch "working" an
+ git checkout working       //wechseln in den working-branch
+ git branch                       //anzeigen der branches und aktuellen branch
+ git diff master working    // zeigt unterschiede zwischen branch master und working
+  
+6. commit umsortieren und zusammenfuegen
+git log                                                           //commit raussuchen ab dem man umsortieren will
+git checkout 3b23e1f801e0c6889507fd70c04d0b14c71c30ad -b old      //branch erzeugen (er wechselt automatisch dahin)
+git checkout master                                               //zum master wechseln
+git rebase --interactive old                                      //commit bearbeiten (umsortieren -> zeilen umsortieren ; zusammenfassen -> ein als pick lassen, die folgenden mit squash; patches loeschen -> zeile loeschen)
+git branch -d old                                                 //alter branch loeschen
+
