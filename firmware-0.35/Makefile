@@ -40,14 +40,9 @@ ARCH=AT91SAM7S128
 #
 # CFLAGS common to both the THUMB and ARM mode builds
 #
-#
-#
-#-D __AT91SAM7S__ aus openbeacon (svn geholt)
-#
 
 CFLAGS= \
 -D __$(ARCH)__ \
--D __AT91SAM7S__ \
 -Iconfig \
 -Iapplication \
 -Ios/core/include  \
@@ -71,11 +66,12 @@ LINKER_FLAGS=-Xlinker -oopenbeacon.elf -Xlinker -M -Xlinker -Map=openbeacon.map
 
 #
 # Source files that must be built to ARM mode.
+# application/xxtea.c \
 #
 ARM_SRC= \
   application/main.c \
   application/env.c \
-  application/xxtea.c \
+  application/usbshell.c \
   application/nRF24L01/nRF_API.c \
   application/nRF24L01/nRF_CMD.c \
   application/nRF24L01/nRF_LL.c \

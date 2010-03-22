@@ -24,39 +24,25 @@
 #ifndef __OPENBEACON_H__
 #define __OPENBEACON_H__
 
-#define TEA_ENCRYPTION_BLOCK_COUNT 4
-
-#define RFB_RFOPTIONS		0x0F
-
-#define RFBPROTO_BEACONTRACKER	23
-
-#define RFBFLAGS_ACK		0x01
-#define RFBFLAGS_SENSOR		0x02
+#define OPENBEACON_NEW                          4
 
 typedef unsigned char u_int8_t;
 typedef unsigned short u_int16_t;
 typedef unsigned long u_int32_t;
 
-typedef struct
-{
-  u_int8_t size, proto;
-} __attribute__((packed)) TBeaconHeader;
+typedef struct {
+        u_int32_t pid;
+        u_int32_t seq;
+        u_int32_t reserved1;
+        u_int16_t reserved3;
+        u_int16_t crc;
+} SelfPacket;
 
-typedef struct
-{
-  TBeaconHeader hdr;
-  u_int8_t flags, strength;
-  u_int32_t seq;
-  u_int32_t oid;
-  u_int16_t reserved;
-  u_int16_t crc;
-} __attribute__((packed)) TBeaconTracker;
-
-typedef union
-{
-  TBeaconTracker pkt;
-  u_int32_t data[TEA_ENCRYPTION_BLOCK_COUNT];
-  u_int8_t datab[TEA_ENCRYPTION_BLOCK_COUNT * sizeof (u_int32_t)];
-} __attribute__((packed)) TBeaconEnvelope;
+typedef union {
+                SelfPacket sp;
+                u_int8_t   data_byte[OPENBEACON_NEW*sizeof(u_int32_t)];
+                u_int16_t  data_word[OPENBEACON_NEW*sizeof(u_int16_t)];
+                u_int32_t data_dword[OPENBEACON_NEW*sizeof( u_int8_t)];
+} __attribute__((packed)) OpenBeacon_packet;
 
 #endif/*__OPENBEACON_H__*/

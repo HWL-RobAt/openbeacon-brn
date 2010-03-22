@@ -36,11 +36,11 @@
 #include "env.h"
 #include "board.h"
 #include "main.h"
-#include "xxtea.h"
 #include "nRF24L01/nRF_HW.h"
 #include "nRF24L01/nRF_CMD.h"
 #include "nRF24L01/nRF_LL.h"
 #include "nRF24L01/nRF_API.h"
+#include "usbshell.h"
 
 /* Priorities/stacks for the various tasks within the demo application. */
 #define mainUSB_PRIORITY			( tskIDLE_PRIORITY + 1 )
@@ -49,7 +49,7 @@
 #define mainNRF_TASK_STACK			( 512 )
 
 /**********************************************************************/
-TBeaconEnvelope g_Beacon;
+OpenBeacon_packet g_Beacon;
 
 const unsigned char mac[5]={0x01,0x02,0x03,0x02,0x01};
 
@@ -115,9 +115,9 @@ static inline void prvSetupHardware (void)
 }
 
 /**********************************************************************/
-#define SHUFFLE(a,b)    tmp=g_Beacon.datab[a];\
-                        g_Beacon.datab[a]=g_Beacon.datab[b];\
-                        g_Beacon.datab[b]=tmp;
+#define SHUFFLE(a,b)    tmp=g_Beacon.data_byte[a];\
+                        g_Beacon.data_byte[a]=g_Beacon.data_byte[b];\
+                        g_Beacon.data_byte[b]=tmp;
 
 /**********************************************************************/
 static inline void shuffle_tx_byteorder (void)
@@ -150,26 +150,34 @@ unsigned long swaplong (unsigned long src)
 void DumpUIntToUSB(unsigned int data)
 {
     int i=0;
-    unsigned char buffer[10],*p=&buffer[sizeof(buffer)];
+    unsigned char buffer[14],*p=&buffer[sizeof(buffer)];
     
     do {
-	*--p='0'+(unsigned char)(data%10);
+	*--p='0'+(char)(data%10);
 	data/=10;
 	i++;
     } while(data);
-    
-    while(i--)
-	vUSBSendByte(*p++);        
+
+    Msg2USB_encap(p-4, i+4, MONITOR_PRINT);
 }
 /**********************************************************************/
 
 void DumpStringToUSB(char* text)
 {
-    unsigned char data;
-    
-    if(text)
-	while((data=*text++)!=0)
-	    vUSBSendByte(data);
+    unsigned char packet[1000];
+    unsigned int len = strlen(text);
+
+    memcpy(packet+4, text, len);
+    Msg2USB_encap(packet, len+4, MONITOR_PRINT);
+}
+
+void DumpCharToUSB(char text)
+{
+    unsigned char packet[6];
+
+    packet[4] = text;
+    packet[5] = 0;
+    Msg2USB_encap(packet, 6, MONITOR_PRINT);
 }
 /**********************************************************************/
 
@@ -186,24 +194,17 @@ void TransmitBeacon(unsigned int TxPowerLevel)
     nRFAPI_SetTxPower(TxPowerLevel);
 
     // setup packet 
-    g_Beacon.pkt.hdr.size = sizeof (TBeaconTracker);
-    g_Beacon.pkt.hdr.proto = RFBPROTO_BEACONTRACKER;
-    g_Beacon.pkt.flags = 0;
-    g_Beacon.pkt.strength = 0x55 * TxPowerLevel;
-    g_Beacon.pkt.seq = swaplong (seq++);
-    g_Beacon.pkt.oid = swaplong (env.e.tag_id);
-    g_Beacon.pkt.reserved = 0;
+    g_Beacon.sp.seq = swaplong (seq++);
+    g_Beacon.sp.pid = swaplong (env.e.tag_id);
 
-    crc = env_crc16(g_Beacon.datab, sizeof (g_Beacon.pkt) - sizeof (g_Beacon.pkt.crc));
-    g_Beacon.pkt.crc = swapshort(crc);    
+
+
+
+    crc = env_crc16(g_Beacon.data_byte, sizeof (g_Beacon.sp) - sizeof (g_Beacon.sp.crc));
+    g_Beacon.sp.crc = swapshort(crc);    
     
-    // encrypt the data
-    shuffle_tx_byteorder ();
-    xxtea_encode ();
-    shuffle_tx_byteorder ();
-
     // upload data to nRF24L01
-    nRFAPI_TX(g_Beacon.datab, sizeof(g_Beacon));
+    nRFAPI_TX(g_Beacon.data_byte, sizeof(g_Beacon));
 
     // transmit data
     nRFLL_CE(1);
@@ -218,16 +219,20 @@ void vApplicationIdleHook(void)
     static portTickType xLastBlink=0,xLastTx=0;
     static unsigned int xTxPowerLevel=0;
     portCHAR cByte;
-    
-    if(vUSBRecvByte(&cByte,1,100))
+
+    if(usb_status!=0)
     {
+	// work
+	cByte = usb_status;
+        usb_status = 0;
+
 	if(cByte>='A' && cByte<='Z')
 	    cByte-=('A'-'a');
 	    
 	if(cByte>='1' && cByte<='4')
 	{
 	    DumpStringToUSB(" * Switched to transmit mode at power level ");
-	    vUSBSendByte(cByte);
+	    DumpCharToUSB(cByte);
 	    DumpStringToUSB("\n\r");
 	    	    
 	    env.e.mode=cByte-'0';
@@ -238,10 +243,6 @@ void vApplicationIdleHook(void)
 	else
 	    switch(cByte)
 	    {
-		case 's':
-		    env_store();
-		    DumpStringToUSB(" * Stored environment variables\n\r");
-		    break;
 		case '0':
 		    nRFAPI_SetRxMode(1);
 		    nRFLL_CE(1);
@@ -260,25 +261,24 @@ void vApplicationIdleHook(void)
 			    env.e.speed--;
 		    			
 		    DumpStringToUSB(" * Transmit interval set to ");
-		    vUSBSendByte(((char)(env.e.speed))+'0');		    
+		    DumpCharToUSB( (env.e.speed)+'0' );
 		    DumpStringToUSB("00ms\n\r");
 		    break;		    
 		case 'h':	
 		case '?':
-		    DumpStringToUSB(
-			" *****************************************************\n\r"
-			" * OpenBeacon USB terminal                           *\n\r"
-			" * (C) 2007 Milosch Meriac <meriac@openbeacon.de>    *\n\r"
-			" *****************************************************\n\r"
-			" *\n\r"
-			" * s    - store transmitter settings\n\r"
-			" * 0    - receive only mode\n\r"
-			" * 1..4 - automatic transmit at selected power levels\n\r"
-			" * +,-  - faster/slower transmit speed\n\r"
-			" * ?,h  - display this help screen\n\r"
-			" *\n\r"
-			" *****************************************************\n\r"
-			);
+		    DumpStringToUSB(	" *********************************************************\n\r"
+		    			" * OpenBeacon USB terminal                               *\n\r"
+		    			" * (C) 2007 Milosch Meriac <meriac@openbeacon.de>        *\n\r"
+		    			" *********************************************************\n\r");
+		    DumpStringToUSB(	" *\n\r"
+		    			" * 0      - receive only mode\n\r"
+		    			" * 1..4   - automatic transmit at selected power levels\n\r"
+		    			" * +,-    - faster/slower transmit speed\n\r");
+		    DumpStringToUSB(	" * ?,h    - display this help screen\n\r *\n\r"
+		    			" *********************************************************\n\r"
+					" * d[0-9] - switch to device \n\r"
+					" * x      - exit \n\r");
+		    DumpStringToUSB(    " *********************************************************\n\r");
 		    break;
 	    }
     }
@@ -301,31 +301,26 @@ void vApplicationIdleHook(void)
 	if(status & MASK_RX_DR_FLAG)
 	{
 	    // read packet from nRF chip
-	    nRFCMD_RegReadBuf(RD_RX_PLOAD,g_Beacon.datab,sizeof(g_Beacon));
+	    nRFCMD_RegReadBuf(RD_RX_PLOAD,g_Beacon.data_byte,sizeof(g_Beacon));
 	    	    
-	    // adjust byte order and decode
-	    shuffle_tx_byteorder();
-	    xxtea_decode();
-	    shuffle_tx_byteorder();
-	    
 	    // verify the crc checksum
-	    crc = env_crc16(g_Beacon.datab, sizeof(g_Beacon)-sizeof(g_Beacon.pkt.crc));	    
-	    if(swapshort(g_Beacon.pkt.crc)==crc)
-	    {
-		DumpUIntToUSB(swaplong(g_Beacon.pkt.oid));
-		vUSBSendByte(',');
-		DumpUIntToUSB(swaplong(g_Beacon.pkt.seq));
-		vUSBSendByte(',');
-		DumpUIntToUSB(g_Beacon.pkt.strength);
-		vUSBSendByte(',');
-		DumpUIntToUSB(g_Beacon.pkt.flags);		    		
+	    crc = env_crc16(g_Beacon.data_byte, sizeof(g_Beacon)-sizeof(g_Beacon.sp.crc));	    
+	    if(swapshort(g_Beacon.sp.crc)==crc) {
+
+		DumpUIntToUSB(swaplong(g_Beacon.sp.pid));
+		DumpCharToUSB(',');
+		DumpUIntToUSB(swaplong(g_Beacon.sp.seq));
 		DumpStringToUSB("\n\r");
 				
-    		blinked = 1;
+		blinked = 1;
 		xLastBlink = xTaskGetTickCount ();	    
     		AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_RED );
+	    } else {
+		DumpStringToUSB("crc fail!\n\r");
+		blinked = 1;
+	        xLastBlink = xTaskGetTickCount ();
+            	AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_RED );
 	    }
-
     	    nRFAPI_FlushRX();
 	}
 	
@@ -353,6 +348,7 @@ int main (void)
     
     xTaskCreate (vUSBCDCTask, (signed portCHAR *) "USB", mainUSB_TASK_STACK,
 	NULL, mainUSB_PRIORITY, NULL);
+    vUSBShellInit();
 
     vTaskStartScheduler ();
 

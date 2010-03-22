@@ -70,7 +70,7 @@
 /* utils settings  */
 /*-----------------*/
 
-#define CONFIG_TEA_ENABLEDECODE
-#define CONFIG_TEA_ENABLEENCODE
+#define TASK_USBSHELL_PRIORITY  ( tskIDLE_PRIORITY + 0)
+#define TASK_USBSHELL_STACK     ( 512 )
 
 #endif /* Board_h */

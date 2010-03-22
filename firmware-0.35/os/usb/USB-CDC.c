@@ -66,7 +66,7 @@
 static void prvResetEndPoints (void);
 
 /* Clear pull up resistor to detach device from host */
-void vDetachUSBInterface (void);
+static void vDetachUSBInterface (void);
 
 /* Set up interface and initialize variables */
 static void vInitUSBInterface (void);
@@ -87,7 +87,7 @@ static void prvHandleStandardEndPointRequest (xUSB_REQUEST * pxRequest);
 static void prvHandleClassInterfaceRequest (xUSB_REQUEST * pxRequest);
 
 /* Prepare control data transfer.  prvSendNextSegment starts transfer. */
-static void prvSendControlData (const unsigned portCHAR * pucData,
+static void prvSendControlData (unsigned portCHAR * pucData,
 				unsigned portSHORT usRequestedLength,
 				unsigned portLONG ulLengthLeftToSend,
 				portLONG lSendingDescriptor);
@@ -122,9 +122,6 @@ xQueueHandle xUSBInterruptQueue;
 transmitted.  Rx queue must be larger than FIFO size. */
 static xQueueHandle xRxCDC;
 static xQueueHandle xTxCDC;
-static xQueueHandle usb_zcopy_tx_queue;
-
-#define CHUNK_SIZE 5
 
 /* Line coding - 115,200 baud, N-8-1 */
 static const unsigned portCHAR pxLineCoding[] =
@@ -133,15 +130,6 @@ static const unsigned portCHAR pxLineCoding[] =
 /* Status variables. */
 static unsigned portCHAR ucControlState;
 static unsigned int uiCurrentBank;
-
-/* For zero-copy USB send */
-struct usb_zcopy_tx_buffer {
-	const unsigned char *data;
-	unsigned int len;
-	unsigned int done;
-	usb_zcopy_send_complete_callback_t callback;
-	void *cookie;
-};
 
 
 /*------------------------------------------------------------*/
@@ -155,7 +143,6 @@ vUSBCDCTask (void *pvParameters)
   unsigned portLONG ulRxBytes;
   unsigned portCHAR ucByte;
   unsigned char chunk[CHUNK_SIZE]; 
-  struct usb_zcopy_tx_buffer zcopy_tx = {NULL, 0, 0, NULL, NULL};
   portBASE_TYPE i;
   portBASE_TYPE xByte;
 
@@ -178,7 +165,7 @@ vUSBCDCTask (void *pvParameters)
  	for (;;) {
 		/* Look for data coming from the ISR. */
 		if (xQueueReceive
-			(xUSBInterruptQueue, &pxMessage, (zcopy_tx.done < zcopy_tx.len) ? 0 : usbSHORTEST_DELAY)) {
+			(xUSBInterruptQueue, &pxMessage, usbSHORTEST_DELAY)) {
 			if (pxMessage->ulISR & AT91C_UDP_EPINT0) {
 				/* All endpoint 0 interrupts are handled here. */
 				prvProcessEndPoint0Interrupt(pxMessage);
@@ -192,29 +179,8 @@ vUSBCDCTask (void *pvParameters)
 
 		/* See if we're ready to send and receive data. */
 		if (eDriverState == eREADY_TO_SEND && ucControlState) {
-			if ((!(AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] & AT91C_UDP_TXPKTRDY))
-					&& ((zcopy_tx.done < zcopy_tx.len) || uxQueueMessagesWaiting(xTxCDC) || uxQueueMessagesWaiting(usb_zcopy_tx_queue)) ) {
-				for (xByte = 0; xByte < 64 - CHUNK_SIZE + 1; xByte++) {
-					if(zcopy_tx.done >= zcopy_tx.len) {
-						if(!xQueueReceive(usb_zcopy_tx_queue, &zcopy_tx, 0)) {
-							zcopy_tx.done = 0;
-							zcopy_tx.len = 0;
-						}
-					}
-
-					if(zcopy_tx.done < zcopy_tx.len) {
-						/* Zero-copy data to send, prioritize it */
-						while(xByte < 64 && zcopy_tx.done < zcopy_tx.len) {
-							AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_2] = zcopy_tx.data[zcopy_tx.done++];
-							xByte++;
-						}
-						if(zcopy_tx.done >= zcopy_tx.len) {
-							if(zcopy_tx.callback != NULL)
-								zcopy_tx.callback(zcopy_tx.cookie);
-						}
-						break; /* Do not allow the 'normal' transmit below to execute */
-					}
-
+			if ((!(AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] & AT91C_UDP_TXPKTRDY)) && uxQueueMessagesWaiting (xTxCDC)) {
+				for (xByte = 0; xByte+CHUNK_SIZE<64; xByte++){
 					if (!xQueueReceive(xTxCDC, &chunk, 0)) {
 						/* No data buffered to transmit. */
 						break;
@@ -227,130 +193,91 @@ vUSBCDCTask (void *pvParameters)
 						xByte++;
 					}
 				}
-				AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] |=
-					AT91C_UDP_TXPKTRDY;
+				AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] |= AT91C_UDP_TXPKTRDY;
 			}
 
-	  /* Check for incoming data (host-to-device) on endpoint 1. */
-	  while (AT91C_BASE_UDP->
-		 UDP_CSR[usbEND_POINT_1] & (AT91C_UDP_RX_DATA_BK0 |
-					    AT91C_UDP_RX_DATA_BK1))
-	    {
-	      ulRxBytes =
-		(AT91C_BASE_UDP->
-		 UDP_CSR[usbEND_POINT_1] >> 16) & usbRX_COUNT_MASK;
+			/* Check for incoming data (host-to-device) on endpoint 1. */
+			while (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] & (AT91C_UDP_RX_DATA_BK0 | AT91C_UDP_RX_DATA_BK1))
+	    	{
+				ulRxBytes = (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] >> 16) & usbRX_COUNT_MASK;
 
-	      /* Only process FIFO if there's room to store it in the queue */
-	      if (ulRxBytes <
-		  (USB_CDC_QUEUE_SIZE - uxQueueMessagesWaiting (xRxCDC)))
-		{
-		  while (ulRxBytes--)
-		    {
-		      ucByte = AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_1];
-		      xQueueSend (xRxCDC, &ucByte, 0);
-		    }
+	      		/* Only process FIFO if there's room to store it in the queue */
+	      		if (ulRxBytes < (USB_CDC_QUEUE_SIZE - uxQueueMessagesWaiting (xRxCDC))) {
+					while (ulRxBytes--) {
+				      ucByte = AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_1];
+				      xQueueSend (xRxCDC, &ucByte, 0);
+				    }
 
-		  /* Release the FIFO */
-		  portENTER_CRITICAL ();
-		  {
-		    ulStatus = AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1];
-		    usbCSR_CLEAR_BIT (&ulStatus, uiCurrentBank);
-		    AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] = ulStatus;
-		  }
-		  portEXIT_CRITICAL ();
+					/* Release the FIFO */
+					portENTER_CRITICAL ();
+					{
+						ulStatus = AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1];
+						usbCSR_CLEAR_BIT (&ulStatus, uiCurrentBank);
+						AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] = ulStatus;
+					}
+					portEXIT_CRITICAL ();
 
-		  /* Re-enable endpoint 1's interrupts */
-		  AT91C_BASE_UDP->UDP_IER = AT91C_UDP_EPINT1;
+					/* Re-enable endpoint 1's interrupts */
+					AT91C_BASE_UDP->UDP_IER = AT91C_UDP_EPINT1;
 
-		  /* Update the current bank in use */
-		  if (uiCurrentBank == AT91C_UDP_RX_DATA_BK0)
-		    {
-		      uiCurrentBank = AT91C_UDP_RX_DATA_BK1;
-		    }
-		  else
-		    {
-		      uiCurrentBank = AT91C_UDP_RX_DATA_BK0;
-		    }
+					/* Update the current bank in use */
+					if (uiCurrentBank == AT91C_UDP_RX_DATA_BK0) {
+						uiCurrentBank = AT91C_UDP_RX_DATA_BK1;
+					} else {
+						uiCurrentBank = AT91C_UDP_RX_DATA_BK0;
+					}
 
+				} else {
+					break;
+				}
+			}
 		}
-	      else
-		{
-		  break;
-		}
-	    }
-	}
     }
 }
 
 /*------------------------------------------------------------*/
 
-void vUSBSendByte(portCHAR cByte)
-{
-	char chunk[CHUNK_SIZE];
+void vUSBSendByte (portCHAR cByte) {
+	portCHAR chunk[CHUNK_SIZE];
 	chunk[0] = 1;
 	chunk[1] = cByte;
+
 	/* Queue the byte to be sent.  The USB task will send it. */
 	xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
 }
-
 #define MIN(a,b) ((a)>(b)?(b):(a))
-void
-vUSBSendBuffer_blocking(const unsigned char *buffer, portBASE_TYPE offset,
-						portBASE_TYPE length, portTickType xTicksToWait)
-{
+void vUSBSendBytes (portCHAR *buffer, portBASE_TYPE length) {
 	unsigned char chunk[CHUNK_SIZE];
+	portBASE_TYPE offset = 0;
+	portBASE_TYPE next_size;
+
 	while(length > 0) {
-		int next_size = MIN(length, CHUNK_SIZE-1);
+		next_size = MIN(length, CHUNK_SIZE-1);
 		chunk[0] = next_size;
 		memcpy(chunk+1, buffer+offset, next_size);
-		/* Queue the bytes to be sent.  The USB task will send it. */
-		xQueueSend (xTxCDC, &chunk, xTicksToWait);
+		
+		// Queue the bytes to be sent.  The USB task will send it.
+		xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
 		length -= next_size;
 		offset += next_size;
 	}
-}
 
-void
-vUSBSendBuffer (const unsigned char *buffer, portBASE_TYPE offset, portBASE_TYPE length)
-{
-	vUSBSendBuffer_blocking(buffer, offset, length, usbNO_BLOCK);
-}
-
-
-int usb_send_buffer_zero_copy(const unsigned char *data, unsigned int len,
-		usb_zcopy_send_complete_callback_t callback, void *cookie,
-		portTickType xTicksToWait)
-{
-	struct usb_zcopy_tx_buffer buf = {
-			data, len,
-			0,
-			callback, cookie,
-	};
-	return xQueueSend(usb_zcopy_tx_queue, &buf, xTicksToWait);
 }
 
 /*------------------------------------------------------------*/
 
 portLONG
-vUSBRecvByte (portCHAR *cByte, portLONG size, portTickType xTicksToWait)
+vUSBRecvByte (portCHAR *cByte,portLONG size)
 {
     portLONG res;
     if(size<=0 || !cByte || !xRxCDC)
         return 0;
 
     res=0;
-    while(size-- && xQueueReceive(xRxCDC, cByte++, xTicksToWait))
+    while(size-- && xQueueReceive(xRxCDC, cByte++, 0))
         res++;
 
     return res;
-}
-
-/*------------------------------------------------------------*/
-
-int
-iUSBGetChosenConfiguration (void)
-{
-  return ucUSBConfig;
 }
 
 /*------------------------------------------------------------*/
@@ -632,14 +559,10 @@ prvGetStandardDeviceDescriptor (xUSB_REQUEST * pxRequest)
 			  pdTRUE);
       break;
 
-    case usbDESCRIPTOR_TYPE_CONFIGURATION: {
-        /* The index to the configuration descriptor is the lower byte. */
-        unsigned int config = pxRequest->usValue & 0xff;
-        if(config > sizeof(pxConfigDescriptorList)/sizeof(pxConfigDescriptorList[0])) config = sizeof(pxConfigDescriptorList)/sizeof(pxConfigDescriptorList[0]); 
-      prvSendControlData ((unsigned portCHAR*) pxConfigDescriptorList[config],
-			  pxRequest->usLength, pxConfigDescriptorSizes[config],
+    case usbDESCRIPTOR_TYPE_CONFIGURATION:
+      prvSendControlData ((unsigned portCHAR *) &(pxConfigDescriptor),
+			  pxRequest->usLength, sizeof (pxConfigDescriptor),
 			  pdTRUE);
-      }
       break;
 
     case usbDESCRIPTOR_TYPE_STRING:
@@ -663,8 +586,6 @@ prvGetStandardDeviceDescriptor (xUSB_REQUEST * pxRequest)
 	  break;
 
 	case usbPRODUCT_STRING:
-	case usbCONFIGURATION_STRING:
-	case usbINTERFACE_STRING:
 	  prvSendControlData ((unsigned portCHAR *)
 			      &pxProductStringDescriptor, pxRequest->usLength,
 			      sizeof (pxProductStringDescriptor), pdTRUE);
@@ -838,17 +759,9 @@ prvHandleStandardEndPointRequest (xUSB_REQUEST * pxRequest)
 
 /*-----------------------------------------------------------*/
 
-static void vEnableUSBClock(void)
-{
-	  /* Enables the 48MHz USB clock UDPCK and System Peripheral USB Clock. */
-	  AT91C_BASE_PMC->PMC_SCER = AT91C_PMC_UDP;
-	  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_UDP);
-}
-
-void
+static void
 vDetachUSBInterface (void)
 {
-#if defined(USB_PULLUP_EXTERNAL)
   /* Setup the PIO for the USB pull up resistor. */
   AT91C_BASE_PIOA->PIO_PER = AT91C_PIO_PA16;
   AT91C_BASE_PIOA->PIO_OER = AT91C_PIO_PA16;
@@ -856,12 +769,6 @@ vDetachUSBInterface (void)
 
   /* Disable pull up */
   AT91C_BASE_PIOA->PIO_SODR = AT91C_PIO_PA16;
-#elif defined(USB_PULLUP_INTERNAL)
-  vEnableUSBClock();
-  AT91C_BASE_UDP->UDP_TXVC &= ~AT91C_UDP_PUON;
-#else
-#error USB Pullup not defined
-#endif
 }
 
 /*-----------------------------------------------------------*/
@@ -869,7 +776,7 @@ vDetachUSBInterface (void)
 static void
 vInitUSBInterface (void)
 {
-  extern void (vUSB_ISR_Wrapper) (void);
+  extern void (vUSB_ISR) (void);
 
   /* Create the queue used to communicate between the USB ISR and task. */
   xUSBInterruptQueue =
@@ -881,12 +788,9 @@ vInitUSBInterface (void)
 		  (unsigned portCHAR) sizeof (signed portCHAR));
   xTxCDC =
     xQueueCreate ( (USB_CDC_QUEUE_SIZE/CHUNK_SIZE) + 1,
-		  (unsigned portCHAR) CHUNK_SIZE * sizeof (signed portCHAR));
+		  (unsigned portCHAR) CHUNK_SIZE*sizeof(signed portCHAR));
 
-  usb_zcopy_tx_queue = xQueueCreate(USB_CDC_ZCOPY_TX_QUEUE_SIZE, sizeof(struct usb_zcopy_tx_buffer));
-
-
-  if ((!xUSBInterruptQueue) || (!xRxCDC) || (!xTxCDC) || (!usb_zcopy_tx_queue))
+  if ((!xUSBInterruptQueue) || (!xRxCDC) || (!xTxCDC))
     {
       /* Not enough RAM to create queues!. */
       return;
@@ -906,9 +810,10 @@ vInitUSBInterface (void)
   /* Set the PLL USB Divider */
   AT91C_BASE_CKGR->CKGR_PLLR |= AT91C_CKGR_USBDIV_1;
 
-  vEnableUSBClock();
+  /* Enables the 48MHz USB clock UDPCK and System Peripheral USB Clock. */
+  AT91C_BASE_PMC->PMC_SCER = AT91C_PMC_UDP;
+  AT91C_BASE_PMC->PMC_PCER = (1 << AT91C_ID_UDP);
 
-#if defined(USB_PULLUP_EXTERNAL)
   /* Setup the PIO for the USB pull up resistor. */
   AT91C_BASE_PIOA->PIO_PER = AT91C_PIO_PA16;
   AT91C_BASE_PIOA->PIO_OER = AT91C_PIO_PA16;
@@ -917,7 +822,6 @@ vInitUSBInterface (void)
   /* Start without the pullup - this will get set at the end of this 
      function. */
   AT91C_BASE_PIOA->PIO_SODR = AT91C_PIO_PA16;
-#endif
 
 
   /* When using the USB debugger the peripheral registers do not always get
@@ -939,26 +843,19 @@ vInitUSBInterface (void)
      enumeration process progresses. */
   AT91F_AIC_ConfigureIt (AT91C_ID_UDP, usbINTERRUPT_PRIORITY,
 			 AT91C_AIC_SRCTYPE_INT_HIGH_LEVEL,
-			 (void (*)(void)) vUSB_ISR_Wrapper);
+			 (void (*)(void)) vUSB_ISR);
   AT91C_BASE_AIC->AIC_IECR = 0x1 << AT91C_ID_UDP;
 
 
   /* Wait a short while before making our presence known. */
   vTaskDelay (usbINIT_DELAY);
-
-#if defined(USB_PULLUP_EXTERNAL)
   AT91C_BASE_PIOA->PIO_CODR = AT91C_PIO_PA16;
-#elif defined(USB_PULLUP_INTERNAL)
-  AT91C_BASE_UDP->UDP_TXVC |= AT91C_UDP_PUON;
-#else
-#error USB Pullup not defined
-#endif
 }
 
 /*-----------------------------------------------------------*/
 
 static void
-prvSendControlData (const unsigned portCHAR * pucData,
+prvSendControlData (unsigned portCHAR * pucData,
 		    unsigned portSHORT usRequestedLength,
 		    unsigned portLONG ulLengthToSend,
 		    portLONG lSendingDescriptor)

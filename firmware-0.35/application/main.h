@@ -27,6 +27,7 @@
 
 #include "openbeacon.h"
 
-extern TBeaconEnvelope g_Beacon;
+extern OpenBeacon_packet g_Beacon;
+extern portCHAR usb_status;
 
 #endif/*__MAIN_H__*/
