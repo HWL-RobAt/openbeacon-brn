@@ -37,6 +37,18 @@
 
 unsigned char packet[1500];
 
+void printDebug(unsigned char* packet, char* msg) {
+	struct packet_header *ph = (struct packet_header *) &packet;
+        ph->type    = DEBUG_PRINT;
+        ph->high_length = 0;
+
+        sprintf((portCHAR*)(packet+sizeof(struct packet_header) + 3), msg);
+        ph->low_length = strlen( (portCHAR*)(packet+sizeof(struct packet_header) + 3) ) + 3 + 1;
+        
+	usb_send_buffer_zero_copy(packet, ph->low_length+sizeof(struct packet_header), NULL, NULL, portMAX_DELAY);
+}
+
+
 static void
 usbshell_task (void *pvParameters)
 {
@@ -64,16 +76,11 @@ usbshell_task (void *pvParameters)
 			for (;;) if(vUSBRecvByte (&c, sizeof (c), 100) ) continue; else break;
 		}
 		
-		struct packet_header *ph = (struct packet_header *) &packet;
-		ph->type    = DEBUG_PRINT;
-		ph->low_length = 37;
-		ph->high_length = 0;
+		printDebug(packet, "Hallo, World!!, Mal ein Test!");
 
-		sprintf((portCHAR*)(packet+sizeof(struct packet_header) + 3), "Hallo, World!!");
-		ph->low_length = strlen( (portCHAR*)(packet+sizeof(struct packet_header) + 3) ) + 3 + 1;
+	
 
-		usb_send_buffer_zero_copy(packet, ph->low_length+sizeof(struct packet_header), NULL, NULL, portMAX_DELAY);
-		
+	
 		ispacket = 0;
 	}      
 }
@@ -83,26 +90,3 @@ vUSBShellInit (void) {
 	xTaskCreate (usbshell_task, (signed portCHAR *) "USBSHELL", TASK_USBSHELL_STACK, NULL, TASK_USBSHELL_PRIORITY, NULL);
 }
 
-
-/*
-		vUSBRecvByte (&c, sizeof (c), 100); // continue;
-
-//		if ( index == 0 ) lowlen = c;
-//		if ( index == 1 ) {
-//			len = c;
-//			len = len * 256 + lowlen;
-//		}
-    
-//		packet[index] = c;
-//		index++;
-    
-//		if ( ( len + sizeof(struct packet_header) ) == index ) {
-
-			index = 0;
-			len = 0; 
-			lowlen=0;
-			
-//			vTaskDelay (1);
-//		}
-
-*/
