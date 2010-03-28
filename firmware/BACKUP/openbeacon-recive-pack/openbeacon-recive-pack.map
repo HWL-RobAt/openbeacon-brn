@@ -1,0 +1,1025 @@
+Archive member included because of file (symbol)
+
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+                              ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o (__udivsi3)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+                              application/proto.o (__divsi3)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
+                              /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o) (__div0)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+                              ../core/os/core/MemMang/heap_3.o (free)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+                              /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o) (_malloc_r)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+                              application/proto.o (memcpy)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+                              application/main.o (memset)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+                              /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o) (__malloc_lock)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+                              application/proto.o (strlen)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+                              ../core/os/core/tasks.o (strncpy)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+                              /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o) (_free_r)
+/share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+                              /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o) (_impure_ptr)
+
+Allocating common symbols
+Common symbol       size              file
+
+rf_sent_unicast     0x4               application/proto.o
+packet              0x5dc             application/usbshell.o
+xUSBInterruptQueue  0x4               ../core/os/usb/USB-CDC.o
+rf_sent_broadcast   0x4               application/proto.o
+rf_rec              0x4               application/proto.o
+nRFCMD_Macro        0x4               ../core/openbeacon/nRF24L01/nRF_CMD.o
+env                 0x80              ../core/openbeacon/env.o
+nRFCMD_MacroResult  0x4               ../core/openbeacon/nRF24L01/nRF_CMD.o
+__packed__          0x4               application/main.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+flash            0x00100000         0x0000fc00
+ram              0x00200000         0x00004000
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD application/main.o
+LOAD application/usbshell.o
+LOAD application/xxtea.o
+LOAD application/proto.o
+LOAD ../core//openbeacon/crc32.o
+LOAD ../core//openbeacon/rnd.o
+LOAD ../core/openbeacon/dbgu.o
+LOAD ../core/openbeacon/syscalls.o
+LOAD ../core/openbeacon/led.o
+LOAD ../core/openbeacon/env.o
+LOAD ../core/openbeacon/sort.o
+LOAD ../core/openbeacon/nRF24L01/nRF_API.o
+LOAD ../core/openbeacon/nRF24L01/nRF_CMD.o
+LOAD ../core/os/boot/Cstartup_SAM7.o
+LOAD ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+LOAD ../core/os/core/list.o
+LOAD ../core/os/core/queue.o
+LOAD ../core/os/core/tasks.o
+LOAD ../core/os/core/port.o
+LOAD ../core/os/core/portISR.o
+LOAD ../core/os/core/MemMang/heap_3.o
+LOAD ../core/os/usb/USB-CDC.o
+LOAD ../core/os/usb/USBIsr.o
+LOAD /tmp/cceuzwpu.o
+LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libm.a
+START GROUP
+LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a
+LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a
+LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libc.a
+END GROUP
+                0x00203ffc                __stack_end__ = 0x203ffc
+                0x00000000                . = 0x0
+
+startup         0x00100000       0x44
+ *(.bootloader)
+ *(.startup)
+ .startup       0x00100000       0x44 /tmp/cceuzwpu.o
+                0x00100000                start
+
+prog            0x00100044     0x4ba4
+ *(.text)
+ .text          0x00100044       0xd0 /tmp/cceuzwpu.o
+                0x001000f4                endless_loop
+ .text          0x00100114      0x140 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+                0x00100114                __aeabi_idiv
+                0x00100114                __divsi3
+                0x0010023c                __aeabi_idivmod
+ .text          0x00100254        0x4 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
+                0x00100254                __aeabi_ldiv0
+                0x00100254                __div0
+                0x00100254                __aeabi_idiv0
+ .text          0x00100258       0x28 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+                0x0010026c                malloc
+                0x00100258                free
+ .text          0x00100280      0x770 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+                0x00100280                _malloc_r
+ .text          0x001009f0       0xa0 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+                0x001009f0                memcpy
+ .text          0x00100a90       0x98 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+                0x00100a90                memset
+ .text          0x00100b28        0x8 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+                0x00100b2c                __malloc_unlock
+                0x00100b28                __malloc_lock
+ .text          0x00100b30       0x90 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+                0x00100b30                strlen
+ .text          0x00100bc0      0x114 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+                0x00100bc0                strncpy
+ .text          0x00100cd4      0x39c /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+                0x00100dd0                _free_r
+                0x00100cd4                _malloc_trim_r
+ *(.text.*)
+ .text.vApplicationIdleHook
+                0x00101070       0x14 application/main.o
+                0x00101070                vApplicationIdleHook
+ .text.vResetEnv
+                0x00101084       0x14 application/main.o
+                0x00101084                vResetEnv
+ .text.mainloop
+                0x00101098       0x80 application/main.o
+                0x00101098                mainloop
+ .text.use_led  0x00101118        0x4 application/usbshell.o
+ .text.vUSBShellInit
+                0x0010111c       0x38 application/usbshell.o
+                0x0010111c                vUSBShellInit
+ .text.PtSetRfPowerLevel
+                0x00101154       0x1c application/proto.o
+                0x00101154                PtSetRfPowerLevel
+ .text.PtInitProtocol
+                0x00101170       0x60 application/proto.o
+                0x00101170                PtInitProtocol
+ .text.shuffle_tx_byteorder
+                0x001011d0       0x48 application/proto.o
+ .text.vnRFtaskRxTx
+                0x00101218      0x2a0 application/proto.o
+ .text._sbrk_r  0x001014b8       0x28 ../core/openbeacon/syscalls.o
+                0x001014b8                _sbrk_r
+ .text.led_init
+                0x001014e0       0x18 ../core/openbeacon/led.o
+                0x001014e0                led_init
+ .text.led_set_green
+                0x001014f8       0x20 ../core/openbeacon/led.o
+                0x001014f8                led_set_green
+ .text.env_crc16
+                0x00101518       0x78 ../core/openbeacon/env.o
+                0x00101518                env_crc16
+ .text.env_init
+                0x00101590       0x14 ../core/openbeacon/env.o
+                0x00101590                env_init
+ .text.env_load
+                0x001015a4       0xc8 ../core/openbeacon/env.o
+                0x001015a4                env_load
+ .text.nRFAPI_SetFeatures
+                0x0010166c       0x54 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x0010166c                nRFAPI_SetFeatures
+ .text.nRFAPI_SetPipeSizeRX
+                0x001016c0       0x20 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001016c0                nRFAPI_SetPipeSizeRX
+ .text.nRFAPI_ClearIRQ
+                0x001016e0       0x14 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001016e0                nRFAPI_ClearIRQ
+ .text.nRFAPI_SetChannel
+                0x001016f4        0xc ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001016f4                nRFAPI_SetChannel
+ .text.nRFAPI_SetSizeMac
+                0x00101700       0x30 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101700                nRFAPI_SetSizeMac
+ .text.nRFAPI_PipesAck
+                0x00101730        0xc ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101730                nRFAPI_PipesAck
+ .text.nRFAPI_PipesEnable
+                0x0010173c        0xc ../core/openbeacon/nRF24L01/nRF_API.o
+                0x0010173c                nRFAPI_PipesEnable
+ .text.nRFAPI_TxRetries
+                0x00101748       0x18 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101748                nRFAPI_TxRetries
+ .text.nRFAPI_SetTxPower
+                0x00101760       0x20 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101760                nRFAPI_SetTxPower
+ .text.nRFAPI_SetRxMode
+                0x00101780       0x14 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101780                nRFAPI_SetRxMode
+ .text.nRFAPI_GetFifoStatus
+                0x00101794       0x10 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101794                nRFAPI_GetFifoStatus
+ .text.nRFAPI_GetSizeMac
+                0x001017a4       0x20 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001017a4                nRFAPI_GetSizeMac
+ .text.nRFAPI_FlushTX
+                0x001017c4        0x8 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001017c4                nRFAPI_FlushTX
+ .text.nRFAPI_FlushRX
+                0x001017cc        0x8 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001017cc                nRFAPI_FlushRX
+ .text.nRFAPI_GetStatus
+                0x001017d4       0x10 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001017d4                nRFAPI_GetStatus
+ .text.nRFAPI_GetTxMAC
+                0x001017e4       0x20 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x001017e4                nRFAPI_GetTxMAC
+ .text.nRFAPI_SetRxMAC
+                0x00101804       0x78 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101804                nRFAPI_SetRxMAC
+ .text.nRFAPI_SetTxMAC
+                0x0010187c       0x20 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x0010187c                nRFAPI_SetTxMAC
+ .text.nRFAPI_DetectChip
+                0x0010189c       0xa4 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x0010189c                nRFAPI_DetectChip
+ .text.nRFAPI_Init
+                0x00101940       0xd0 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00101940                nRFAPI_Init
+ .text.nRFCMD_WaitRx
+                0x00101a10       0x28 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101a10                nRFCMD_WaitRx
+ .text.nRFCMD_Init
+                0x00101a38      0x178 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101a38                nRFCMD_Init
+ .text.nRFCMD_ISR_ACK_Handler
+                0x00101bb0       0x78 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101bb0                nRFCMD_ISR_ACK_Handler
+ .text.nRFCMD_ISR_ACK
+                0x00101c28       0xa8 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101c28                nRFCMD_ISR_ACK
+ .text.nRFCMD_ReadWriteBuffer
+                0x00101cd0       0x84 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101cd0                nRFCMD_ReadWriteBuffer
+ .text.nRFCMD_RegReadBuf
+                0x00101d54       0x48 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101d54                nRFCMD_RegReadBuf
+ .text.nRFCMD_RegWriteBuf
+                0x00101d9c       0x44 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101d9c                nRFCMD_RegWriteBuf
+ .text.nRFCMD_RegWriteStatusRead
+                0x00101de0       0x30 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101de0                nRFCMD_RegWriteStatusRead
+ .text.nRFCMD_RegRead
+                0x00101e10       0x38 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101e10                nRFCMD_RegRead
+ .text.nRFCMD_CmdExec
+                0x00101e48       0x2c ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101e48                nRFCMD_CmdExec
+ .text.nRFCMD_CE
+                0x00101e74       0x20 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101e74                nRFCMD_CE
+ .text.nRFCMD_ProcessNextMacro
+                0x00101e94       0x90 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .text.nRFCMD_ISR_DMA_Handler
+                0x00101f24       0x7c ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101f24                nRFCMD_ISR_DMA_Handler
+ .text.nRFCMD_ISR_DMA
+                0x00101fa0       0xa8 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00101fa0                nRFCMD_ISR_DMA
+ .text.AT91F_LowLevelInit
+                0x00102048       0x98 ../core/os/boot/Cstartup_SAM7.o
+                0x00102048                AT91F_LowLevelInit
+ .text.AT91F_AIC_ConfigureIt
+                0x001020e0       0x38 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                0x001020e0                AT91F_AIC_ConfigureIt
+ .text.AT91F_PDC_SendFrame
+                0x00102118       0x48 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                0x00102118                AT91F_PDC_SendFrame
+ .text.AT91F_PDC_ReceiveFrame
+                0x00102160       0x48 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                0x00102160                AT91F_PDC_ReceiveFrame
+ .text.vListInitialise
+                0x001021a8       0x24 ../core/os/core/list.o
+                0x001021a8                vListInitialise
+ .text.vListInitialiseItem
+                0x001021cc        0xc ../core/os/core/list.o
+                0x001021cc                vListInitialiseItem
+ .text.vListInsertEnd
+                0x001021d8       0x34 ../core/os/core/list.o
+                0x001021d8                vListInsertEnd
+ .text.vListInsert
+                0x0010220c       0x64 ../core/os/core/list.o
+                0x0010220c                vListInsert
+ .text.vListRemove
+                0x00102270       0x3c ../core/os/core/list.o
+                0x00102270                vListRemove
+ .text.uxQueueMessagesWaiting
+                0x001022ac       0x1c ../core/os/core/queue.o
+                0x001022ac                uxQueueMessagesWaiting
+ .text.prvCopyDataFromQueue
+                0x001022c8       0x48 ../core/os/core/queue.o
+ .text.prvCopyDataToQueue
+                0x00102310       0x9c ../core/os/core/queue.o
+ .text.xQueueGenericSendFromISR
+                0x001023ac       0x7c ../core/os/core/queue.o
+                0x001023ac                xQueueGenericSendFromISR
+ .text.prvUnlockQueue
+                0x00102428       0xfc ../core/os/core/queue.o
+ .text.xQueueGenericReceive
+                0x00102524      0x198 ../core/os/core/queue.o
+                0x00102524                xQueueGenericReceive
+ .text.xQueueGenericSend
+                0x001026bc      0x168 ../core/os/core/queue.o
+                0x001026bc                xQueueGenericSend
+ .text.xQueueCreate
+                0x00102824       0xa4 ../core/os/core/queue.o
+                0x00102824                xQueueCreate
+ .text.vTaskSwitchContext
+                0x001028c8       0xa4 ../core/os/core/tasks.o
+                0x001028c8                vTaskSwitchContext
+ .text.vTaskSetTimeOutState
+                0x0010296c       0x20 ../core/os/core/tasks.o
+                0x0010296c                vTaskSetTimeOutState
+ .text.vTaskMissedYield
+                0x0010298c       0x14 ../core/os/core/tasks.o
+                0x0010298c                vTaskMissedYield
+ .text.xTaskCheckForTimeOut
+                0x001029a0       0xc0 ../core/os/core/tasks.o
+                0x001029a0                xTaskCheckForTimeOut
+ .text.vTaskSuspendAll
+                0x00102a60       0x24 ../core/os/core/tasks.o
+                0x00102a60                vTaskSuspendAll
+ .text.xTaskRemoveFromEventList
+                0x00102a84       0xa4 ../core/os/core/tasks.o
+                0x00102a84                xTaskRemoveFromEventList
+ .text.vTaskIncrementTick
+                0x00102b28      0x16c ../core/os/core/tasks.o
+                0x00102b28                vTaskIncrementTick
+ .text.vTaskPlaceOnEventList
+                0x00102c94       0x8c ../core/os/core/tasks.o
+                0x00102c94                vTaskPlaceOnEventList
+ .text.xTaskCreate
+                0x00102d20      0x23c ../core/os/core/tasks.o
+                0x00102d20                xTaskCreate
+ .text.vTaskStartScheduler
+                0x00102f5c       0x78 ../core/os/core/tasks.o
+                0x00102f5c                vTaskStartScheduler
+ .text.xTaskResumeAll
+                0x00102fd4      0x284 ../core/os/core/tasks.o
+                0x00102fd4                xTaskResumeAll
+ .text.prvIdleTask
+                0x00103258       0xbc ../core/os/core/tasks.o
+ .text.vTaskDelay
+                0x00103314       0xa4 ../core/os/core/tasks.o
+                0x00103314                vTaskDelay
+ .text.pxPortInitialiseStack
+                0x001033b8      0x1c0 ../core/os/core/port.o
+                0x001033b8                pxPortInitialiseStack
+ .text.xPortStartScheduler
+                0x00103578       0x48 ../core/os/core/port.o
+                0x00103578                xPortStartScheduler
+ .text.vPortISRStartFirstTask
+                0x001035c0       0x54 ../core/os/core/portISR.o
+                0x001035c0                vPortISRStartFirstTask
+ .text.vPortEnterCritical
+                0x00103614       0x2c ../core/os/core/portISR.o
+                0x00103614                vPortEnterCritical
+ .text.vPortExitCritical
+                0x00103640       0x44 ../core/os/core/portISR.o
+                0x00103640                vPortExitCritical
+ .text.vPreemptiveTick
+                0x00103684       0xbc ../core/os/core/portISR.o
+                0x00103684                vPreemptiveTick
+ .text.swi_handler
+                0x00103740       0xac ../core/os/core/portISR.o
+                0x00103740                swi_handler
+ .text.vPortFree
+                0x001037ec       0x20 ../core/os/core/MemMang/heap_3.o
+                0x001037ec                vPortFree
+ .text.pvPortMalloc
+                0x0010380c       0x24 ../core/os/core/MemMang/heap_3.o
+                0x0010380c                pvPortMalloc
+ .text.vDetachUSBInterface
+                0x00103830       0x18 ../core/os/usb/USB-CDC.o
+                0x00103830                vDetachUSBInterface
+ .text.usb_send_buffer_zero_copy
+                0x00103848       0x40 ../core/os/usb/USB-CDC.o
+                0x00103848                usb_send_buffer_zero_copy
+ .text.prvSendStall
+                0x00103888       0x24 ../core/os/usb/USB-CDC.o
+ .text.prvSendZLP
+                0x001038ac       0x5c ../core/os/usb/USB-CDC.o
+ .text.prvSendNextSegment
+                0x00103908       0xf8 ../core/os/usb/USB-CDC.o
+ .text.prvSendControlData
+                0x00103a00       0x78 ../core/os/usb/USB-CDC.o
+ .text.vUSBCDCTask
+                0x00103a78      0x9c4 ../core/os/usb/USB-CDC.o
+                0x00103a78                vUSBCDCTask
+ .text.vUSB_ISR_Handler
+                0x0010443c      0x1a4 ../core/os/usb/USBIsr.o
+                0x0010443c                vUSB_ISR_Handler
+ .text.vUSB_ISR_Wrapper
+                0x001045e0       0xa8 ../core/os/usb/USBIsr.o
+                0x001045e0                vUSB_ISR_Wrapper
+ *(.rodata)
+ *(.rodata*)
+ .rodata.str1.4
+                0x00104688        0x4 application/main.o
+ .rodata.str1.4
+                0x0010468c        0x7 application/usbshell.o
+                                  0x8 (size before relaxing)
+ *fill*         0x00104693        0x1 00
+ .rodata.str1.4
+                0x00104694       0x1c application/proto.o
+ .rodata.tea_key
+                0x001046b0       0x10 application/proto.o
+                0x001046b0                tea_key
+ .rodata.broadcast_mac
+                0x001046c0        0x5 application/proto.o
+ *fill*         0x001046c5        0x3 00
+ .rodata.crc32_table
+                0x001046c8      0x400 ../core//openbeacon/crc32.o
+ .rodata.rfbroadcast_mac
+                0x00104ac8        0x5 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00104ac8                rfbroadcast_mac
+ .rodata.ACTIVATE_SEQUENCE.1822
+                0x00104acd        0x2 ../core/openbeacon/nRF24L01/nRF_API.o
+ .rodata.C.2.1824
+                0x00104acf        0x2 ../core/openbeacon/nRF24L01/nRF_API.o
+ *fill*         0x00104ad1        0x3 00
+ .rodata.str1.4
+                0x00104ad4        0x5 ../core/os/core/tasks.o
+                                  0x8 (size before relaxing)
+ .rodata.pxLanguageStringDescriptor
+                0x00104ad9        0x4 ../core/os/usb/USB-CDC.o
+                0x00104ad9                pxLanguageStringDescriptor
+ .rodata.pxManufacturerStringDescriptor
+                0x00104add       0x1c ../core/os/usb/USB-CDC.o
+                0x00104add                pxManufacturerStringDescriptor
+ .rodata.pxProductStringDescriptor
+                0x00104af9       0x2c ../core/os/usb/USB-CDC.o
+                0x00104af9                pxProductStringDescriptor
+ .rodata.pxConfigDescriptor1
+                0x00104b25       0x43 ../core/os/usb/USB-CDC.o
+                0x00104b25                pxConfigDescriptor1
+ .rodata.pxConfigDescriptor2
+                0x00104b68       0x43 ../core/os/usb/USB-CDC.o
+                0x00104b68                pxConfigDescriptor2
+ *fill*         0x00104bab        0x1 00
+ .rodata.pxConfigDescriptorSizes
+                0x00104bac        0x8 ../core/os/usb/USB-CDC.o
+                0x00104bac                pxConfigDescriptorSizes
+ .rodata.pxDeviceDescriptor
+                0x00104bb4       0x12 ../core/os/usb/USB-CDC.o
+                0x00104bb4                pxDeviceDescriptor
+ *fill*         0x00104bc6        0x2 00
+ .rodata.C.25.4299
+                0x00104bc8       0x14 ../core/os/usb/USB-CDC.o
+ .rodata.pxLineCoding
+                0x00104bdc        0x7 ../core/os/usb/USB-CDC.o
+ *fill*         0x00104be3        0x1 00
+ .rodata.str1.4
+                0x00104be4        0x2 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+                                  0x4 (size before relaxing)
+ *(.glue_7)
+ *fill*         0x00104be6        0x2 00
+ *(.glue_7t)
+                0x00104be8                __end_of_text__ = .
+
+.data           0x00200000      0xb70 load address 0x00104be8
+                0x00200000                __data_beg__ = .
+                0x00104be8                __data_beg_src__ = __end_of_text__
+ *(.data)
+ .data          0x00200000      0x410 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+                0x0020040c                __malloc_sbrk_base
+                0x00200000                __malloc_av_
+                0x00200408                __malloc_trim_threshold
+ .data          0x00200410      0x404 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+                0x00200410                _impure_ptr
+ *(.data.*)
+ .data.jam_mac  0x00200814        0x5 application/proto.o
+ .data.wmcu_mac
+                0x00200819        0x5 application/proto.o
+ *fill*         0x0020081e        0x2 00
+ .data.ulCriticalNesting
+                0x00200820        0x4 ../core/os/core/portISR.o
+                0x00200820                ulCriticalNesting
+ .data.pxConfigDescriptorList
+                0x00200824        0x8 ../core/os/usb/USB-CDC.o
+                0x00200824                pxConfigDescriptorList
+ *(.ramfunc)
+ .ramfunc       0x0020082c      0x298 application/proto.o
+                0x0020082c                xxtea_encode
+                0x00200968                xxtea_decode
+ .ramfunc       0x00200ac4       0xac ../core//openbeacon/crc32.o
+                0x00200ac4                crc32
+                0x00200b70                __data_end__ = .
+
+.bss            0x00200b70      0x994
+                0x00200b70                __bss_beg__ = .
+ *(.bss)
+ .bss           0x00200b70       0x34 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+                0x00200b70                __malloc_top_pad
+                0x00200b74                __malloc_max_sbrked_mem
+                0x00200b7c                __malloc_current_mallinfo
+                0x00200b78                __malloc_max_total_mem
+ *(.bss.*)
+ .bss.rfpkg     0x00200ba4       0x1e application/proto.o
+ .bss.nrf_powerlevel_current
+                0x00200bc2        0x1 application/proto.o
+ .bss.nrf_powerlevel_last
+                0x00200bc3        0x1 application/proto.o
+ .bss.jam_density_ms
+                0x00200bc4        0x4 application/proto.o
+ .bss.heap_ptr  0x00200bc8        0x4 ../core/openbeacon/syscalls.o
+ .bss.spi_outbuf
+                0x00200bcc       0x21 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .bss.spi_inbuf
+                0x00200bed       0x21 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ *fill*         0x00200c0e        0x2 00
+ .bss.xnRF_SemaphoreDMA
+                0x00200c10        0x4 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .bss.xnRF_SemaphoreACK
+                0x00200c14        0x4 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .bss.pxCurrentTCB
+                0x00200c18        0x4 ../core/os/core/tasks.o
+                0x00200c18                pxCurrentTCB
+ .bss.xMissedYield
+                0x00200c1c        0x4 ../core/os/core/tasks.o
+ .bss.xNumOfOverflows
+                0x00200c20        0x4 ../core/os/core/tasks.o
+ .bss.xTickCount
+                0x00200c24        0x4 ../core/os/core/tasks.o
+ .bss.uxSchedulerSuspended
+                0x00200c28        0x4 ../core/os/core/tasks.o
+ .bss.uxTopReadyPriority
+                0x00200c2c        0x4 ../core/os/core/tasks.o
+ .bss.uxMissedTicks
+                0x00200c30        0x4 ../core/os/core/tasks.o
+ .bss.uxCurrentNumberOfTasks
+                0x00200c34        0x4 ../core/os/core/tasks.o
+ .bss.xSchedulerRunning
+                0x00200c38        0x4 ../core/os/core/tasks.o
+ .bss.uxTasksDeleted
+                0x00200c3c        0x4 ../core/os/core/tasks.o
+ .bss.uxTopUsedPriority
+                0x00200c40        0x4 ../core/os/core/tasks.o
+ .bss.pxReadyTasksLists
+                0x00200c44       0x64 ../core/os/core/tasks.o
+ .bss.xDelayedTaskList1
+                0x00200ca8       0x14 ../core/os/core/tasks.o
+ .bss.xDelayedTaskList2
+                0x00200cbc       0x14 ../core/os/core/tasks.o
+ .bss.pxDelayedTaskList
+                0x00200cd0        0x4 ../core/os/core/tasks.o
+ .bss.pxOverflowDelayedTaskList
+                0x00200cd4        0x4 ../core/os/core/tasks.o
+ .bss.xPendingReadyList
+                0x00200cd8       0x14 ../core/os/core/tasks.o
+ .bss.xTasksWaitingTermination
+                0x00200cec       0x14 ../core/os/core/tasks.o
+ .bss.xSuspendedTaskList
+                0x00200d00       0x14 ../core/os/core/tasks.o
+ .bss.ucUSBConfig
+                0x00200d14        0x1 ../core/os/usb/USB-CDC.o
+ *fill*         0x00200d15        0x3 00
+ .bss.eDriverState
+                0x00200d18        0x4 ../core/os/usb/USB-CDC.o
+ .bss.ulReceivedAddress
+                0x00200d1c        0x4 ../core/os/usb/USB-CDC.o
+ .bss.xRequest.4456
+                0x00200d20        0x8 ../core/os/usb/USB-CDC.o
+ .bss.pxControlTx
+                0x00200d28       0x88 ../core/os/usb/USB-CDC.o
+ .bss.pxControlRx
+                0x00200db0       0x88 ../core/os/usb/USB-CDC.o
+ .bss.xRxCDC    0x00200e38        0x4 ../core/os/usb/USB-CDC.o
+ .bss.xTxCDC    0x00200e3c        0x4 ../core/os/usb/USB-CDC.o
+ .bss.usb_zcopy_tx_queue
+                0x00200e40        0x4 ../core/os/usb/USB-CDC.o
+ .bss.ucControlState
+                0x00200e44        0x1 ../core/os/usb/USB-CDC.o
+ *fill*         0x00200e45        0x3 00
+ .bss.uiCurrentBank
+                0x00200e48        0x4 ../core/os/usb/USB-CDC.o
+ .bss.ulNextMessage.3416
+                0x00200e4c        0x4 ../core/os/usb/USBIsr.o
+ .bss.xISRMessages
+                0x00200e50       0x40 ../core/os/usb/USBIsr.o
+ COMMON         0x00200e90      0x5dc application/usbshell.o
+                0x00200e90                packet
+ COMMON         0x0020146c        0xc application/proto.o
+                0x0020146c                rf_sent_unicast
+                0x00201470                rf_sent_broadcast
+                0x00201474                rf_rec
+ COMMON         0x00201478       0x80 ../core/openbeacon/env.o
+                0x00201478                env
+ COMMON         0x002014f8        0x8 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x002014f8                nRFCMD_Macro
+                0x002014fc                nRFCMD_MacroResult
+ COMMON         0x00201500        0x4 ../core/os/usb/USB-CDC.o
+                0x00201500                xUSBInterruptQueue
+                0x00201504                . = ALIGN (0x4)
+                0x00201504                . = ALIGN (0x4)
+                0x00201504                _end = .
+                0x00201504                _bss_end__ = .
+                0x00201504                __bss_end__ = .
+                0x00201504                __end__ = .
+                0x00201504                PROVIDE (end, .)
+OUTPUT(openbeacon-recive-pack.elf elf32-littlearm)
+
+.debug_abbrev   0x00000000     0x2adb
+ .debug_abbrev  0x00000000      0x196 application/main.o
+ .debug_abbrev  0x00000196       0xa7 application/usbshell.o
+ .debug_abbrev  0x0000023d        0x1 application/xxtea.o
+ .debug_abbrev  0x0000023e      0x255 application/proto.o
+ .debug_abbrev  0x00000493       0xaa ../core//openbeacon/crc32.o
+ .debug_abbrev  0x0000053d       0x7f ../core//openbeacon/rnd.o
+ .debug_abbrev  0x000005bc      0x136 ../core/openbeacon/dbgu.o
+ .debug_abbrev  0x000006f2      0x23a ../core/openbeacon/syscalls.o
+ .debug_abbrev  0x0000092c      0x181 ../core/openbeacon/led.o
+ .debug_abbrev  0x00000aad      0x25e ../core/openbeacon/env.o
+ .debug_abbrev  0x00000d0b       0x9e ../core/openbeacon/sort.o
+ .debug_abbrev  0x00000da9      0x16e ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_abbrev  0x00000f17      0x2c3 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_abbrev  0x000011da       0x8a ../core/os/boot/Cstartup_SAM7.o
+ .debug_abbrev  0x00001264      0x2b6 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_abbrev  0x0000151a       0xc9 ../core/os/core/list.o
+ .debug_abbrev  0x000015e3      0x194 ../core/os/core/queue.o
+ .debug_abbrev  0x00001777      0x267 ../core/os/core/tasks.o
+ .debug_abbrev  0x000019de      0x116 ../core/os/core/port.o
+ .debug_abbrev  0x00001af4       0x72 ../core/os/core/portISR.o
+ .debug_abbrev  0x00001b66       0x93 ../core/os/core/MemMang/heap_3.o
+ .debug_abbrev  0x00001bf9      0x300 ../core/os/usb/USB-CDC.o
+ .debug_abbrev  0x00001ef9       0xda ../core/os/usb/USBIsr.o
+ .debug_abbrev  0x00001fd3       0x10 /tmp/cceuzwpu.o
+ .debug_abbrev  0x00001fe3       0x14 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+ .debug_abbrev  0x00001ff7       0x14 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+ .debug_abbrev  0x0000200b       0x14 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
+ .debug_abbrev  0x0000201f      0x187 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_abbrev  0x000021a6      0x225 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_abbrev  0x000023cb       0xa6 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_abbrev  0x00002471       0xa9 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_abbrev  0x0000251a      0x16a /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_abbrev  0x00002684       0x8b /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .debug_abbrev  0x0000270f       0x8d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_abbrev  0x0000279c      0x1e8 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+ .debug_abbrev  0x00002984      0x157 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+
+.debug_info     0x00000000     0xb6a5
+ .debug_info    0x00000000      0x299 application/main.o
+ .debug_info    0x00000299      0x127 application/usbshell.o
+ .debug_info    0x000003c0      0x772 application/proto.o
+ .debug_info    0x00000b32       0xf0 ../core//openbeacon/crc32.o
+ .debug_info    0x00000c22       0xb3 ../core//openbeacon/rnd.o
+ .debug_info    0x00000cd5      0x5e6 ../core/openbeacon/dbgu.o
+ .debug_info    0x000012bb      0xd2b ../core/openbeacon/syscalls.o
+ .debug_info    0x00001fe6      0x5bd ../core/openbeacon/led.o
+ .debug_info    0x000025a3      0x4ae ../core/openbeacon/env.o
+ .debug_info    0x00002a51       0xcf ../core/openbeacon/sort.o
+ .debug_info    0x00002b20      0x57d ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_info    0x0000309d      0xdea ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_info    0x00003e87      0x1fa ../core/os/boot/Cstartup_SAM7.o
+ .debug_info    0x00004081     0x1623 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_info    0x000056a4      0x28b ../core/os/core/list.o
+ .debug_info    0x0000592f      0x73b ../core/os/core/queue.o
+ .debug_info    0x0000606a      0xc30 ../core/os/core/tasks.o
+ .debug_info    0x00006c9a      0x1ac ../core/os/core/port.o
+ .debug_info    0x00006e46       0xf6 ../core/os/core/portISR.o
+ .debug_info    0x00006f3c       0xd4 ../core/os/core/MemMang/heap_3.o
+ .debug_info    0x00007010      0xac4 ../core/os/usb/USB-CDC.o
+ .debug_info    0x00007ad4      0x186 ../core/os/usb/USBIsr.o
+ .debug_info    0x00007c5a       0x84 /tmp/cceuzwpu.o
+ .debug_info    0x00007cde       0x88 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+ .debug_info    0x00007d66       0x88 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+ .debug_info    0x00007dee       0x88 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
+ .debug_info    0x00007e76      0x953 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_info    0x000087c9      0xcba /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_info    0x00009483      0x10a /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_info    0x0000958d      0x10e /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_info    0x0000969b      0x93c /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_info    0x00009fd7       0xd4 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .debug_info    0x0000a0ab      0x127 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_info    0x0000a1d2      0xbb1 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+ .debug_info    0x0000ad83      0x922 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+
+.debug_line     0x00000000     0x2ff6
+ .debug_line    0x00000000       0xfa application/main.o
+ .debug_line    0x000000fa       0x66 application/usbshell.o
+ .debug_line    0x00000160       0x1a application/xxtea.o
+ .debug_line    0x0000017a      0x1e0 application/proto.o
+ .debug_line    0x0000035a       0x85 ../core//openbeacon/crc32.o
+ .debug_line    0x000003df       0x89 ../core//openbeacon/rnd.o
+ .debug_line    0x00000468       0xf1 ../core/openbeacon/dbgu.o
+ .debug_line    0x00000559      0x263 ../core/openbeacon/syscalls.o
+ .debug_line    0x000007bc      0x11a ../core/openbeacon/led.o
+ .debug_line    0x000008d6      0x154 ../core/openbeacon/env.o
+ .debug_line    0x00000a2a       0x61 ../core/openbeacon/sort.o
+ .debug_line    0x00000a8b      0x282 ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_line    0x00000d0d      0x32b ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_line    0x00001038       0x92 ../core/os/boot/Cstartup_SAM7.o
+ .debug_line    0x000010ca      0x303 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_line    0x000013cd      0x106 ../core/os/core/list.o
+ .debug_line    0x000014d3      0x338 ../core/os/core/queue.o
+ .debug_line    0x0000180b      0x483 ../core/os/core/tasks.o
+ .debug_line    0x00001c8e      0x12c ../core/os/core/port.o
+ .debug_line    0x00001dba       0xbc ../core/os/core/portISR.o
+ .debug_line    0x00001e76       0xc5 ../core/os/core/MemMang/heap_3.o
+ .debug_line    0x00001f3b      0x37d ../core/os/usb/USB-CDC.o
+ .debug_line    0x000022b8       0xd8 ../core/os/usb/USBIsr.o
+ .debug_line    0x00002390       0x8a /tmp/cceuzwpu.o
+ .debug_line    0x0000241a       0x8d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+ .debug_line    0x000024a7       0x99 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+ .debug_line    0x00002540       0x61 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
+ .debug_line    0x000025a1      0x118 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_line    0x000026b9      0x247 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_line    0x00002900       0xcb /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_line    0x000029cb       0xd3 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_line    0x00002a9e      0x110 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_line    0x00002bae       0xaf /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .debug_line    0x00002c5d       0xd5 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_line    0x00002d32      0x1c6 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+ .debug_line    0x00002ef8       0xfe /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+
+.debug_frame    0x00000000     0x1234
+ .debug_frame   0x00000000       0x44 application/main.o
+ .debug_frame   0x00000044       0x38 application/usbshell.o
+ .debug_frame   0x0000007c       0xf8 application/proto.o
+ .debug_frame   0x00000174       0x2c ../core//openbeacon/crc32.o
+ .debug_frame   0x000001a0       0x3c ../core//openbeacon/rnd.o
+ .debug_frame   0x000001dc       0x48 ../core/openbeacon/dbgu.o
+ .debug_frame   0x00000224       0xac ../core/openbeacon/syscalls.o
+ .debug_frame   0x000002d0       0x50 ../core/openbeacon/led.o
+ .debug_frame   0x00000320       0x7c ../core/openbeacon/env.o
+ .debug_frame   0x0000039c       0x2c ../core/openbeacon/sort.o
+ .debug_frame   0x000003c8      0x24c ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_frame   0x00000614      0x1a0 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_frame   0x000007b4       0x28 ../core/os/boot/Cstartup_SAM7.o
+ .debug_frame   0x000007dc      0x16c ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_frame   0x00000948       0x68 ../core/os/core/list.o
+ .debug_frame   0x000009b0      0x15c ../core/os/core/queue.o
+ .debug_frame   0x00000b0c      0x2b4 ../core/os/core/tasks.o
+ .debug_frame   0x00000dc0       0x60 ../core/os/core/port.o
+ .debug_frame   0x00000e20       0x80 ../core/os/core/portISR.o
+ .debug_frame   0x00000ea0       0x40 ../core/os/core/MemMang/heap_3.o
+ .debug_frame   0x00000ee0      0x148 ../core/os/usb/USB-CDC.o
+ .debug_frame   0x00001028       0x3c ../core/os/usb/USBIsr.o
+ .debug_frame   0x00001064       0x28 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+ .debug_frame   0x0000108c       0x28 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+ .debug_frame   0x000010b4       0x30 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_frame   0x000010e4       0x38 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_frame   0x0000111c       0x28 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_frame   0x00001144       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_frame   0x00001164       0x30 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_frame   0x00001194       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .debug_frame   0x000011b4       0x2c /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_frame   0x000011e0       0x54 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+
+.debug_loc      0x00000000     0x3ab1
+ .debug_loc     0x00000000       0x1f application/main.o
+ .debug_loc     0x0000001f       0x2b application/usbshell.o
+ .debug_loc     0x0000004a      0x215 application/proto.o
+ .debug_loc     0x0000025f       0xb8 ../core//openbeacon/crc32.o
+ .debug_loc     0x00000317       0x1f ../core//openbeacon/rnd.o
+ .debug_loc     0x00000336       0xa8 ../core/openbeacon/dbgu.o
+ .debug_loc     0x000003de      0x1f6 ../core/openbeacon/syscalls.o
+ .debug_loc     0x000005d4       0x72 ../core/openbeacon/led.o
+ .debug_loc     0x00000646       0xf0 ../core/openbeacon/env.o
+ .debug_loc     0x00000736       0x66 ../core/openbeacon/sort.o
+ .debug_loc     0x0000079c      0x4e6 ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_loc     0x00000c82      0x3ca ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_loc     0x0000104c       0x1f ../core/os/boot/Cstartup_SAM7.o
+ .debug_loc     0x0000106b      0x5b2 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_loc     0x0000161d       0x1f ../core/os/core/list.o
+ .debug_loc     0x0000163c      0x5f2 ../core/os/core/queue.o
+ .debug_loc     0x00001c2e      0x7af ../core/os/core/tasks.o
+ .debug_loc     0x000023dd      0x14f ../core/os/core/port.o
+ .debug_loc     0x0000252c       0x7a ../core/os/core/MemMang/heap_3.o
+ .debug_loc     0x000025a6      0x5ef ../core/os/usb/USB-CDC.o
+ .debug_loc     0x00002b95       0x92 ../core/os/usb/USBIsr.o
+ .debug_loc     0x00002c27       0x3c /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_loc     0x00002c63      0x795 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_loc     0x000033f8       0xdb /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_loc     0x000034d3       0xa9 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_loc     0x0000357c       0x47 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .debug_loc     0x000035c3      0x15f /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_loc     0x00003722      0x38f /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+
+.debug_pubnames
+                0x00000000     0x11c0
+ .debug_pubnames
+                0x00000000       0x55 application/main.o
+ .debug_pubnames
+                0x00000055       0x3e application/usbshell.o
+ .debug_pubnames
+                0x00000093       0xfa application/proto.o
+ .debug_pubnames
+                0x0000018d       0x1c ../core//openbeacon/crc32.o
+ .debug_pubnames
+                0x000001a9       0x2d ../core//openbeacon/rnd.o
+ .debug_pubnames
+                0x000001d6       0x3b ../core/openbeacon/dbgu.o
+ .debug_pubnames
+                0x00000211       0x6c ../core/openbeacon/syscalls.o
+ .debug_pubnames
+                0x0000027d       0x47 ../core/openbeacon/led.o
+ .debug_pubnames
+                0x000002c4       0x61 ../core/openbeacon/env.o
+ .debug_pubnames
+                0x00000325       0x1b ../core/openbeacon/sort.o
+ .debug_pubnames
+                0x00000340      0x25e ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_pubnames
+                0x0000059e      0x17d ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_pubnames
+                0x0000071b       0x29 ../core/os/boot/Cstartup_SAM7.o
+ .debug_pubnames
+                0x00000744      0x177 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_pubnames
+                0x000008bb       0x71 ../core/os/core/list.o
+ .debug_pubnames
+                0x0000092c      0x111 ../core/os/core/queue.o
+ .debug_pubnames
+                0x00000a3d      0x219 ../core/os/core/tasks.o
+ .debug_pubnames
+                0x00000c56       0x5a ../core/os/core/port.o
+ .debug_pubnames
+                0x00000cb0       0xdb ../core/os/core/portISR.o
+ .debug_pubnames
+                0x00000d8b       0x31 ../core/os/core/MemMang/heap_3.o
+ .debug_pubnames
+                0x00000dbc      0x1bd ../core/os/usb/USB-CDC.o
+ .debug_pubnames
+                0x00000f79       0x3c ../core/os/usb/USBIsr.o
+ .debug_pubnames
+                0x00000fb5       0x26 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_pubnames
+                0x00000fdb       0xce /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_pubnames
+                0x000010a9       0x1d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_pubnames
+                0x000010c6       0x1d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_pubnames
+                0x000010e3       0x38 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_pubnames
+                0x0000111b       0x1d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .debug_pubnames
+                0x00001138       0x1e /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_pubnames
+                0x00001156       0x31 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+ .debug_pubnames
+                0x00001187       0x39 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+
+.debug_aranges  0x00000000      0x968
+ .debug_aranges
+                0x00000000       0x38 application/main.o
+ .debug_aranges
+                0x00000038       0x30 application/usbshell.o
+ .debug_aranges
+                0x00000068       0x68 application/proto.o
+ .debug_aranges
+                0x000000d0       0x28 ../core//openbeacon/crc32.o
+ .debug_aranges
+                0x000000f8       0x30 ../core//openbeacon/rnd.o
+ .debug_aranges
+                0x00000128       0x30 ../core/openbeacon/dbgu.o
+ .debug_aranges
+                0x00000158       0x60 ../core/openbeacon/syscalls.o
+ .debug_aranges
+                0x000001b8       0x38 ../core/openbeacon/led.o
+ .debug_aranges
+                0x000001f0       0x48 ../core/openbeacon/env.o
+ .debug_aranges
+                0x00000238       0x28 ../core/openbeacon/sort.o
+ .debug_aranges
+                0x00000260       0xf8 ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_aranges
+                0x00000358       0xa0 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_aranges
+                0x000003f8       0x28 ../core/os/boot/Cstartup_SAM7.o
+ .debug_aranges
+                0x00000420       0x98 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_aranges
+                0x000004b8       0x48 ../core/os/core/list.o
+ .debug_aranges
+                0x00000500       0x88 ../core/os/core/queue.o
+ .debug_aranges
+                0x00000588       0xe8 ../core/os/core/tasks.o
+ .debug_aranges
+                0x00000670       0x38 ../core/os/core/port.o
+ .debug_aranges
+                0x000006a8       0x58 ../core/os/core/portISR.o
+ .debug_aranges
+                0x00000700       0x30 ../core/os/core/MemMang/heap_3.o
+ .debug_aranges
+                0x00000730       0x80 ../core/os/usb/USB-CDC.o
+ .debug_aranges
+                0x000007b0       0x30 ../core/os/usb/USBIsr.o
+ .debug_aranges
+                0x000007e0       0x28 /tmp/cceuzwpu.o
+ .debug_aranges
+                0x00000808       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+ .debug_aranges
+                0x00000828       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+ .debug_aranges
+                0x00000848       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
+ .debug_aranges
+                0x00000868       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_aranges
+                0x00000888       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_aranges
+                0x000008a8       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_aranges
+                0x000008c8       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_aranges
+                0x000008e8       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_aranges
+                0x00000908       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .debug_aranges
+                0x00000928       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_aranges
+                0x00000948       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+
+.debug_ranges   0x00000000      0x700
+ .debug_ranges  0x00000000       0x40 application/main.o
+ .debug_ranges  0x00000040       0x58 application/proto.o
+ .debug_ranges  0x00000098       0x78 ../core/openbeacon/dbgu.o
+ .debug_ranges  0x00000110       0x60 ../core/openbeacon/led.o
+ .debug_ranges  0x00000170       0x48 ../core/openbeacon/env.o
+ .debug_ranges  0x000001b8      0x100 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_ranges  0x000002b8      0x1a8 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_ranges  0x00000460       0xf0 ../core/os/core/tasks.o
+ .debug_ranges  0x00000550      0x160 ../core/os/usb/USB-CDC.o
+ .debug_ranges  0x000006b0       0x50 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+
+.debug_str      0x00000000     0x334d
+ .debug_str     0x00000000      0x1cf application/main.o
+                                0x22c (size before relaxing)
+ .debug_str     0x000001cf       0x41 application/usbshell.o
+                                0x161 (size before relaxing)
+ .debug_str     0x00000210      0x237 application/proto.o
+                                0x403 (size before relaxing)
+ .debug_str     0x00000447       0x75 ../core//openbeacon/crc32.o
+                                 0xe2 (size before relaxing)
+ .debug_str     0x000004bc       0x4b ../core//openbeacon/rnd.o
+                                 0xf6 (size before relaxing)
+ .debug_str     0x00000507      0x2dd ../core/openbeacon/dbgu.o
+                                0x37c (size before relaxing)
+ .debug_str     0x000007e4      0x4d1 ../core/openbeacon/syscalls.o
+                                0x5eb (size before relaxing)
+ .debug_str     0x00000cb5       0xaf ../core/openbeacon/led.o
+                                0x30b (size before relaxing)
+ .debug_str     0x00000d64      0x13a ../core/openbeacon/env.o
+                                0x2aa (size before relaxing)
+ .debug_str     0x00000e9e       0x2a ../core/openbeacon/sort.o
+                                 0xd9 (size before relaxing)
+ .debug_str     0x00000ec8      0x25d ../core/openbeacon/nRF24L01/nRF_API.o
+                                0x350 (size before relaxing)
+ .debug_str     0x00001125      0x43b ../core/openbeacon/nRF24L01/nRF_CMD.o
+                                0x731 (size before relaxing)
+ .debug_str     0x00001560       0x33 ../core/os/boot/Cstartup_SAM7.o
+                                0x194 (size before relaxing)
+ .debug_str     0x00001593      0x71b ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                                0xa95 (size before relaxing)
+ .debug_str     0x00001cae      0x142 ../core/os/core/list.o
+                                0x218 (size before relaxing)
+ .debug_str     0x00001df0      0x2cb ../core/os/core/queue.o
+                                0x477 (size before relaxing)
+ .debug_str     0x000020bb      0x56f ../core/os/core/tasks.o
+                                0x757 (size before relaxing)
+ .debug_str     0x0000262a       0xc5 ../core/os/core/port.o
+                                0x1bb (size before relaxing)
+ .debug_str     0x000026ef       0xb1 ../core/os/core/portISR.o
+                                0x14b (size before relaxing)
+ .debug_str     0x000027a0       0x4d ../core/os/core/MemMang/heap_3.o
+                                0x124 (size before relaxing)
+ .debug_str     0x000027ed      0x57f ../core/os/usb/USB-CDC.o
+                                0x6ca (size before relaxing)
+ .debug_str     0x00002d6c       0x61 ../core/os/usb/USBIsr.o
+                                0x199 (size before relaxing)
+ .debug_str     0x00002dcd       0x90 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+                                0x4cf (size before relaxing)
+ .debug_str     0x00002e5d      0x207 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+                                0x6b0 (size before relaxing)
+ .debug_str     0x00003064       0xb4 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+                                 0xe7 (size before relaxing)
+ .debug_str     0x00003118       0x54 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+                                0x131 (size before relaxing)
+ .debug_str     0x0000316c       0x72 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+                                0x4d6 (size before relaxing)
+ .debug_str     0x000031de       0x47 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+                                0x130 (size before relaxing)
+ .debug_str     0x00003225       0x49 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+                                0x147 (size before relaxing)
+ .debug_str     0x0000326e       0x3c /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+                                0x602 (size before relaxing)
+ .debug_str     0x000032aa       0xa3 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+                                0x4cd (size before relaxing)
+
+.comment        0x00000000      0x240
+ .comment       0x00000000       0x12 application/main.o
+ .comment       0x00000012       0x12 application/usbshell.o
+ .comment       0x00000024       0x12 application/xxtea.o
+ .comment       0x00000036       0x12 application/proto.o
+ .comment       0x00000048       0x12 ../core//openbeacon/crc32.o
+ .comment       0x0000005a       0x12 ../core//openbeacon/rnd.o
+ .comment       0x0000006c       0x12 ../core/openbeacon/dbgu.o
+ .comment       0x0000007e       0x12 ../core/openbeacon/syscalls.o
+ .comment       0x00000090       0x12 ../core/openbeacon/led.o
+ .comment       0x000000a2       0x12 ../core/openbeacon/env.o
+ .comment       0x000000b4       0x12 ../core/openbeacon/sort.o
+ .comment       0x000000c6       0x12 ../core/openbeacon/nRF24L01/nRF_API.o
+ .comment       0x000000d8       0x12 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .comment       0x000000ea       0x12 ../core/os/boot/Cstartup_SAM7.o
+ .comment       0x000000fc       0x12 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .comment       0x0000010e       0x12 ../core/os/core/list.o
+ .comment       0x00000120       0x12 ../core/os/core/queue.o
+ .comment       0x00000132       0x12 ../core/os/core/tasks.o
+ .comment       0x00000144       0x12 ../core/os/core/port.o
+ .comment       0x00000156       0x12 ../core/os/core/portISR.o
+ .comment       0x00000168       0x12 ../core/os/core/MemMang/heap_3.o
+ .comment       0x0000017a       0x12 ../core/os/usb/USB-CDC.o
+ .comment       0x0000018c       0x12 ../core/os/usb/USBIsr.o
+ .comment       0x0000019e       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+ .comment       0x000001b0       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .comment       0x000001c2       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .comment       0x000001d4       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+ .comment       0x000001e6       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+ .comment       0x000001f8       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strlen.o)
+ .comment       0x0000020a       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .comment       0x0000021c       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+ .comment       0x0000022e       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
