@@ -50,6 +50,7 @@
 
 /**********************************************************************/
 OpenBeacon_packet g_Beacon;
+char USB_SYNC = 0;
 
 const unsigned char mac[5]={0x01,0x02,0x03,0x02,0x01};
 
@@ -197,9 +198,6 @@ void TransmitBeacon(unsigned int TxPowerLevel)
     g_Beacon.sp.seq = swaplong (seq++);
     g_Beacon.sp.pid = swaplong (env.e.tag_id);
 
-
-
-
     crc = env_crc16(g_Beacon.data_byte, sizeof (g_Beacon.sp) - sizeof (g_Beacon.sp.crc));
     g_Beacon.sp.crc = swapshort(crc);    
     
@@ -219,7 +217,9 @@ void vApplicationIdleHook(void)
     static portTickType xLastBlink=0,xLastTx=0;
     static unsigned int xTxPowerLevel=0;
     portCHAR cByte;
-
+	
+    if( USB_SYNC==0 ) return;
+	
     if(usb_status!=0)
     {
 	// work
@@ -338,7 +338,7 @@ void vApplicationIdleHook(void)
 			
 	if(env.e.mode)
 	    nRFLL_CE(0);
-    }	
+    }
 }
 
 /**********************************************************************/
@@ -348,8 +348,10 @@ int main (void)
     
     xTaskCreate (vUSBCDCTask, (signed portCHAR *) "USB", mainUSB_TASK_STACK,
 	NULL, mainUSB_PRIORITY, NULL);
+	
+    USB_SYNC = 1;
+   
     vUSBShellInit();
-
     vTaskStartScheduler ();
 
     return 0;

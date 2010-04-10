@@ -72,19 +72,19 @@ usbshell_task (void *pvParameters)
 			// TODO: for all recive packet 
 
 			if(index >= ph->low_length+256*ph->high_length+sizeof(struct packet_header)  ) { // packet is recive
+			
 				if(ph->type==MONITOR_INPUT) {
 					usb_status = packet[sizeof(struct packet_header)];
 				}
 				if(ph->type==PACKET_DATA) {
 					Msg2USB_encap(packet, ph->low_length+256*ph->high_length+sizeof(struct packet_header), PACKET_DATA);
 				}
-				
+
 				index = 0;
 			}
+
 		}
-//		if(index==0) { // no recive
-//			vTaskDelay(5);
-//		}
+
 	}
 }
 
@@ -92,4 +92,3 @@ void
 vUSBShellInit (void) {
 	xTaskCreate (usbshell_task, (signed portCHAR *) "USBSHELL", TASK_USBSHELL_STACK, NULL, TASK_USBSHELL_PRIORITY, NULL);
 }
-
