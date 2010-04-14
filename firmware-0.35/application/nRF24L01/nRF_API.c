@@ -134,6 +134,29 @@ void nRFAPI_SetTxPower(unsigned char power)
     nRFCMD_RegReadWrite(RF_SETUP | WRITE_REG,NRF_RFOPTIONS | (power<<1));
 }
 
+unsigned char nRFAPI_GetTxPower()
+{
+    unsigned char ret;
+	
+    ret = nRFCMD_RegRead(RF_SETUP ) & 6>>1 ;
+    return ret;
+}
+
+void nRFAPI_SetTxPowerRate(unsigned char power, unsigned char rate)
+{
+    if(power>3)	power=3;
+    if(rate>1)	rate=1;
+	
+    nRFCMD_RegReadWrite(RF_SETUP | WRITE_REG, ((rate*4+power)<<1) + 1);
+}
+unsigned char nRFAPI_GetTxRate()
+{
+    unsigned char ret;
+	
+    ret = nRFCMD_RegRead(RF_SETUP )>>3;	
+    return ret;
+}
+
 void nRFAPI_TxRetries(unsigned char count)
 {
 	if(count>15)

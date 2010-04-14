@@ -169,7 +169,7 @@ void *rx_from_ob_to_click_thread(void *p)
 			
 			readbytes = read_obd_serial(dev->fd, &buffer[index], len);
       
-			if ( readbytes > 0 ) {
+			if ( readbytes > 0 ) {				
 				index+=readbytes;
       
 				if ( index == (ph->length + sizeof(struct packet_header)) ) {
@@ -206,7 +206,7 @@ void *rx_from_ob_to_click_thread(void *p)
 void *input_thread(void *p) 
 {
 	unsigned int input_exit = 0;
-	int ch;
+	int ch, i;
 	char buffer[BUFFERSIZE];
 	struct packet_header *ph = (struct packet_header *)buffer;
 	
@@ -222,12 +222,19 @@ void *input_thread(void *p)
 				if(ch-'0'<device_list_size) {
 					InOut_Device_id = ch-'0';
 				}
-				
 			} else {
 				// send to OB-HW 
 				ph->type    = MONITOR_INPUT;
 				ph->length = 1;
+				
 				buffer[ sizeof(struct packet_header) ] = ch;
+				for(i=1; i<10; i++) {
+					ch = getchar();
+					if(ch=='\r' || ch=='\n') break;
+
+					buffer[ sizeof(struct packet_header)+i ] = ch;
+					ph->length++;
+				}
 							
 				write_obd_serial( device_list[ InOut_Device_id ].fd, buffer, ph->length + sizeof(struct packet_header) );
 			}

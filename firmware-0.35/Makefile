@@ -83,8 +83,8 @@ ARM_SRC= \
   os/core/ARM7_AT91SAM7S/port.c \
   os/core/ARM7_AT91SAM7S/portISR.c \
   os/core/MemMang/heap_2.c \
-  os/usb/USB-CDC.c \
-  os/usb/USBIsr.c
+  os/obd_usb/USB-CDC.c \
+  os/obd_usb/USBIsr.c 
 
 #
 # Define all object files.

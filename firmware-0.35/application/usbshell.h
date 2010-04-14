@@ -35,7 +35,9 @@ struct packet_header {
   unsigned portCHAR  high_length;
   unsigned portCHAR  type;
   unsigned portCHAR  reserved;
-} __packed__;
+} __packed__ ;
+
+typedef struct packet_header OBD2HW_Header;
 
 void Msg2USB_encap(unsigned char* msg, unsigned int len, unsigned portCHAR type);
 

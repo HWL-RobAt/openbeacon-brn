@@ -17,7 +17,7 @@ int open_obd_serial(char *device) {
   struct termios oldtio,newtio;
   struct sigaction saio;           /* definition of signal action */
   
-  fd = open( device, O_RDWR );
+  fd = open( device, O_RDWR);
   if (fd <0) {
     perror(device);
     return -1;
@@ -37,19 +37,21 @@ int open_obd_serial(char *device) {
   fcntl(fd, F_SETFL, FASYNC);
 
   tcgetattr(fd,&oldtio); /* save current port settings */
-	
-  /* set new port settings for canonical input processing */
-  newtio.c_iflag = IGNPAR | IGNBRK; //| ICRNL;
+
+  cfmakeraw(&newtio);
+  
+   /* set new port settings for canonical input processing */
+  newtio.c_iflag = IGNPAR | IGNBRK;
   newtio.c_oflag = IGNPAR | IGNBRK;
   newtio.c_lflag = 0;
   newtio.c_cc[VMIN]=1;
   newtio.c_cc[VTIME]=0;
-	
+    	
   cfsetispeed (&newtio, B115200);
   cfsetospeed (&newtio, B115200);
 
   tcflush(fd, TCIFLUSH);
-  tcsetattr(fd,TCSANOW,&newtio);
+  tcsetattr(fd,TCSAFLUSH,&newtio);
   
   return fd;
 }

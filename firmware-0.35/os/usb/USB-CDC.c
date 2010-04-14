@@ -250,10 +250,11 @@ void vUSBSendBytes (portCHAR *buffer, portBASE_TYPE length) {
 	unsigned char chunk[CHUNK_SIZE];
 	portBASE_TYPE offset = 0;
 	portBASE_TYPE next_size;
-
+	
 	while(length > 0) {
 		next_size = MIN(length, CHUNK_SIZE-1);
 		chunk[0] = next_size;
+		
 		memcpy(chunk+1, buffer+offset, next_size);
 		
 		// Queue the bytes to be sent.  The USB task will send it.
