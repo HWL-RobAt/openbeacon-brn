@@ -166,16 +166,23 @@ void DumpCharToUSB(char text)
     Msg2USB_encap(packet, 6, MONITOR_PRINT);
 }
 /**********************************************************************/
+void delay(portTickType ticks) {
+	portTickType xLastBlink = xTaskGetTickCount() ;
+	
+	while( xTaskGetTickCount ()-xLastBlink<ticks  );
+}
 
-void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate)   // payload length = 30
+void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate, unsigned char TxChannel)   // payload length = 30
 {
     unsigned int i=0;
     unsigned long crc;
     
-    // set TX mode    
+  
+    // set TX mode
     nRFLL_CE(0);
     nRFAPI_SetRxMode(0);
     nRFAPI_SetTxPowerRate(TxPowerLevel, TxRate);
+    TxChannel = 81;
 
     // setup packet 
     for(i=0; i<sizeof(g_Beacon.payload); i++) g_Beacon.payload[i] = payload[i];
@@ -187,9 +194,12 @@ void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsi
     
     // upload data to nRF24L01
     nRFAPI_TX(g_Beacon.payload, sizeof(SelfPacket) );
-
+	
     // transmit data
-    nRFLL_CE(1);
+    nRFLL_CE(1);    
+    
+//    usb_status[1] = '0';
+//    usb_status[0] = 1;
 }
 
 /**********************************************************************/
@@ -215,9 +225,16 @@ void vApplicationIdleHook(void)
 	
 	switch(cByte)
 	{
+	case '0':
+                    nRFAPI_SetRxMode(1);
+                    nRFLL_CE(1);
+                    // DumpStringToUSB(" * Switched to receive-only mode\n\r");
+		    break;
 	case 'r':
 		TxRate = ( usb_status[2]-'0' );
+		if(TxRate==0) TxRate = nRFAPI_GetTxRate(); else TxRate--;
 		if(TxRate>1) TxRate=1;
+	
 		DumpStringToUSB(" * set rate to ");
 		DumpUIntToUSB(TxRate);
 		DumpStringToUSB("\n\r");
@@ -294,7 +311,6 @@ void vApplicationIdleHook(void)
 	    nRFAPI_FlushTX();
 
 	nRFAPI_ClearIRQ(status);
-
     }
 
     if(blinked && ((xTaskGetTickCount () - xLastBlink) > (portTICK_RATE_MS*10)))

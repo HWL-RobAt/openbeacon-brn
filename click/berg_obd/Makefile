@@ -5,7 +5,7 @@ all:
 	gcc -I./socket -I./serial -c main.c -o main.o
 	gcc -I./socket -I./serial -c main_test.c -o main_test.o
 	gcc tools/tools.o main.o socket/socket.o serial/serial.o -lpthread -o berg_obd
-	gcc main_test.o socket/socket.o serial/serial.o -lpthread -o obd_test
+	gcc main_test.o socket/socket.o serial/serial.o -lpthread -o obd_test 
 
 
 clean:

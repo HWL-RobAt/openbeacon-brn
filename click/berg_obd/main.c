@@ -139,7 +139,8 @@ void *rx_from_ob_to_click_thread(void *p)
 	int index = 0;
 	struct packet_header *ph = NULL;
 	int i;
-
+	char print_msg[255];
+	
 	while( dev->rx_running == 1 ) {
 		// Empfangsbereitschaft signalisieren
 		
@@ -186,8 +187,17 @@ void *rx_from_ob_to_click_thread(void *p)
 						fflush(dev->output_file);
 					}else if ( ph->type == MONITOR_PRINT ) {
 						// print monitor prints
+						unsigned int pos = 0;
+						unsigned int hlen = 0;
+						
 						buffer[sizeof(struct packet_header) + ph->length ] = 0;
-						printf("%s", &(buffer[sizeof(struct packet_header)] ));
+						for(pos=0; pos<ph->length; pos++) {
+							printf("%c", buffer[sizeof(struct packet_header) + pos]);
+							if(buffer[sizeof(struct packet_header) + pos] =='\r') {
+								printf("%s#\t\t", dev->device_name );
+							}
+							fflush(stdout);
+						}
 					} else {
 						printf("BUFFER:\n");
 						for(i=0; i<BUFFERSIZE; i++) printf("%d ", buffer[i]);
@@ -222,6 +232,8 @@ void *input_thread(void *p)
 				if(ch-'0'<device_list_size) {
 					InOut_Device_id = ch-'0';
 				}
+			} else if(ch=='\n') { 
+				printf("\n%s#\t\t", device_list[ InOut_Device_id ].device_name);
 			} else {
 				// send to OB-HW 
 				ph->type    = MONITOR_INPUT;
@@ -230,7 +242,10 @@ void *input_thread(void *p)
 				buffer[ sizeof(struct packet_header) ] = ch;
 				for(i=1; i<10; i++) {
 					ch = getchar();
-					if(ch=='\r' || ch=='\n') break;
+					if(ch=='\r' || ch=='\n') {
+						printf("\n%s#\t\t", device_list[ InOut_Device_id ].device_name);
+						break;
+					}
 
 					buffer[ sizeof(struct packet_header)+i ] = ch;
 					ph->length++;
@@ -238,7 +253,6 @@ void *input_thread(void *p)
 							
 				write_obd_serial( device_list[ InOut_Device_id ].fd, buffer, ph->length + sizeof(struct packet_header) );
 			}
-			
 	}
 }
 
@@ -278,9 +292,11 @@ int main( int argc, char **argv) {
 	// start all threads
 	dev = device_list;
 	InOut_Device_id = 0;  
+
+	printf("\n%s#\t\t", device_list[ 0 ].device_name);
+	fflush(stdout);
 	
 	while(dev->device_name!=NULL) {
-		printf("\tprocess thread: %s\n", dev->device_name);
 		pthread_join(dev->rxThread,&dev->rxThreadJoin);
 		pthread_join(dev->txThread,&dev->txThreadJoin);
 		dev++;

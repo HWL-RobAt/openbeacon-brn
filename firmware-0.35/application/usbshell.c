@@ -34,6 +34,10 @@
 #include "../obd_usb/USB-CDC.h"
 #include "usbshell.h"
 #include "main.h"
+#include "nRF24L01/nRF_HW.h"
+#include "nRF24L01/nRF_CMD.h"
+#include "nRF24L01/nRF_LL.h"
+#include "nRF24L01/nRF_API.h"
 
 #define PACKET_SIZE 	64
 unsigned char packet[PACKET_SIZE+CHUNK_SIZE];
@@ -86,7 +90,11 @@ usbshell_task (void *pvParameters)
 					// Msg2USB_encap(packet, ph->low_length+256*ph->high_length+sizeof(struct packet_header), PACKET_DATA);
 					
 					// send to hw
-					TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate);
+					if(c2obdh->rate==0) c2obdh->rate = nRFAPI_GetTxRate();
+					else c2obdh->rate--;
+					TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate, c2obdh->channel);
+					memcpy( packet+sizeof(struct packet_header), "send\n\r", 6);
+					Msg2USB_encap(packet, 6+sizeof(struct packet_header), MONITOR_PRINT);
 				}
 				index = 0;
 			}
