@@ -43,7 +43,7 @@ typedef union {
                 u_int32_t data_dword[OPENBEACON_NEW*sizeof( u_int8_t)];
 } __attribute__((packed)) OpenBeacon_packet;
 
-void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate, unsigned char TxChannel);
+void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate, unsigned char TxChannel, unsigned char* mac, unsigned char mac_length);
 
 struct Click2OBD_header {
     u_int8_t  rssi;									 	// unused

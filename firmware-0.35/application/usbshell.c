@@ -92,7 +92,7 @@ usbshell_task (void *pvParameters)
 					// send to hw
 					if(c2obdh->rate==0) c2obdh->rate = nRFAPI_GetTxRate();
 					else c2obdh->rate--;
-					TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate, c2obdh->channel);
+					TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate, c2obdh->channel, c2obdh->openbeacon_dmac, sizeof(c2obdh->openbeacon_dmac) );
 					memcpy( packet+sizeof(struct packet_header), "send\n\r", 6);
 					Msg2USB_encap(packet, 6+sizeof(struct packet_header), MONITOR_PRINT);
 				}

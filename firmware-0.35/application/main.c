@@ -54,6 +54,7 @@
 unsigned char packet[PACKET_SIZE+CHUNK_SIZE];
 SelfPacket g_Beacon;
 char USB_SYNC = 0;
+char status_mode;
 
 const unsigned char mac[5]={0x01,0x02,0x03,0x02,0x01};
 
@@ -105,6 +106,7 @@ static inline void prvSetupHardware (void)
     nRFAPI_SetTxPowerRate(0, 0);
 
     nRFLL_CE(1);
+    status_mode=0;
     
     /* initialize environment variables */
     env_init();
@@ -172,34 +174,35 @@ void delay(portTickType ticks) {
 	while( xTaskGetTickCount ()-xLastBlink<ticks  );
 }
 
-void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate, unsigned char TxChannel)   // payload length = 30
+void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate, unsigned char TxChannel, unsigned char* mac, unsigned char mac_length)   // payload length = 30
 {
+    // TODO: THREAD SAVE????
+    // TODO: check TX_FULL
+    // TODO: check free space and use it
     unsigned int i=0;
     unsigned long crc;
     
-  
     // set TX mode
     nRFLL_CE(0);
     nRFAPI_SetRxMode(0);
-    nRFAPI_SetTxPowerRate(TxPowerLevel, TxRate);
-    TxChannel = 81;
+    nRFAPI_SetTxPowerRate( TxPowerLevel, TxRate );
+    nRFAPI_SetChannel( TxChannel );
 
+    // set DESC-MAC
+    nRFAPI_SetTxMAC(mac, mac_length);
+	
     // setup packet 
     for(i=0; i<sizeof(g_Beacon.payload); i++) g_Beacon.payload[i] = payload[i];
     
     crc = env_crc16(g_Beacon.payload, sizeof (g_Beacon.payload) );
     g_Beacon.crc = swapshort(crc);    
     
-    // SourceMAC Adresse setzen
-    
     // upload data to nRF24L01
     nRFAPI_TX(g_Beacon.payload, sizeof(SelfPacket) );
-	
+
     // transmit data
-    nRFLL_CE(1);    
-    
-//    usb_status[1] = '0';
-//    usb_status[0] = 1;
+    nRFLL_CE(1);
+    status_mode=1;
 }
 
 /**********************************************************************/
@@ -245,11 +248,11 @@ void vApplicationIdleHook(void)
 		for(i=0; i<3 && i<usb_status[0]-1; i++) TxChannel = TxChannel*10+(usb_status[i+2]-'0');
 		if(TxChannel>125) TxChannel=125;
 		DumpStringToUSB(" * switch channel to ");
-		DumpUIntToUSB(usb_status[0]-1);
-		DumpStringToUSB("   ");
-		DumpUIntToUSB(TxChannel);
+		DumpUIntToUSB( TxChannel );
 		DumpStringToUSB("\n\r");
 		nRFAPI_SetChannel( TxChannel );
+                nRFAPI_SetRxMode(1);
+                nRFLL_CE(1);	
 		break;
 	case 'h':	
 	case '?':
@@ -272,7 +275,13 @@ void vApplicationIdleHook(void)
     if((AT91F_PIO_GetInput(AT91C_BASE_PIOA)&IRQ_PIN)==0)
     {
 	status=nRFAPI_GetStatus();
-
+	// check for transmit packet
+	if( status_mode && (nRFAPI_GetFifoStatus()&FIFO_STATUS_TX_EMPTY)) {
+                nRFAPI_SetRxMode(1);
+                nRFLL_CE(1);
+		status_mode=0;
+	}	    
+	    
 	if(status & MASK_RX_DR_FLAG)
 	{
 	    // read packet from nRF chip
@@ -283,6 +292,7 @@ void vApplicationIdleHook(void)
 	    if(swapshort(g_Beacon.crc)==crc) {
 		// Recive Beacon
 		DumpStringToUSB("Packet Recive\n\r");
+		    
 		unsigned portCHAR i;
 		struct Click2OBD_header* c2obdh;
 		    
