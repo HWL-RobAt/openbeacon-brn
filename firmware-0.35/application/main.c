@@ -58,6 +58,9 @@ char status_mode;
 
 const unsigned char mac[5]={0x01,0x02,0x03,0x02,0x01};
 
+unsigned char fifo_queue_buffer[sizeof(HW_Queue_Entry)*22];
+FIFOQueue hw_buffer_queue;
+
 /**********************************************************************/
 static inline void HaltBlinking(void)
 {
@@ -83,6 +86,10 @@ static inline unsigned char HexChar(unsigned char nibble)
 /**********************************************************************/
 static inline void prvSetupHardware (void)
 {
+    // Queue initialisation
+    if( !FIFOQueue_init(&hw_buffer_queue, fifo_queue_buffer, sizeof(fifo_queue_buffer), sizeof(HW_Queue_Entry) ) )
+	    HaltBlinking();
+	
     /*	When using the JTAG debugger the hardware is not always initialised to
 	the correct default state.  This line just ensures that this does not
 	cause all interrupts to be masked at the start. */
@@ -272,16 +279,30 @@ void vApplicationIdleHook(void)
 	}
 	usb_status[0] = 0;
     }
+
+//    if( !status_mode && nRFAPI_CarrierDetect() )  // media free
+    {
+		// have data to send?
+		HW_Queue_Entry qentry, *pqentry;
+		pqentry = &qentry;
+		
+		if(  FIFOQueue_view( &hw_buffer_queue, (unsigned char**)&pqentry) ) {
+			FIFOQueue_pop( &hw_buffer_queue, (unsigned char**)&pqentry);
+			TransmitBeacon(pqentry->payload, pqentry->TxPowerLevel, pqentry->TxRate, pqentry->TxChannel, pqentry->mac, OPENBEACON_MACSIZE);
+			DumpStringToUSB("send\n\r");
+		}
+    }
+    
+     // check for transmit packet
+     if( status_mode && (nRFAPI_GetFifoStatus()&FIFO_STATUS_TX_EMPTY)) {
+	nRFAPI_SetRxMode(1);
+	nRFLL_CE(1);
+	status_mode=0;
+     }	
+    
     if((AT91F_PIO_GetInput(AT91C_BASE_PIOA)&IRQ_PIN)==0)
     {
 	status=nRFAPI_GetStatus();
-	// check for transmit packet
-	if( status_mode && (nRFAPI_GetFifoStatus()&FIFO_STATUS_TX_EMPTY)) {
-                nRFAPI_SetRxMode(1);
-                nRFLL_CE(1);
-		status_mode=0;
-	}	    
-	    
 	if(status & MASK_RX_DR_FLAG)
 	{
 	    // read packet from nRF chip
@@ -315,7 +336,7 @@ void vApplicationIdleHook(void)
             	AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_RED );
 	    }
     	    nRFAPI_FlushRX();
-	}
+	} 
 	
 	if(status & MASK_MAX_RT_FLAG)
 	    nRFAPI_FlushTX();

@@ -88,4 +88,6 @@
 #define FIFO_STATUS_TX_EMPTY	0x10
 #define FIFO_STATUS_TX_FULL		0x20
 
+#define STATUS_CD				0x01
+
 #endif/*NRF_HW_H*/

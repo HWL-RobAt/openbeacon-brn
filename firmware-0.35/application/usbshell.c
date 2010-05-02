@@ -92,9 +92,23 @@ usbshell_task (void *pvParameters)
 					// send to hw
 					if(c2obdh->rate==0) c2obdh->rate = nRFAPI_GetTxRate();
 					else c2obdh->rate--;
-					TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate, c2obdh->channel, c2obdh->openbeacon_dmac, sizeof(c2obdh->openbeacon_dmac) );
-					memcpy( packet+sizeof(struct packet_header), "send\n\r", 6);
-					Msg2USB_encap(packet, 6+sizeof(struct packet_header), MONITOR_PRINT);
+					
+					HW_Queue_Entry qentry, *pqentry;
+					qentry.TxPowerLevel 	=	c2obdh->power;
+					qentry.TxRate			=	c2obdh->rate;
+					qentry.TxChannel		=	c2obdh->channel;
+					memcpy(qentry.mac,  c2obdh->openbeacon_dmac, OPENBEACON_MACSIZE);
+					memcpy(qentry.payload,  packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac), sizeof(SelfPacket));
+					
+					pqentry = &qentry;
+					
+					if( FIFOQueue_push( &hw_buffer_queue,  (unsigned char**)&pqentry) ) {
+						// TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate, c2obdh->channel, c2obdh->openbeacon_dmac, sizeof(c2obdh->openbeacon_dmac) );
+						memcpy( packet+sizeof(struct packet_header), "push into queue\n\r", 17);
+					} else {
+						memcpy( packet+sizeof(struct packet_header), "no packet send \n\r", 17);
+					}
+					Msg2USB_encap(packet, 17+sizeof(struct packet_header), MONITOR_PRINT);
 				}
 				index = 0;
 			}

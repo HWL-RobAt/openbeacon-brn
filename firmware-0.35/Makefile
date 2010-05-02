@@ -72,6 +72,7 @@ ARM_SRC= \
   application/main.c \
   application/env.c \
   application/usbshell.c \
+  application/fifoqueue.c \
   application/nRF24L01/nRF_API.c \
   application/nRF24L01/nRF_CMD.c \
   application/nRF24L01/nRF_LL.c \
