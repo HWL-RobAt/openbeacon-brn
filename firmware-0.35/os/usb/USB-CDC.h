@@ -39,7 +39,7 @@
 #include "usb.h"
 
 #define USB_CDC_QUEUE_SIZE	4000
-#define CHUNK_SIZE    		60
+#define CHUNK_SIZE    			60
 
 /* Structure used to take a snapshot of the USB status from within the ISR. */
 typedef struct X_ISR_STATUS

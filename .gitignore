@@ -1,3 +1,7 @@
 *.o
+*.bin
+*.elf
+*.map
 click/obd/obd
 click/obd/obd_test
+.gitignore

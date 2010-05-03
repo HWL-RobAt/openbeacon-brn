@@ -72,6 +72,7 @@ ARM_SRC= \
   application/main.c \
   application/env.c \
   application/usbshell.c \
+  application/fifoqueue.c \
   application/nRF24L01/nRF_API.c \
   application/nRF24L01/nRF_CMD.c \
   application/nRF24L01/nRF_LL.c \
@@ -83,8 +84,8 @@ ARM_SRC= \
   os/core/ARM7_AT91SAM7S/port.c \
   os/core/ARM7_AT91SAM7S/portISR.c \
   os/core/MemMang/heap_2.c \
-  os/usb/USB-CDC.c \
-  os/usb/USBIsr.c
+  os/obd_usb/USB-CDC.c \
+  os/obd_usb/USBIsr.c 
 
 #
 # Define all object files.

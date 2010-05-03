@@ -31,13 +31,17 @@
 
 #include "openbeacon.h"
 #include "env.h"
-#include "USB-CDC.h"
+#include "../obd_usb/USB-CDC.h"
 #include "usbshell.h"
 #include "main.h"
+#include "nRF24L01/nRF_HW.h"
+#include "nRF24L01/nRF_CMD.h"
+#include "nRF24L01/nRF_LL.h"
+#include "nRF24L01/nRF_API.h"
 
 #define PACKET_SIZE 	64
-unsigned char packet[PACKET_SIZE];
-portCHAR usb_status = 0;
+unsigned char packet[PACKET_SIZE+CHUNK_SIZE];
+portCHAR usb_status[10] = {0,0,0,0,0,0,0,0,0,0};
 
 void Msg2USB_encap(unsigned char* msg, unsigned int len, unsigned portCHAR type) {
 	struct packet_header *ph = (struct packet_header *) msg;
@@ -46,7 +50,11 @@ void Msg2USB_encap(unsigned char* msg, unsigned int len, unsigned portCHAR type)
         ph->high_length = (len-sizeof(struct packet_header))/256 ;
 	ph->low_length = (len-sizeof(struct packet_header))%256;
 	
-	vUSBSendBytes((char*)msg, len);	
+//	if(type==MONITOR_PRINT) {  // Probleme siehe USB-CDC.c
+//		vUSBSendZeroCopyBytes( (char*)msg, len );
+//	} else {
+		vUSBSendBytes((char*)msg, len);	
+//	}
 }
 
 static void
@@ -55,6 +63,7 @@ usbshell_task (void *pvParameters)
 	portTickType xLastBlink=0;
 	unsigned int index=0;
 	struct packet_header *ph;
+	struct Click2OBD_header *c2obdh;
 		
 	if(pvParameters==NULL) xLastBlink=0;
 
@@ -64,27 +73,48 @@ usbshell_task (void *pvParameters)
         for (;;)
         {
 		// recive from usb
-		index += vUSBRecvByte( (char*)(packet+index), sizeof(unsigned char)*(PACKET_SIZE-index) ) ;
+		index += vUSBRecvByte( (char*)(packet+index), sizeof(unsigned char)*(PACKET_SIZE-index+CHUNK_SIZE) ) ;
 
 		if(index >= sizeof(struct packet_header) ) {  // header is recive
 			ph = (struct packet_header *)  packet;
+			c2obdh = (struct Click2OBD_header *)( packet + sizeof(struct packet_header) );
 			
-			// TODO: for all recive packet 
-
+			// TODO: for all recive packet
 			if(index >= ph->low_length+256*ph->high_length+sizeof(struct packet_header)  ) { // packet is recive
 				if(ph->type==MONITOR_INPUT) {
-					usb_status = packet[sizeof(struct packet_header)];
+					memcpy((char*) (usb_status+1), packet+sizeof(struct packet_header),  ph->low_length<9?ph->low_length:9);
+					usb_status[0]=ph->low_length<9?ph->low_length:9;
 				}
 				if(ph->type==PACKET_DATA) {
-					Msg2USB_encap(packet, ph->low_length+256*ph->high_length+sizeof(struct packet_header), PACKET_DATA);
+					// echo
+					// Msg2USB_encap(packet, ph->low_length+256*ph->high_length+sizeof(struct packet_header), PACKET_DATA);
+					
+					// send to hw
+					if(c2obdh->rate==0) c2obdh->rate = nRFAPI_GetTxRate();
+					else c2obdh->rate--;
+					
+					HW_Queue_Entry qentry, *pqentry;
+					qentry.TxPowerLevel 	=	c2obdh->power;
+					qentry.TxRate			=	c2obdh->rate;
+					qentry.TxChannel		=	c2obdh->channel;
+					memcpy(qentry.mac,  c2obdh->openbeacon_dmac, OPENBEACON_MACSIZE);
+					memcpy(qentry.payload,  packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac), sizeof(SelfPacket));
+					
+					pqentry = &qentry;
+					
+					if( FIFOQueue_push( &hw_buffer_queue,  (unsigned char**)&pqentry) ) {
+						// TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate, c2obdh->channel, c2obdh->openbeacon_dmac, sizeof(c2obdh->openbeacon_dmac) );
+						memcpy( packet+sizeof(struct packet_header), "push into queue\n\r", 17);
+					} else {
+						memcpy( packet+sizeof(struct packet_header), "no packet send \n\r", 17);
+					}
+					Msg2USB_encap(packet, 17+sizeof(struct packet_header), MONITOR_PRINT);
 				}
-				
 				index = 0;
 			}
+
 		}
-//		if(index==0) { // no recive
-//			vTaskDelay(5);
-//		}
+
 	}
 }
 
@@ -92,4 +122,3 @@ void
 vUSBShellInit (void) {
 	xTaskCreate (usbshell_task, (signed portCHAR *) "USBSHELL", TASK_USBSHELL_STACK, NULL, TASK_USBSHELL_PRIORITY, NULL);
 }
-
