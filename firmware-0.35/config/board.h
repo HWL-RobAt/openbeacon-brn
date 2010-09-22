@@ -60,8 +60,8 @@
 #define DEFAULT_CHANNEL 81
 
 #define CSN_PIN		(1L<<11)
-#define MISO_PIN	(1L<<12)
-#define MOSI_PIN	(1L<<13)
+#define MISO_PIN		(1L<<12)
+#define MOSI_PIN		(1L<<13)
 #define SCK_PIN		(1L<<14)
 #define IRQ_PIN		(1L<<19)
 #define CE_PIN		(1L<<26)

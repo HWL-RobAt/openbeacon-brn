@@ -46,7 +46,7 @@ CFLAGS= \
 -Iconfig \
 -Iapplication \
 -Ios/core/include  \
--Ios/usb  \
+-Ios/obd_usb  \
 -Ios/core/ARM7_AT91SAM7S  \
 -Wall  \
 -Werror \
@@ -71,6 +71,7 @@ LINKER_FLAGS=-Xlinker -oopenbeacon.elf -Xlinker -M -Xlinker -Map=openbeacon.map
 ARM_SRC= \
   application/main.c \
   application/env.c \
+  application/rnd.c \
   application/usbshell.c \
   application/fifoqueue.c \
   application/nRF24L01/nRF_API.c \

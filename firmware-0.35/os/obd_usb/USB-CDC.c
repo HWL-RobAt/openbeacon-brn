@@ -60,6 +60,11 @@
 #include "USB-CDC.h"
 #include <descriptors.h>
 
+#include "fifoqueue.h"
+
+#define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
+#include "openbeacon_comunication.h"
+
 #define usbNO_BLOCK ( ( portTickType ) 0 )
 
 /* Reset all endpoints */
@@ -120,8 +125,13 @@ xQueueHandle xUSBInterruptQueue;
 
 /* Queues used to hold received characters, and characters waiting to be
 transmitted.  Rx queue must be larger than FIFO size. */
-static xQueueHandle xRxCDC;
-static xQueueHandle xTxCDC;
+// static xQueueHandle xRxCDC;
+// static xQueueHandle xTxCDC;
+
+static unsigned char xTxCDC_Buffer[ USB_CDC_QUEUE_SIZE_TX ];
+static FIFOQueue xTxCDC;
+static unsigned char xRxCDC_Buffer[ USB_CDC_QUEUE_SIZE_RX ];
+static FIFOQueue xRxCDC;
 
 /* Line coding - 115,200 baud, N-8-1 */
 static const unsigned portCHAR pxLineCoding[] =
@@ -130,41 +140,50 @@ static const unsigned portCHAR pxLineCoding[] =
 /* Status variables. */
 static unsigned portCHAR ucControlState;
 static unsigned int uiCurrentBank;
+static unsigned int packet_length_send=0;
+static unsigned int packet_save=0;
 
-
+#define STATE_RECIVE_TRANSMIT		10
+#define STATE_RECIVE				15
+#define STATE_TRANSMIT				20  
+static unsigned int state_usb;
+   
 /*------------------------------------------------------------*/
 
 
 void
 vUSBCDCTask (void *pvParameters)
 {
-  xISRStatus *pxMessage;
-  unsigned portLONG ulStatus;
-  unsigned portLONG ulRxBytes;
-  unsigned portCHAR ucByte;
-  //unsigned portCHAR pData;
-  
-  obd_chunk chunk;
-  portBASE_TYPE i;
-  portBASE_TYPE xByte;
+	xISRStatus *pxMessage;
+	unsigned portLONG ulStatus;
+	unsigned portLONG ulRxBytes;
+	unsigned portCHAR ucByte, *pucByte=&ucByte;
+	//unsigned portCHAR pData;
+	  
+	obd_chunk chunk, *pchunk=&chunk;
+	portBASE_TYPE xByte;
+	unsigned int i;
 
-  (void) pvParameters;
+	(void) pvParameters;
 
-  /* Disconnect USB device from hub.  For debugging - causes host to register reset */
-  portENTER_CRITICAL ();
-  vDetachUSBInterface ();
-  portEXIT_CRITICAL ();
+	/* Disconnect USB device from hub.  For debugging - causes host to register reset */
+	portENTER_CRITICAL ();
+	vDetachUSBInterface ();
+	portEXIT_CRITICAL ();
+ 
+	vTaskDelay (portTICK_RATE_MS * 60);
 
-  vTaskDelay (portTICK_RATE_MS * 60);
+	/* Init USB interface */
+	portENTER_CRITICAL ();
+	vInitUSBInterface ();
+	portEXIT_CRITICAL ();
 
-  /* Init USB interface */
-  portENTER_CRITICAL ();
-  vInitUSBInterface ();
-  portEXIT_CRITICAL ();
+	/* Main task loop.  Process incoming endpoint 0 interrupts, handle data transfers. */
 
-  /* Main task loop.  Process incoming endpoint 0 interrupts, handle data transfers. */
-
- 	for (;;) {
+	packet_save = 0;
+	state_usb = STATE_RECIVE_TRANSMIT;
+	
+	for (;;) {
 		/* Look for data coming from the ISR. */
 		if (xQueueReceive
 			(xUSBInterruptQueue, &pxMessage, usbSHORTEST_DELAY)) {
@@ -181,119 +200,165 @@ vUSBCDCTask (void *pvParameters)
 
 		/* See if we're ready to send and receive data. */
 		if (eDriverState == eREADY_TO_SEND && ucControlState) {
-			if ((!(AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] & AT91C_UDP_TXPKTRDY)) && uxQueueMessagesWaiting (xTxCDC)) {
-				for (xByte = 0; xByte+CHUNK_SIZE<64; xByte++){
-					if (!xQueueReceive(xTxCDC, &chunk, 0) ) {
-						/* No data buffered to transmit. */
+				if ((!(AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] & AT91C_UDP_TXPKTRDY))  ) {
+					// && uxQueueMessagesWaiting (xTxCDC) 
+					
+					for (xByte = 0; xByte+CHUNK_SIZE<64; xByte++){
+						//if (!xQueueReceive(xTxCDC, &chunk, 0) ) {
+						if (FIFOQueue_elements( &xTxCDC )==0 ) {
+							/* No data buffered to transmit. */
+							break;
+						}
+						if( packet_length_send == 0) {   // no packet size
+							FIFOQueue_view( &xTxCDC, (unsigned char**)&pchunk);
+							OBD2HW_Header* obdh = (OBD2HW_Header*)pchunk;
+							
+							packet_length_send =  obdh->length;
+							state_usb=STATE_TRANSMIT;
+						}
+						
+						FIFOQueue_pop( &xTxCDC, (unsigned char**)&pchunk);
+
+						/* Got a byte (or more) to transmit. */ 
+						if(chunk.type==0) {
+							for (i = 0; i<chunk.length; i++) {
+								AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_2] = chunk.data.value[i];
+								xByte++;
+							}							
+						}
+						
+						if( packet_length_send == (unsigned portBASE_TYPE)xByte) {
+							state_usb=STATE_RECIVE_TRANSMIT;
+							break;  // send a complete packet
+						}
+					}
+					AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] |= AT91C_UDP_TXPKTRDY;
+				}
+
+				/* Check for incoming data (host-to-device) on endpoint 1. */
+				while (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] & (AT91C_UDP_RX_DATA_BK0 | AT91C_UDP_RX_DATA_BK1))
+				{
+					ulRxBytes = (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] >> 16) & usbRX_COUNT_MASK;
+					
+					/* Only process FIFO if there's room to store it in the queue */
+					if(ulRxBytes < (FIFOQueue_count(&xRxCDC) - FIFOQueue_elements(&xRxCDC) ) ) {
+						while (ulRxBytes--) {
+							ucByte = AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_1];
+							FIFOQueue_push(&xRxCDC, &pucByte);
+						}
+											
+						/* Release the FIFO */
+						portENTER_CRITICAL ();
+						{
+							ulStatus = AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1];
+							usbCSR_CLEAR_BIT (&ulStatus, uiCurrentBank);
+							AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] = ulStatus;
+						}
+						portEXIT_CRITICAL ();
+
+						/* Re-enable endpoint 1's interrupts */
+						AT91C_BASE_UDP->UDP_IER = AT91C_UDP_EPINT1;
+
+						/* Update the current bank in use */
+						if (uiCurrentBank == AT91C_UDP_RX_DATA_BK0) {
+							uiCurrentBank = AT91C_UDP_RX_DATA_BK1;
+						} else {
+							uiCurrentBank = AT91C_UDP_RX_DATA_BK0;
+						}
+					} else {
 						break;
 					}
-
-					/* Got a byte (or more) to transmit. */ 
-					for (i = 0; i<chunk.length; i++) {
-						if(chunk.type==0) {
-							AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_2] = chunk.data.value[i];
-							xByte++;
-						}
-						if(chunk.type==1 && i<1) {
-//							AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_2] = '0';   // Probleme beim verwenden 
-//							xByte++;
-						}
-					}
 				}
-				AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] |= AT91C_UDP_TXPKTRDY;
-			}
-
-			/* Check for incoming data (host-to-device) on endpoint 1. */
-			while (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] & (AT91C_UDP_RX_DATA_BK0 | AT91C_UDP_RX_DATA_BK1))
-	    	{
-				ulRxBytes = (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] >> 16) & usbRX_COUNT_MASK;
-
-	      		/* Only process FIFO if there's room to store it in the queue */
-	      		if (ulRxBytes < (USB_CDC_QUEUE_SIZE - uxQueueMessagesWaiting (xRxCDC))) {
-					while (ulRxBytes--) {
-				      ucByte = AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_1];
-				      xQueueSend (xRxCDC, &ucByte, 0);
-				    }
-
-					/* Release the FIFO */
-					portENTER_CRITICAL ();
-					{
-						ulStatus = AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1];
-						usbCSR_CLEAR_BIT (&ulStatus, uiCurrentBank);
-						AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] = ulStatus;
-					}
-					portEXIT_CRITICAL ();
-
-					/* Re-enable endpoint 1's interrupts */
-					AT91C_BASE_UDP->UDP_IER = AT91C_UDP_EPINT1;
-
-					/* Update the current bank in use */
-					if (uiCurrentBank == AT91C_UDP_RX_DATA_BK0) {
-						uiCurrentBank = AT91C_UDP_RX_DATA_BK1;
-					} else {
-						uiCurrentBank = AT91C_UDP_RX_DATA_BK0;
-					}
-
-				} else {
-					break;
-				}
-			}
-			
 		}
-    }
+	}
 }
 
 /*------------------------------------------------------------*/
 
-void vUSBSendByte (portCHAR cByte) {
-	obd_chunk chunk;
+unsigned int vUSBSendByte (portCHAR cByte, portTickType time_diff) {
+	obd_chunk chunk, *pchunk=&chunk;
+	portTickType time_begin = xTaskGetTickCount();
 	
 	chunk.type = 0;
 	chunk.length = 1;
 	chunk.data.value[0] = cByte;
 
 	/* Queue the byte to be sent.  The USB task will send it. */
-	xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
+	// xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
+	while(xTaskGetTickCount()-time_begin<=time_diff ) {
+		if( FIFOQueue_elements(&xTxCDC)+1<FIFOQueue_count(&xTxCDC) ) {
+			FIFOQueue_push(&xTxCDC, (unsigned char**)&pchunk);
+			return 1;
+		}
+	}
+	return 0;
 }
 #define MIN(a,b) ((a)>(b)?(b):(a))
-void vUSBSendBytes (portCHAR *buffer, portCHAR length) {
-	obd_chunk chunk;
+unsigned int vUSBSendBytes (portCHAR *buffer, portCHAR length, portTickType time_diff) {
+	obd_chunk chunk, *pchunk=&chunk;
+	portTickType time_begin = xTaskGetTickCount();
 	
 	portCHAR offset = 0;
 	portCHAR next_size;
 	
-	while(length > 0) {
-		next_size = MIN(length, CHUNK_SIZE);
-		chunk.type = 0;
-		chunk.length = next_size;
-		
-		memcpy(chunk.data.value, buffer+offset, next_size);
-		
-		// Queue the bytes to be sent.  The USB task will send it.
-		xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
-		length -= next_size;
-		offset += next_size;
+	// TODO: Berechnen der Chunk Stücke und prüfen ob alle in den Puffer passen, wenn nein dann alle ignorieren.		
+	unsigned char chunk_part = length/CHUNK_SIZE;
+	if( length%CHUNK_SIZE>0 ) chunk_part++;
+
+	while(xTaskGetTickCount()-time_begin<=time_diff ) {		
+		if( FIFOQueue_elements(&xTxCDC)+chunk_part<FIFOQueue_count(&xTxCDC) ) {
+			while(length > 0) {
+				next_size = MIN(length, CHUNK_SIZE);
+				chunk.type = 0;
+				chunk.length = next_size;
+			
+				memcpy(chunk.data.value, buffer+offset, next_size);
+			
+				// Queue the bytes to be sent.  The USB task will send it.
+				// xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
+				FIFOQueue_push(&xTxCDC, (unsigned char**)&pchunk);
+			
+				length -= next_size;
+				offset += next_size;
+			}
+			return 1;	
+		}
 	}
+	return 0;
 }
-void vUSBSendZeroCopyBytes(portCHAR *buffer, portCHAR length)   // TODO: CALLBACK 
+unsigned int vUSBSendZeroCopyBytes(portCHAR *buffer, portCHAR length, portTickType time_diff)   // TODO: CALLBACK 
 {
-	obd_chunk chunk;
+	// TODO: nutze den Puffer um, das unnütze Kopieren zu vermindern
+	obd_chunk chunk, *pchunk=&chunk;
+	portTickType time_begin = xTaskGetTickCount();
 	
 	portCHAR offset = 0;
 	portCHAR next_size;
-	
-	while(length > 0) {
-		next_size = MIN(length, CHUNK_SIZE);
-		chunk.type = 1;
-		chunk.length = next_size;
-		
-		memcpy(chunk.data.value, buffer+offset, next_size);
-		
-		// Queue the bytes to be sent.  The USB task will send it.
-		xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
-		length -= next_size;
-		offset += next_size;
+
+	// TODO: Berechnen der Chunk Stücke und prüfen ob alle in den Puffer passen, wenn nein dann alle ignorieren.
+	unsigned char chunk_part = length/CHUNK_SIZE;
+	if( length%CHUNK_SIZE>0 ) chunk_part++;
+
+	while(xTaskGetTickCount()-time_begin<=time_diff ) {	
+		if( FIFOQueue_elements(&xTxCDC)+chunk_part<=FIFOQueue_count(&xTxCDC) ) {
+			while(length > 0) {
+				next_size = MIN(length, CHUNK_SIZE);
+				chunk.type = 1;
+				chunk.length = next_size;
+				
+				memcpy(chunk.data.value, buffer+offset, next_size);
+				
+				// Queue the bytes to be sent.  The USB task will send it.
+				// xQueueSend(xTxCDC, &chunk, usbNO_BLOCK);
+				FIFOQueue_push(&xTxCDC, (unsigned char**)&pchunk);
+				
+				length -= next_size;
+				offset += next_size;
+			}
+			return 1;
+		}
 	}
+	return 0;
 }
 
 /*------------------------------------------------------------*/
@@ -302,12 +367,17 @@ portLONG
 vUSBRecvByte (portCHAR *cByte,portLONG size)
 {
     portLONG res;
-    if(size<=0 || !cByte || !xRxCDC)
+    if(size<=0 || !cByte )
         return 0;
 
     res=0;
-    while(size-- && xQueueReceive(xRxCDC, cByte++, 0))
+    
+    // xQueueReceive(xRxCDC, cByte++, 0))
+    while(size-- &&  FIFOQueue_elements(&xRxCDC)>0 ) {
+	FIFOQueue_pop(&xRxCDC, (unsigned char**)&cByte);
+	cByte++;
         res++;
+    }
 
     return res;
 }
@@ -815,14 +885,19 @@ vInitUSBInterface (void)
     xQueueCreate (usbQUEUE_LENGTH + 1, sizeof (xISRStatus *));
 
   /* Create the queues used to hold Rx and Tx characters. */
+/*  	
   xRxCDC =
     xQueueCreate (USB_CDC_QUEUE_SIZE,
 		  (unsigned portCHAR) sizeof (signed portCHAR));
-  xTxCDC =
+
+  xTxCDC = 
     xQueueCreate ( USB_CDC_QUEUE_SIZE/sizeof(obd_chunk),
 		  (unsigned portCHAR) sizeof(obd_chunk) );
-
-  if ((!xUSBInterruptQueue) || (!xRxCDC) || (!xTxCDC))
+*/
+  FIFOQueue_init( &xTxCDC, xTxCDC_Buffer, USB_CDC_QUEUE_SIZE_TX,  sizeof(obd_chunk) );	
+  FIFOQueue_init( &xRxCDC, xRxCDC_Buffer, USB_CDC_QUEUE_SIZE_TX,  1 );	
+	
+  if ( !xUSBInterruptQueue )
     {
       /* Not enough RAM to create queues!. */
       return;

@@ -11,10 +11,23 @@
 
 #include "socket/obd_socket.h"
 #include "serial/obd_serial.h"
-#include "usbpacket/usbpacket.h"
+
+#define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
+#include "openbeacon_comunication.h"
 #include "tools/commandline.h"
 
 #define BUFFERSIZE 2048
+
+portCHAR getDataFromUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR putDataToUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
+
+unsigned int write_to_channel( portCHAR* out, unsigned portCHAR len, int device ) {
+	return write_obd_serial( device, (char*)out, len );
+}
+
+unsigned int  read_to_channel( portCHAR* out, unsigned portCHAR len, int device ) {
+	return read_obd_serial(device, (char*)out, len );
+}
 
 void *tx_from_click_to_ob_thread(void *p);
 void *rx_from_ob_to_click_thread(void *p);
@@ -40,9 +53,6 @@ unsigned int device_list_size;
 
 int begin_ports = 20000;
 unsigned int InOut_Device_id;
-
-// pthread_mutex_t thread_read_lock = PTHREAD_MUTEX_INITIALIZER;
-// pthread_mutex_t thread_write_lock = PTHREAD_MUTEX_INITIALIZER;
 
 // create information for usb-devices 
 int use_dev(int argc, char** argv) { 
@@ -110,106 +120,72 @@ void *tx_from_click_to_ob_thread(void *p)
 {
 	struct device_data* dev = (struct device_data*)p;
 	int readbytes,i;
-	char buffer[BUFFERSIZE];
 	int index = 0;
-	struct packet_header *ph = (struct packet_header *)buffer;
+	
+	StrukturBuffer usb_buffer;
+	OBD2HW_Header *ph = (OBD2HW_Header *)usb_buffer.buffer;
 
 	while( dev->tx_running == 1 ) {
-		readbytes = recv_from_peer(dev->con, &buffer[sizeof(struct packet_header)], BUFFERSIZE - sizeof(struct packet_header));  //read header
+		// Read
+		readbytes = recv_from_peer(dev->con, usb_buffer.buffer+sizeof(OBD2HW_Header), sizeof(usb_buffer.buffer) - sizeof(OBD2HW_Header));  //read header
+		usb_buffer.length = readbytes+sizeof(OBD2HW_Header);
 	         
+		// DEBUG:
 		fprintf(dev->output_file, "[SOCKET: Read %d Bytes: ", readbytes); 
-		for ( i = 0; i < readbytes; i++) fprintf(dev->output_file, "%d ",buffer[sizeof(struct packet_header) + i]); 		
+		for ( i = 0; i < readbytes; i++) fprintf(dev->output_file, "%d ",usb_buffer.buffer[sizeof(OBD2HW_Header) + i]); 		
 		fprintf(dev->output_file, "]\n");
 		fflush(dev->output_file);
-
+		
+		// Send
 		ph->type = PACKET_DATA;
-		ph->length = readbytes;
-		write_obd_serial(dev->fd, buffer, ph->length + sizeof(struct packet_header));
+		ph->length   = readbytes;
+		putDataToUSBChannel(dev->fd,  usb_buffer.buffer, usb_buffer.length );
 	}
 
 	pthread_exit(NULL);
+}
+void debug_msg(char* msg, unsigned portCHAR msg_len) {
+//	printf("DEBUG: %s\n", msg);
 }
 
 void *rx_from_ob_to_click_thread(void *p)
 {
 	struct device_data* dev = (struct device_data*)p;
-
-	int readbytes = 1;
-	char buffer[BUFFERSIZE];
-	int index = 0;
-	struct packet_header *ph = NULL;
+	StrukturBuffer usb_buffer;
+	OBD2HW_Header *ph = NULL;
 	int i;
-	char print_msg[255];
 	
 	while( dev->rx_running == 1 ) {
-		// Empfangsbereitschaft signalisieren
-		
-		if ( ph == NULL ) { 
-			if ( readbytes > 0 ) fprintf(dev->output_file, "[Serial: Wait for new frame]\n");
-			readbytes = read_obd_serial(dev->fd, &buffer[index], sizeof(struct packet_header) - index);  //read header
-      
-			if ( readbytes > 0 ) {
-				// for(i=0; i<readbytes; i++) printf("%d", buffer[index+i]);
-								
-				fprintf(dev->output_file, "[IFrame: Read %d Bytes: ", readbytes);
-				for ( i = 0; i < readbytes; i++) fprintf(dev->output_file, "%d ",buffer[index + i]); 
-				fprintf(dev->output_file, "]\n");
-				fflush(dev->output_file);
-				
-				index += readbytes;
-				if ( index == sizeof(struct packet_header) ) {
-					ph = (struct packet_header *)buffer;
-					
-					if(ph->length==0) ph=NULL;
+		usb_buffer.length = STRUKTUR_BUFFER_MAX_LENGTH;
+		if( getDataFromUSBChannel(dev->fd, usb_buffer.buffer, &usb_buffer.length) != STATUS_OK ) continue;
+
+		ph = (OBD2HW_Header *)usb_buffer.buffer;
+		if ( ph->type == PACKET_DATA ) {				
+			fprintf(dev->output_file, "[DFrame: Read %d Bytes: ", usb_buffer.length);
+			for ( i = 0; i < usb_buffer.length; i++) fprintf(dev->output_file, "%d ",usb_buffer.buffer[sizeof(OBD2HW_Header) + i]); 
+			fprintf(dev->output_file, "]\n");
+			fflush(dev->output_file);
+			send_to_peer(dev->con, &usb_buffer.buffer[ sizeof(OBD2HW_Header) ], ph->length);
+		} else if ( ph->type == DEBUG_PRINT ) { // überspringen der Optionen  evtl. späteres Packetformat verbessern
+			usb_buffer.buffer[sizeof(OBD2HW_Header) + ph->length] = 0;
+			fprintf(dev->output_file, "[Debug: Read %d Bytes: %s\n", usb_buffer.length, &(usb_buffer.buffer[ sizeof(OBD2HW_Header) ] ));
+			fflush(dev->output_file);
+		}else if ( ph->type == MONITOR_PRINT ) {
+			// print monitor prints
+			usb_buffer.buffer[sizeof(OBD2HW_Header) + ph->length ] = 0;
+			for(i=0; i<ph->length; i++) {
+				printf("%c", usb_buffer.buffer[sizeof(OBD2HW_Header) + i]);
+				if(usb_buffer.buffer[sizeof(OBD2HW_Header) + i] =='\r') {
+					printf("%s#\t\t", dev->device_name );
 				}
+				fflush(stdout);
 			}
 		} else {
-			// Später grössere Datenmengen verarbeiten können
-			unsigned int len = ph->length - index + sizeof(struct packet_header);
-			if(len>BUFFERSIZE-index) len = BUFFERSIZE-index;
-			
-			readbytes = read_obd_serial(dev->fd, &buffer[index], len);
-      
-			if ( readbytes > 0 ) {				
-				index+=readbytes;
-      
-				if ( index == (ph->length + sizeof(struct packet_header)) ) {
-					if ( ph->type == PACKET_DATA ) {				
-						fprintf(dev->output_file, "[DFrame: Read %d Bytes: ", readbytes);
-						for ( i = 0; i < readbytes; i++) fprintf(dev->output_file, "%d ",buffer[sizeof(struct packet_header) + i]); 
-						fprintf(dev->output_file, "]\n");
-						fflush(dev->output_file);
-
-						send_to_peer(dev->con, &buffer[sizeof(struct packet_header)], ph->length);
-					} else if ( ph->type == DEBUG_PRINT ) { // überspringen der Optionen  evtl. späteres Packetformat verbessern
-						buffer[sizeof(struct packet_header) + ph->length] = 0;
-						fprintf(dev->output_file, "[Debug: Read %d Bytes: %s\n", index, &(buffer[sizeof(struct packet_header) ] ));
-						fflush(dev->output_file);
-					}else if ( ph->type == MONITOR_PRINT ) {
-						// print monitor prints
-						unsigned int pos = 0;
-						unsigned int hlen = 0;
-						
-						buffer[sizeof(struct packet_header) + ph->length ] = 0;
-						for(pos=0; pos<ph->length; pos++) {
-							printf("%c", buffer[sizeof(struct packet_header) + pos]);
-							if(buffer[sizeof(struct packet_header) + pos] =='\r') {
-								printf("%s#\t\t", dev->device_name );
-							}
-							fflush(stdout);
-						}
-					} else {
-						printf("BUFFER:\n");
-						for(i=0; i<BUFFERSIZE; i++) printf("%d ", buffer[i]);
-						printf("\n");
-					}						
-					index = 0;  
-					ph = NULL;
-				}
-			}	
-		}
-	}
-  
+			printf("BUFFER(%d):\n", usb_buffer.length);
+			for(i=0; i<usb_buffer.length; i++) printf("%c", usb_buffer.buffer[i]); 
+			printf("\n");
+		}		
+	}  
 	pthread_exit(NULL);
 }
 
@@ -218,7 +194,7 @@ void *input_thread(void *p)
 	unsigned int input_exit = 0;
 	int ch, i;
 	char buffer[BUFFERSIZE];
-	struct packet_header *ph = (struct packet_header *)buffer;
+	OBD2HW_Header *ph = (OBD2HW_Header *)buffer;
 	
 	while( input_exit==0 ) {
 			ch = getchar();
@@ -228,7 +204,6 @@ void *input_thread(void *p)
 			} else if(ch=='d') {
 				ch = getchar();
 				// switch to device
-				
 				if(ch-'0'<device_list_size) {
 					InOut_Device_id = ch-'0';
 				}
@@ -237,9 +212,9 @@ void *input_thread(void *p)
 			} else {
 				// send to OB-HW 
 				ph->type    = MONITOR_INPUT;
-				ph->length = 1;
+				ph->length   = 1;
 				
-				buffer[ sizeof(struct packet_header) ] = ch;
+				buffer[ sizeof(OBD2HW_Header) ] = ch;
 				for(i=1; i<10; i++) {
 					ch = getchar();
 					if(ch=='\r' || ch=='\n') {
@@ -247,11 +222,12 @@ void *input_thread(void *p)
 						break;
 					}
 
-					buffer[ sizeof(struct packet_header)+i ] = ch;
+					buffer[ sizeof(OBD2HW_Header)+i ] = ch;
 					ph->length++;
 				}
-							
-				write_obd_serial( device_list[ InOut_Device_id ].fd, buffer, ph->length + sizeof(struct packet_header) );
+				// TODO: umstellen auf die neue Funktion   putDataToODBSerial(dev->fd,  &usb_buffer );
+				putDataToUSBChannel(device_list[ InOut_Device_id ].fd,  buffer, ph->length+sizeof(OBD2HW_Header) );
+//				write_obd_serial( device_list[ InOut_Device_id ].fd, buffer, ph->length+ sizeof(OBD2HW_Header) );
 			}
 	}
 }
@@ -299,7 +275,7 @@ int main( int argc, char **argv) {
 	while(dev->device_name!=NULL) {
 		pthread_join(dev->rxThread,&dev->rxThreadJoin);
 		pthread_join(dev->txThread,&dev->txThreadJoin);
-		dev++;
+		dev++; 
 	}
 
 	return(0);

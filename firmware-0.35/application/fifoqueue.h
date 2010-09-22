@@ -17,6 +17,8 @@ unsigned char FIFOQueue_push(FIFOQueue* fq, unsigned char** entry);
 unsigned char   FIFOQueue_pop(FIFOQueue* fq, unsigned char** entry);
 unsigned char  FIFOQueue_view(FIFOQueue* fq, unsigned char** entry);
 
+unsigned int FIFOQueue_elements(FIFOQueue* fq);
+unsigned int FIFOQueue_count(FIFOQueue* fq);
 
 #ifdef PROJECT_DEBUG_X86
 #include <stdio.h>

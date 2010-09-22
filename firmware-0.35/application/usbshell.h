@@ -21,24 +21,8 @@
 #ifndef __USBSHELL_H__
 #define __USBSHELL_H__
 
-extern void vUSBShellInit (void);
+extern void usbshell_task(void *pvParameters);
 
-#define UNKNOWN_DATA 		0
-#define PACKET_DATA 		1
-#define CONFIG_DATA 		2
-#define DEBUG_PRINT 		3
-#define MONITOR_PRINT 		4
-#define MONITOR_INPUT 		5
-
-struct packet_header {
-  unsigned portCHAR  low_length;
-  unsigned portCHAR  high_length;
-  unsigned portCHAR  type;
-  unsigned portCHAR  reserved;
-} __packed__ ;
-
-typedef struct packet_header OBD2HW_Header;
-
-void Msg2USB_encap(unsigned char* msg, unsigned int len, unsigned portCHAR type);
+void Msg2USB_encap(unsigned char* msg, unsigned portCHAR len, unsigned portCHAR type);
 
 #endif /* __USBSHELL_H__ */

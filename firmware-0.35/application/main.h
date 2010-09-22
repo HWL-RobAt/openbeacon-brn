@@ -28,16 +28,10 @@
 #include "openbeacon.h"
 #include "fifoqueue.h"
 
-extern SelfPacket g_Beacon;
+extern OpenBeacon_data g_Beacon;
 extern portCHAR usb_status[10];
 extern FIFOQueue hw_buffer_queue;
 
-typedef struct {
-	unsigned char TxPowerLevel;
-	unsigned char TxRate;
-	unsigned char TxChannel;
-	unsigned char mac[OPENBEACON_MACSIZE];
-	unsigned char payload[32];
-} HW_Queue_Entry;	
+// Data für die Queue, evtl. struct Click2OBD_header verwenden
 
 #endif/*__MAIN_H__*/

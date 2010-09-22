@@ -38,8 +38,10 @@
 
 #include "usb.h"
 
-#define USB_CDC_QUEUE_SIZE	2000
+#define USB_CDC_QUEUE_SIZE_TX	  500
+#define USB_CDC_QUEUE_SIZE_RX	1500
 #define CHUNK_SIZE    			5
+#define MAX_USB_BLOCK_SIZE    	50
 
 typedef struct obd_chunk {
 	unsigned portCHAR type;   // 0 - data,  1 - pointer to data
@@ -91,9 +93,9 @@ void vUSBCDCTask (void *pvParameters);
 
 /* Send cByte down the USB port.  Characters are simply buffered and not
 sent unless the port is connected. */
-void vUSBSendByte (portCHAR cByte);
-void vUSBSendBytes (portCHAR *buffer, portCHAR length);
-void vUSBSendZeroCopyBytes(portCHAR *buffer, portCHAR length);  // TODO: CALLBACK ?
+unsigned int vUSBSendByte (portCHAR cByte, portTickType time_diff);
+unsigned int vUSBSendBytes (portCHAR *buffer, portCHAR length, portTickType time_diff);
+unsigned int vUSBSendZeroCopyBytes(portCHAR *buffer, portCHAR length, portTickType time_diff);  // TODO: CALLBACK ?
 
 portLONG vUSBRecvByte (portCHAR *cByte,portLONG size);
 

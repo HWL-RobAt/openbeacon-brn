@@ -3,12 +3,12 @@
 
 unsigned char    FIFOQueue_init(FIFOQueue* fq, unsigned char *mem, unsigned int size, unsigned int struct_len) {
         if(fq!=NULL) {
-                fq->queue_mem           = mem;
-                fq->queue_mem_size      = size;
-                fq->queue_struct_len    = struct_len;
-                fq->queue_in            = 0;
-                fq->queue_count         = fq->queue_mem_size/fq->queue_struct_len;
-                fq->queue_out           = (fq->queue_count-1)%fq->queue_count;
+                fq->queue_mem		= mem;
+                fq->queue_mem_size	= size;
+                fq->queue_struct_len	= struct_len;
+                fq->queue_in			= 0;
+                fq->queue_count		= fq->queue_mem_size/fq->queue_struct_len;
+                fq->queue_out			= (fq->queue_count-1)%fq->queue_count;
                 return 1;
         }
         return 0;
@@ -42,6 +42,15 @@ unsigned char   FIFOQueue_view(FIFOQueue* fq, unsigned char** entry) {
         }
         return 0;
 }
+unsigned int FIFOQueue_elements(FIFOQueue* fq) {
+        if(fq->queue_out>fq->queue_in) {
+                return fq->queue_count-(fq->queue_out-fq->queue_in+1);
+        }
+        return fq->queue_in-fq->queue_out-1;
+}
+unsigned int FIFOQueue_count(FIFOQueue* fq) {
+	return fq->queue_count-2;
+}
 
 #ifdef PROJECT_DEBUG_X86
 void FIFOQueue_debug(FIFOQueue* fq, void (*FIFOQueue_function)(unsigned char* entry)) {
@@ -58,3 +67,22 @@ void FIFOQueue_debug(FIFOQueue* fq, void (*FIFOQueue_function)(unsigned char* en
         printf("\n");
 }
 #endif
+
+
+/*
+        count:   10
+
+	in:      out:        elements:
+         0         9			0
+         1         9                  1
+         2         9                  2
+	 7         9			7
+         8         9                  8
+	 9         9                  9
+
+
+*/
+
+
+
+

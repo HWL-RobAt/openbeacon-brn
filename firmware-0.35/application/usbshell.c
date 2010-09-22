@@ -29,6 +29,8 @@
 #include <task.h>
 #include <semphr.h>
 
+#include "openbeacon_comunication.h"
+
 #include "openbeacon.h"
 #include "env.h"
 #include "../obd_usb/USB-CDC.h"
@@ -43,82 +45,95 @@
 unsigned char packet[PACKET_SIZE+CHUNK_SIZE];
 portCHAR usb_status[10] = {0,0,0,0,0,0,0,0,0,0};
 
-void Msg2USB_encap(unsigned char* msg, unsigned int len, unsigned portCHAR type) {
-	struct packet_header *ph = (struct packet_header *) msg;
+portCHAR getDataFromUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR putDataToUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
+
+void Msg2USB_encap(unsigned char* msg, unsigned portCHAR len, unsigned portCHAR type) {
+	OBD2HW_Header *ph = (OBD2HW_Header *) msg;
         ph->type    = type;
+	ph->length = len-sizeof(OBD2HW_Header);
 	
-        ph->high_length = (len-sizeof(struct packet_header))/256 ;
-	ph->low_length = (len-sizeof(struct packet_header))%256;
-	
-//	if(type==MONITOR_PRINT) {  // Probleme siehe USB-CDC.c
-//		vUSBSendZeroCopyBytes( (char*)msg, len );
-//	} else {
-		vUSBSendBytes((char*)msg, len);	
-//	}
+//	vUSBSendBytes((char*)msg, len);	
+	putDataToUSBChannel(0,  msg,  len);
 }
 
-static void
+unsigned int read_to_channel( portCHAR* out, unsigned portCHAR len, portLONG device ) {
+	if(device>0) return 0;
+	return vUSBRecvByte (out, len);
+}
+
+unsigned int write_to_channel( portCHAR* out, unsigned portCHAR len, portLONG device ) {
+	if(device>0) return 0;
+	vUSBSendBytes((char*)out, len, 10);
+	return len;
+}	
+
+void debug_msg(char* msg, unsigned portCHAR msg_len) {	
+	portCHAR buffer[300];
+	OBD2HW_Header *ph = (OBD2HW_Header *) buffer;
+	unsigned portLONG i = 0;
+	
+	for(i=0; i<msg_len; i++) {
+		buffer[sizeof(OBD2HW_Header)+i] = msg[i];
+	}
+
+        ph->type    = MONITOR_PRINT;
+	ph->length = msg_len;
+	
+	vUSBSendBytes(buffer, msg_len+sizeof(OBD2HW_Header), 10);	
+}
+
+extern char USB_SYNC;
+
+void
 usbshell_task (void *pvParameters)
 {
 	portTickType xLastBlink=0;
-	unsigned int index=0;
-	struct packet_header *ph;
-	struct Click2OBD_header *c2obdh;
+	unsigned portCHAR packet_len=0;
+	OBD2HW_Header *ph;
+	Click2OBD_header *c2obdh;
+	
+	(void) pvParameters;	
+	while( USB_SYNC==0 );
 		
-	if(pvParameters==NULL) xLastBlink=0;
-
-	xLastBlink = xTaskGetTickCount();
-
-        // workloop
+	// workloop
         for (;;)
         {
+		if( xTaskGetTickCount()-xLastBlink>100 ) {
+//			memcpy( packet+sizeof(OBD2HW_Header), "get? ", 5);
+//			Msg2USB_encap(packet, 5+sizeof(OBD2HW_Header), MONITOR_PRINT);
+				
+			xLastBlink = xTaskGetTickCount();
+		}
+		
 		// recive from usb
-		index += vUSBRecvByte( (char*)(packet+index), sizeof(unsigned char)*(PACKET_SIZE-index+CHUNK_SIZE) ) ;
-
-		if(index >= sizeof(struct packet_header) ) {  // header is recive
-			ph = (struct packet_header *)  packet;
-			c2obdh = (struct Click2OBD_header *)( packet + sizeof(struct packet_header) );
+		packet_len = PACKET_SIZE+CHUNK_SIZE;
+	
+		if( getDataFromUSBChannel(0,  packet,  &packet_len )==STATUS_OK ) {
+			ph = (OBD2HW_Header *)  packet;
+			c2obdh = (Click2OBD_header *)( packet + sizeof(OBD2HW_Header) );
 			
 			// TODO: for all recive packet
-			if(index >= ph->low_length+256*ph->high_length+sizeof(struct packet_header)  ) { // packet is recive
-				if(ph->type==MONITOR_INPUT) {
-					memcpy((char*) (usb_status+1), packet+sizeof(struct packet_header),  ph->low_length<9?ph->low_length:9);
-					usb_status[0]=ph->low_length<9?ph->low_length:9;
-				}
-				if(ph->type==PACKET_DATA) {
-					// echo
-					// Msg2USB_encap(packet, ph->low_length+256*ph->high_length+sizeof(struct packet_header), PACKET_DATA);
-					
-					// send to hw
-					if(c2obdh->rate==0) c2obdh->rate = nRFAPI_GetTxRate();
-					else c2obdh->rate--;
-					
-					HW_Queue_Entry qentry, *pqentry;
-					qentry.TxPowerLevel 	=	c2obdh->power;
-					qentry.TxRate			=	c2obdh->rate;
-					qentry.TxChannel		=	c2obdh->channel;
-					memcpy(qentry.mac,  c2obdh->openbeacon_dmac, OPENBEACON_MACSIZE);
-					memcpy(qentry.payload,  packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac), sizeof(SelfPacket));
-					
-					pqentry = &qentry;
-					
-					if( FIFOQueue_push( &hw_buffer_queue,  (unsigned char**)&pqentry) ) {
-						// TransmitBeacon( packet+sizeof(struct packet_header)+sizeof(struct Click2OBD_header)-sizeof(c2obdh->openbeacon_smac) , c2obdh->power, c2obdh->rate, c2obdh->channel, c2obdh->openbeacon_dmac, sizeof(c2obdh->openbeacon_dmac) );
-						memcpy( packet+sizeof(struct packet_header), "push into queue\n\r", 17);
-					} else {
-						memcpy( packet+sizeof(struct packet_header), "no packet send \n\r", 17);
-					}
-					Msg2USB_encap(packet, 17+sizeof(struct packet_header), MONITOR_PRINT);
-				}
-				index = 0;
+			if(ph->type==MONITOR_INPUT) {
+				memcpy((char*) (usb_status+1), packet+sizeof(OBD2HW_Header),  ph->length<9?ph->length:9);
+				usb_status[0]=ph->length<9?ph->length:9;
 			}
+			if(ph->type==PACKET_DATA) {
+				if(c2obdh->status&STATUS_NO_TX ) {  // no send 
+					c2obdh->status = c2obdh->status | STATUS_ECHO_OK | STATUS_ECHO_ERROR;   // set STATUS_ECHO_OK and STATUS_ECHO_ERROR to 1 => Testpacket Antwort
+					// TODO: zeitliche Bewertung
 
+					
+					Msg2USB_encap(packet, ph->length+sizeof(OBD2HW_Header), PACKET_DATA);
+				} else {						
+					if( FIFOQueue_push( &hw_buffer_queue,  (unsigned char**)&c2obdh) ) {
+						memcpy( packet+sizeof(OBD2HW_Header), "push into queue\n\r", 17);
+					} else {
+						memcpy( packet+sizeof(OBD2HW_Header), "no packet send \n\r", 17);
+					}
+					Msg2USB_encap(packet, 17+sizeof(OBD2HW_Header), MONITOR_PRINT);
+				}
+			}
 		}
-
 	}
-}
-
-void
-vUSBShellInit (void) {
-	xTaskCreate (usbshell_task, (signed portCHAR *) "USBSHELL", TASK_USBSHELL_STACK, NULL, TASK_USBSHELL_PRIORITY, NULL);
 }
