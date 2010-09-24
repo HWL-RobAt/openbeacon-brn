@@ -140,13 +140,6 @@ static const unsigned portCHAR pxLineCoding[] =
 /* Status variables. */
 static unsigned portCHAR ucControlState;
 static unsigned int uiCurrentBank;
-static unsigned int packet_length_send=0;
-static unsigned int packet_save=0;
-
-#define STATE_RECIVE_TRANSMIT		10
-#define STATE_RECIVE				15
-#define STATE_TRANSMIT				20  
-static unsigned int state_usb;
    
 /*------------------------------------------------------------*/
 
@@ -179,9 +172,6 @@ vUSBCDCTask (void *pvParameters)
 	portEXIT_CRITICAL ();
 
 	/* Main task loop.  Process incoming endpoint 0 interrupts, handle data transfers. */
-
-	packet_save = 0;
-	state_usb = STATE_RECIVE_TRANSMIT;
 	
 	for (;;) {
 		/* Look for data coming from the ISR. */
@@ -209,13 +199,6 @@ vUSBCDCTask (void *pvParameters)
 							/* No data buffered to transmit. */
 							break;
 						}
-						if( packet_length_send == 0) {   // no packet size
-							FIFOQueue_view( &xTxCDC, (unsigned char**)&pchunk);
-							OBD2HW_Header* obdh = (OBD2HW_Header*)pchunk;
-							
-							packet_length_send =  obdh->length;
-							state_usb=STATE_TRANSMIT;
-						}
 						
 						FIFOQueue_pop( &xTxCDC, (unsigned char**)&pchunk);
 
@@ -225,11 +208,6 @@ vUSBCDCTask (void *pvParameters)
 								AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_2] = chunk.data.value[i];
 								xByte++;
 							}							
-						}
-						
-						if( packet_length_send == (unsigned portBASE_TYPE)xByte) {
-							state_usb=STATE_RECIVE_TRANSMIT;
-							break;  // send a complete packet
 						}
 					}
 					AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] |= AT91C_UDP_TXPKTRDY;
