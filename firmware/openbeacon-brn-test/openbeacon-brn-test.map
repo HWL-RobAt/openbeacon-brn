@@ -1,11 +1,32 @@
 Archive member included because of file (symbol)
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_udivsi3.o)
+=======
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                               ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o (__udivsi3)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_divsi3.o)
+=======
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                               application/xxtea.o (__divsi3)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_umodsi3.o)
+=======
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_umodsi3.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                               application/dimmer.o (__umodsi3)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_dvmd_tls.o)
+                              /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_udivsi3.o) (__div0)
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+                              ../core/os/core/MemMang/heap_3.o (malloc)
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+                              /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o) (_malloc_r)
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+=======
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
                               /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o) (__div0)
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
@@ -13,13 +34,30 @@ Archive member included because of file (symbol)
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
                               /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o) (_malloc_r)
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                               application/update.o (memcpy)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+=======
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                               application/main.o (memset)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+                              /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o) (__malloc_lock)
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+=======
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
                               /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o) (__malloc_lock)
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                               ../core/os/core/tasks.o (strncpy)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+                              /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o) (_free_r)
+/usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+                              /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o) (_impure_ptr)
+=======
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
                               /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o) (_free_r)
 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
@@ -34,6 +72,7 @@ packet_count        0x4               application/proto.o
 nRFCMD_Macro        0x4               ../core/openbeacon/nRF24L01/nRF_CMD.o
 env                 0x80              ../core/openbeacon/env.o
 nRFCMD_MacroResult  0x4               ../core/openbeacon/nRF24L01/nRF_CMD.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
 Memory Configuration
 
@@ -70,6 +109,15 @@ LOAD ../core/os/core/portISR.o
 LOAD ../core/os/core/MemMang/heap_3.o
 LOAD ../core/os/usb/USB-CDC.o
 LOAD ../core/os/usb/USBIsr.o
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+LOAD /tmp/ccBI8hW8.o
+LOAD /tmp/ccSVIDF6.o
+LOAD /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libm.a
+LOAD /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a
+LOAD /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a
+LOAD /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libc.a
+LOAD /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a
+=======
 LOAD /tmp/ccfnpovd.o
 LOAD /tmp/ccoUNcln.o
 LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libm.a
@@ -78,26 +126,64 @@ LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/l
 LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a
 LOAD /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libc.a
 END GROUP
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                 0x00203ffc                __stack_end__ = 0x203ffc
                 0x00000000                . = 0x0
 
 startup         0x00100000     0x1044
  *(.bootloader)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .bootloader    0x00100000     0x1000 /tmp/ccBI8hW8.o
+=======
  .bootloader    0x00100000     0x1000 /tmp/ccfnpovd.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                 0x00100000                bootloader
  *(.startup)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .startup       0x00101000       0x44 /tmp/ccSVIDF6.o
+=======
  .startup       0x00101000       0x44 /tmp/ccoUNcln.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                 0x00101000                start
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+prog            0x00101044     0x4c60
+=======
 prog            0x00101044     0x4d6c
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.text)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .text          0x00101044       0xd0 /tmp/ccSVIDF6.o
+=======
  .text          0x00101044       0xd0 /tmp/ccoUNcln.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                 0x001010f4                endless_loop
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .text          0x00101114       0x28 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+                0x00101114                malloc
+                0x00101128                free
+ .text          0x0010113c      0x6c8 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+=======
  .text          0x00101114       0x28 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
                 0x00101128                malloc
                 0x00101114                free
  .text          0x0010113c      0x770 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                 0x0010113c                _malloc_r
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .text          0x00101804       0x90 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+                0x00101804                memcpy
+ .text          0x00101894       0x78 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+                0x00101894                memset
+ .text          0x0010190c        0x8 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+                0x00101910                __malloc_unlock
+                0x0010190c                __malloc_lock
+ .text          0x00101914       0xec /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+                0x00101914                strncpy
+ .text          0x00101a00      0x338 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+                0x00101b04                _free_r
+                0x00101a00                _malloc_trim_r
+=======
  .text          0x001018ac       0xa0 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
                 0x001018ac                memcpy
  .text          0x0010194c       0x98 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
@@ -110,44 +196,115 @@ prog            0x00101044     0x4d6c
  .text          0x00101b00      0x39c /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
                 0x00101bfc                _free_r
                 0x00101b00                _malloc_trim_r
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.text.*)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .text.vResetEnv
+                0x00101d38       0x68 application/main.o
+                0x00101d38                vResetEnv
+=======
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vApplicationIdleHook
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101da0       0x18 application/main.o
+                0x00101da0                vApplicationIdleHook
+=======
                 0x00101e9c       0x14 application/main.o
                 0x00101e9c                vApplicationIdleHook
  .text.vResetEnv
                 0x00101eb0       0x64 application/main.o
                 0x00101eb0                vResetEnv
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.mainloop
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101db8       0xb4 application/main.o
+                0x00101db8                mainloop
+ .text.PtUpdateWmcuId
+                0x00101e6c       0x48 application/proto.o
+                0x00101e6c                PtUpdateWmcuId
+=======
                 0x00101f14       0xa0 application/main.o
                 0x00101f14                mainloop
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.PtInitNrfFrontend
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101eb4       0x10 application/proto.o
+                0x00101eb4                PtInitNrfFrontend
+=======
                 0x00101fb4       0x10 application/proto.o
                 0x00101fb4                PtInitNrfFrontend
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.PtDumpNrfRegisters
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101ec4       0x14 application/proto.o
+                0x00101ec4                PtDumpNrfRegisters
+=======
                 0x00101fc4       0x14 application/proto.o
                 0x00101fc4                PtDumpNrfRegisters
  .text.PtUpdateWmcuId
                 0x00101fd8       0x40 application/proto.o
                 0x00101fd8                PtUpdateWmcuId
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vGetDimmerJitterUS
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101ed8       0x4c application/dimmer.o
+                0x00101ed8                vGetDimmerJitterUS
+=======
                 0x00102018       0x4c application/dimmer.o
                 0x00102018                vGetDimmerJitterUS
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vUpdateDimmer
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101f24       0x24 application/dimmer.o
+                0x00101f24                vUpdateDimmer
+=======
                 0x00102064       0x20 application/dimmer.o
                 0x00102064                vUpdateDimmer
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vGetDimmerStep
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101f48       0x10 application/dimmer.o
+                0x00101f48                vGetDimmerStep
+=======
                 0x00102084       0x10 application/dimmer.o
                 0x00102084                vGetDimmerStep
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vGetEmiPulses
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101f58       0x10 application/dimmer.o
+                0x00101f58                vGetEmiPulses
+=======
                 0x00102094       0x10 application/dimmer.o
                 0x00102094                vGetEmiPulses
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vGetDimmerOff
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101f68       0x10 application/dimmer.o
+                0x00101f68                vGetDimmerOff
+=======
                 0x001020a4       0x10 application/dimmer.o
                 0x001020a4                vGetDimmerOff
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.DeviceRevertToUpdateMode
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00101f78       0x7c application/update.o
+                0x00101f78                DeviceRevertToUpdateMode
+ .text.cmd_status
+                0x00101ff4      0x224 application/usbshell.o
+ .text.cmd_reset
+                0x00102218       0x18 application/usbshell.o
+ .text.cmd_help
+                0x00102230       0xc4 application/usbshell.o
+=======
                 0x001020b4       0x74 application/update.o
                 0x001020b4                DeviceRevertToUpdateMode
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.hex_to_int
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001022f4       0x64 application/usbshell.o
+ .text.cmd_mac  0x00102358      0x17c application/usbshell.o
+ .text.cmd_dim  0x001024d4       0x88 application/usbshell.o
+=======
                 0x00102128       0x58 application/usbshell.o
  .text.vUSBShellInit
                 0x00102180       0x38 application/usbshell.o
@@ -156,7 +313,11 @@ prog            0x00101044     0x4d6c
                 0x001021b8       0xbc application/usbshell.o
  .text.cmd_debug
                 0x00102274       0x68 application/usbshell.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.cmd_rfstatus
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010255c       0x6c application/usbshell.o
+=======
                 0x001022dc       0x5c application/usbshell.o
  .text.cmd_mac  0x00102338      0x188 application/usbshell.o
  .text.cmd_status
@@ -165,9 +326,38 @@ prog            0x00101044     0x4d6c
                 0x00102704       0x10 application/usbshell.o
  .text.cmd_id   0x00102714      0x144 application/usbshell.o
  .text.cmd_dim  0x00102858       0x88 application/usbshell.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.cmd_fire
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001025c8       0x34 application/usbshell.o
+ .text.cmd_id   0x001025fc      0x130 application/usbshell.o
+ .text.cmd_debug
+                0x0010272c       0x68 application/usbshell.o
+ .text.cmd_update
+                0x00102794        0x4 application/usbshell.o
+                0x00102794                cmd_update
+ .text.cmd_nrf_dump
+                0x00102798        0x4 application/usbshell.o
+                0x00102798                cmd_nrf_dump
+ .text.cmd_nrf_init
+                0x0010279c        0x8 application/usbshell.o
+                0x0010279c                cmd_nrf_init
+ .text.cmd_nrf_reset
+                0x001027a4        0x8 application/usbshell.o
+                0x001027a4                cmd_nrf_reset
+=======
                 0x001028e0       0x30 application/usbshell.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.usbshell_task
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001027ac      0x134 application/usbshell.o
+ .text.vUSBShellInit
+                0x001028e0       0x40 application/usbshell.o
+                0x001028e0                vUSBShellInit
+ .text.DumpUIntToUSB
+                0x00102920       0x6c application/debug_print.o
+                0x00102920                DumpUIntToUSB
+=======
                 0x00102910      0x154 application/usbshell.o
  .text.cmd_nrf_reset
                 0x00102a64        0x8 application/usbshell.o
@@ -184,9 +374,26 @@ prog            0x00101044     0x4d6c
  .text.DumpStringToUSB
                 0x00102a7c       0x3c application/debug_print.o
                 0x00102a7c                DumpStringToUSB
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.printnibble
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010298c       0x18 application/debug_print.o
+=======
                 0x00102ab8       0x18 application/debug_print.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.DumpHexToUSB
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001029a4       0x48 application/debug_print.o
+                0x001029a4                DumpHexToUSB
+ .text.DumpStringToUSB
+                0x001029ec       0x68 application/debug_print.o
+                0x001029ec                DumpStringToUSB
+ .text._sbrk_r  0x00102a54       0x28 ../core/openbeacon/syscalls.o
+                0x00102a54                _sbrk_r
+ .text.led_set_green
+                0x00102a7c       0x20 ../core/openbeacon/led.o
+                0x00102a7c                led_set_green
+=======
                 0x00102ad0       0x40 application/debug_print.o
                 0x00102ad0                DumpHexToUSB
  .text.DumpUIntToUSB
@@ -194,16 +401,37 @@ prog            0x00101044     0x4d6c
                 0x00102b10                DumpUIntToUSB
  .text._sbrk_r  0x00102b7c       0x28 ../core/openbeacon/syscalls.o
                 0x00102b7c                _sbrk_r
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.led_init
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102a9c       0x1c ../core/openbeacon/led.o
+                0x00102a9c                led_init
+=======
                 0x00102ba4       0x18 ../core/openbeacon/led.o
                 0x00102ba4                led_init
  .text.led_set_green
                 0x00102bbc       0x20 ../core/openbeacon/led.o
                 0x00102bbc                led_set_green
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.env_crc16
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102ab8       0x64 ../core/openbeacon/env.o
+                0x00102ab8                env_crc16
+ .text.env_store
+                0x00102b1c       0xac ../core/openbeacon/env.o
+                0x00102b1c                env_store
+ .text.env_load
+                0x00102bc8       0xd8 ../core/openbeacon/env.o
+                0x00102bc8                env_load
+=======
                 0x00102bdc       0x78 ../core/openbeacon/env.o
                 0x00102bdc                env_crc16
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.env_init
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102ca0       0x14 ../core/openbeacon/env.o
+                0x00102ca0                env_init
+=======
                 0x00102c54       0x14 ../core/openbeacon/env.o
                 0x00102c54                env_init
  .text.env_load
@@ -218,25 +446,70 @@ prog            0x00101044     0x4d6c
  .text.nRFAPI_GetChannel
                 0x00102de0       0x14 ../core/openbeacon/nRF24L01/nRF_API.o
                 0x00102de0                nRFAPI_GetChannel
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.nRFAPI_SetRxMAC
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102cb4       0x78 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00102cb4                nRFAPI_SetRxMAC
+=======
                 0x00102df4       0x78 ../core/openbeacon/nRF24L01/nRF_API.o
                 0x00102df4                nRFAPI_SetRxMAC
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.nRFAPI_SetTxMAC
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102d2c       0x20 ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00102d2c                nRFAPI_SetTxMAC
+ .text.nRFAPI_GetChannel
+                0x00102d4c       0x1c ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00102d4c                nRFAPI_GetChannel
+ .text.nRFAPI_CarrierDetect
+                0x00102d68       0x1c ../core/openbeacon/nRF24L01/nRF_API.o
+                0x00102d68                nRFAPI_CarrierDetect
+=======
                 0x00102e6c       0x20 ../core/openbeacon/nRF24L01/nRF_API.o
                 0x00102e6c                nRFAPI_SetTxMAC
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.nRFCMD_ReadWriteBuffer
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102d84       0x84 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00102d84                nRFCMD_ReadWriteBuffer
+ .text.nRFCMD_RegRead
+                0x00102e08       0x40 ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00102e08                nRFCMD_RegRead
+=======
                 0x00102e8c       0x84 ../core/openbeacon/nRF24L01/nRF_CMD.o
                 0x00102e8c                nRFCMD_ReadWriteBuffer
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.nRFCMD_RegWriteBuf
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102e48       0x4c ../core/openbeacon/nRF24L01/nRF_CMD.o
+                0x00102e48                nRFCMD_RegWriteBuf
+=======
                 0x00102f10       0x44 ../core/openbeacon/nRF24L01/nRF_CMD.o
                 0x00102f10                nRFCMD_RegWriteBuf
  .text.nRFCMD_RegRead
                 0x00102f54       0x38 ../core/openbeacon/nRF24L01/nRF_CMD.o
                 0x00102f54                nRFCMD_RegRead
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.AT91F_LowLevelInit
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102e94       0x94 ../core/os/boot/Cstartup_SAM7.o
+                0x00102e94                AT91F_LowLevelInit
+ .text.AT91F_PDC_ReceiveFrame
+                0x00102f28       0x50 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                0x00102f28                AT91F_PDC_ReceiveFrame
+ .text.AT91F_PDC_SendFrame
+                0x00102f78       0x50 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                0x00102f78                AT91F_PDC_SendFrame
+=======
                 0x00102f8c       0x98 ../core/os/boot/Cstartup_SAM7.o
                 0x00102f8c                AT91F_LowLevelInit
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.AT91F_AIC_ConfigureIt
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00102fc8       0x3c ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                0x00102fc8                AT91F_AIC_ConfigureIt
+=======
                 0x00103024       0x38 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
                 0x00103024                AT91F_AIC_ConfigureIt
  .text.AT91F_PDC_SendFrame
@@ -245,49 +518,147 @@ prog            0x00101044     0x4d6c
  .text.AT91F_PDC_ReceiveFrame
                 0x001030a4       0x48 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
                 0x001030a4                AT91F_PDC_ReceiveFrame
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vListInitialise
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103004       0x24 ../core/os/core/list.o
+                0x00103004                vListInitialise
+=======
                 0x001030ec       0x24 ../core/os/core/list.o
                 0x001030ec                vListInitialise
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vListInitialiseItem
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103028        0xc ../core/os/core/list.o
+                0x00103028                vListInitialiseItem
+=======
                 0x00103110        0xc ../core/os/core/list.o
                 0x00103110                vListInitialiseItem
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vListInsertEnd
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103034       0x38 ../core/os/core/list.o
+                0x00103034                vListInsertEnd
+=======
                 0x0010311c       0x34 ../core/os/core/list.o
                 0x0010311c                vListInsertEnd
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vListInsert
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010306c       0x58 ../core/os/core/list.o
+                0x0010306c                vListInsert
+=======
                 0x00103150       0x64 ../core/os/core/list.o
                 0x00103150                vListInsert
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vListRemove
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001030c4       0x3c ../core/os/core/list.o
+                0x001030c4                vListRemove
+ .text.xQueueCreate
+                0x00103100       0xa0 ../core/os/core/queue.o
+                0x00103100                xQueueCreate
+=======
                 0x001031b4       0x3c ../core/os/core/list.o
                 0x001031b4                vListRemove
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.uxQueueMessagesWaiting
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001031a0       0x24 ../core/os/core/queue.o
+                0x001031a0                uxQueueMessagesWaiting
+=======
                 0x001031f0       0x1c ../core/os/core/queue.o
                 0x001031f0                uxQueueMessagesWaiting
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.prvCopyDataFromQueue
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001031c4       0x40 ../core/os/core/queue.o
+=======
                 0x0010320c       0x48 ../core/os/core/queue.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.prvCopyDataToQueue
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103204       0xa4 ../core/os/core/queue.o
+=======
                 0x00103254       0x9c ../core/os/core/queue.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.xQueueGenericSendFromISR
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001032a8       0x70 ../core/os/core/queue.o
+                0x001032a8                xQueueGenericSendFromISR
+=======
                 0x001032f0       0x7c ../core/os/core/queue.o
                 0x001032f0                xQueueGenericSendFromISR
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.prvUnlockQueue
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103318       0xdc ../core/os/core/queue.o
+=======
                 0x0010336c       0xfc ../core/os/core/queue.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.xQueueGenericReceive
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001033f4      0x1d0 ../core/os/core/queue.o
+                0x001033f4                xQueueGenericReceive
+=======
                 0x00103468      0x198 ../core/os/core/queue.o
                 0x00103468                xQueueGenericReceive
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.xQueueGenericSend
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001035c4      0x19c ../core/os/core/queue.o
+                0x001035c4                xQueueGenericSend
+ .text.vTaskSuspendAll
+                0x00103760       0x2c ../core/os/core/tasks.o
+                0x00103760                vTaskSuspendAll
+ .text.vTaskIncrementTick
+                0x0010378c      0x12c ../core/os/core/tasks.o
+                0x0010378c                vTaskIncrementTick
+ .text.xTaskResumeAll
+                0x001038b8      0x250 ../core/os/core/tasks.o
+                0x001038b8                xTaskResumeAll
+ .text.vTaskDelay
+                0x00103b08       0x88 ../core/os/core/tasks.o
+                0x00103b08                vTaskDelay
+=======
                 0x00103600      0x168 ../core/os/core/queue.o
                 0x00103600                xQueueGenericSend
  .text.xQueueCreate
                 0x00103768       0xa4 ../core/os/core/queue.o
                 0x00103768                xQueueCreate
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vTaskSwitchContext
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103b90       0xac ../core/os/core/tasks.o
+                0x00103b90                vTaskSwitchContext
+ .text.vTaskPlaceOnEventList
+                0x00103c3c       0x94 ../core/os/core/tasks.o
+                0x00103c3c                vTaskPlaceOnEventList
+ .text.xTaskRemoveFromEventList
+                0x00103cd0       0xb0 ../core/os/core/tasks.o
+                0x00103cd0                xTaskRemoveFromEventList
+=======
                 0x0010380c       0xa4 ../core/os/core/tasks.o
                 0x0010380c                vTaskSwitchContext
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vTaskSetTimeOutState
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103d80       0x20 ../core/os/core/tasks.o
+                0x00103d80                vTaskSetTimeOutState
+ .text.xTaskCheckForTimeOut
+                0x00103da0       0xac ../core/os/core/tasks.o
+                0x00103da0                xTaskCheckForTimeOut
+=======
                 0x001038b0       0x20 ../core/os/core/tasks.o
                 0x001038b0                vTaskSetTimeOutState
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vTaskMissedYield
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103e4c       0x14 ../core/os/core/tasks.o
+                0x00103e4c                vTaskMissedYield
+ .text.prvIdleTask
+                0x00103e60       0xc8 ../core/os/core/tasks.o
+=======
                 0x001038d0       0x14 ../core/os/core/tasks.o
                 0x001038d0                vTaskMissedYield
  .text.xTaskCheckForTimeOut
@@ -305,10 +676,20 @@ prog            0x00101044     0x4d6c
  .text.vTaskPlaceOnEventList
                 0x00103bd8       0x8c ../core/os/core/tasks.o
                 0x00103bd8                vTaskPlaceOnEventList
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.xTaskCreate
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00103f28      0x238 ../core/os/core/tasks.o
+                0x00103f28                xTaskCreate
+=======
                 0x00103c64      0x23c ../core/os/core/tasks.o
                 0x00103c64                xTaskCreate
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vTaskStartScheduler
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00104160       0x7c ../core/os/core/tasks.o
+                0x00104160                vTaskStartScheduler
+=======
                 0x00103ea0       0x78 ../core/os/core/tasks.o
                 0x00103ea0                vTaskStartScheduler
  .text.xTaskResumeAll
@@ -319,19 +700,53 @@ prog            0x00101044     0x4d6c
  .text.vTaskDelay
                 0x00104258       0xa4 ../core/os/core/tasks.o
                 0x00104258                vTaskDelay
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.pxPortInitialiseStack
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001041dc       0xf8 ../core/os/core/port.o
+                0x001041dc                pxPortInitialiseStack
+=======
                 0x001042fc      0x1c0 ../core/os/core/port.o
                 0x001042fc                pxPortInitialiseStack
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.xPortStartScheduler
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001042d4       0x58 ../core/os/core/port.o
+                0x001042d4                xPortStartScheduler
+=======
                 0x001044bc       0x48 ../core/os/core/port.o
                 0x001044bc                xPortStartScheduler
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vPortISRStartFirstTask
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010432c       0x54 ../core/os/core/portISR.o
+                0x0010432c                vPortISRStartFirstTask
+ .text.swi_handler
+                0x00104380       0xac ../core/os/core/portISR.o
+                0x00104380                swi_handler
+ .text.vPreemptiveTick
+                0x0010442c       0xc4 ../core/os/core/portISR.o
+                0x0010442c                vPreemptiveTick
+=======
                 0x00104504       0x54 ../core/os/core/portISR.o
                 0x00104504                vPortISRStartFirstTask
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vPortEnterCritical
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001044f0       0x2c ../core/os/core/portISR.o
+                0x001044f0                vPortEnterCritical
+=======
                 0x00104558       0x2c ../core/os/core/portISR.o
                 0x00104558                vPortEnterCritical
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vPortExitCritical
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010451c       0x44 ../core/os/core/portISR.o
+                0x0010451c                vPortExitCritical
+ .text.pvPortMalloc
+                0x00104560       0x2c ../core/os/core/MemMang/heap_3.o
+                0x00104560                pvPortMalloc
+=======
                 0x00104584       0x44 ../core/os/core/portISR.o
                 0x00104584                vPortExitCritical
  .text.vPreemptiveTick
@@ -340,16 +755,39 @@ prog            0x00101044     0x4d6c
  .text.swi_handler
                 0x00104684       0xac ../core/os/core/portISR.o
                 0x00104684                swi_handler
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vPortFree
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010458c       0x28 ../core/os/core/MemMang/heap_3.o
+                0x0010458c                vPortFree
+=======
                 0x00104730       0x20 ../core/os/core/MemMang/heap_3.o
                 0x00104730                vPortFree
  .text.pvPortMalloc
                 0x00104750       0x24 ../core/os/core/MemMang/heap_3.o
                 0x00104750                pvPortMalloc
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vDetachUSBInterface
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001045b4       0x1c ../core/os/usb/USB-CDC.o
+                0x001045b4                vDetachUSBInterface
+ .text.vUSBSendByte
+                0x001045d0       0x40 ../core/os/usb/USB-CDC.o
+                0x001045d0                vUSBSendByte
+ .text.usb_send_buffer_zero_copy
+                0x00104610       0x4c ../core/os/usb/USB-CDC.o
+                0x00104610                usb_send_buffer_zero_copy
+=======
                 0x00104774       0x18 ../core/os/usb/USB-CDC.o
                 0x00104774                vDetachUSBInterface
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vUSBRecvByte
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010465c       0x84 ../core/os/usb/USB-CDC.o
+                0x0010465c                vUSBRecvByte
+ .text.prvSendZLP
+                0x001046e0       0x6c ../core/os/usb/USB-CDC.o
+=======
                 0x0010478c       0x88 ../core/os/usb/USB-CDC.o
                 0x0010478c                vUSBRecvByte
  .text.usb_send_buffer_zero_copy
@@ -358,37 +796,113 @@ prog            0x00101044     0x4d6c
  .text.vUSBSendByte
                 0x00104854       0x38 ../core/os/usb/USB-CDC.o
                 0x00104854                vUSBSendByte
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.prvSendStall
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010474c       0x30 ../core/os/usb/USB-CDC.o
+=======
                 0x0010488c       0x24 ../core/os/usb/USB-CDC.o
  .text.prvSendZLP
                 0x001048b0       0x5c ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.prvSendNextSegment
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0010477c      0x10c ../core/os/usb/USB-CDC.o
+=======
                 0x0010490c       0xf8 ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.prvSendControlData
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00104888       0x80 ../core/os/usb/USB-CDC.o
+=======
                 0x00104a04       0x78 ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vUSBCDCTask
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00104908      0xa08 ../core/os/usb/USB-CDC.o
+                0x00104908                vUSBCDCTask
+=======
                 0x00104a7c      0x9c4 ../core/os/usb/USB-CDC.o
                 0x00104a7c                vUSBCDCTask
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vUSB_ISR_Handler
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105310      0x1dc ../core/os/usb/USBIsr.o
+                0x00105310                vUSB_ISR_Handler
+=======
                 0x00105440      0x1a4 ../core/os/usb/USBIsr.o
                 0x00105440                vUSB_ISR_Handler
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .text.vUSB_ISR_Wrapper
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001054ec       0xa8 ../core/os/usb/USBIsr.o
+                0x001054ec                vUSB_ISR_Wrapper
+=======
                 0x001055e4       0xa8 ../core/os/usb/USBIsr.o
                 0x001055e4                vUSB_ISR_Wrapper
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.rodata)
  *(.rodata*)
  .rodata.str1.4
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105594       0x37 application/main.o
+                                 0x38 (size before relaxing)
+ *fill*         0x001055cb        0x1 00
+=======
                 0x0010568c       0x38 application/main.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .rodata.str1.4
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001055cc       0x30 application/update.o
+=======
                 0x001056c4       0x30 application/update.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .rodata.str1.4
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x001055fc      0x5a5 application/usbshell.o
+=======
                 0x001056f4      0x5a6 application/usbshell.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                                 0x5b8 (size before relaxing)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ *fill*         0x00105ba1        0x3 00
+=======
  *fill*         0x00105c9a        0x2 00
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .rodata.str1.4
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105ba4        0x5 ../core/os/core/tasks.o
+=======
                 0x00105c9c        0x5 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                                   0x8 (size before relaxing)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .rodata.pxDeviceDescriptor
+                0x00105ba9       0x12 ../core/os/usb/USB-CDC.o
+                0x00105ba9                pxDeviceDescriptor
+ *fill*         0x00105bbb        0x1 00
+ .rodata.pxConfigDescriptorSizes
+                0x00105bbc        0x8 ../core/os/usb/USB-CDC.o
+                0x00105bbc                pxConfigDescriptorSizes
+ .rodata.pxConfigDescriptor2
+                0x00105bc4       0x43 ../core/os/usb/USB-CDC.o
+                0x00105bc4                pxConfigDescriptor2
+ .rodata.pxConfigDescriptor1
+                0x00105c07       0x43 ../core/os/usb/USB-CDC.o
+                0x00105c07                pxConfigDescriptor1
+ .rodata.pxProductStringDescriptor
+                0x00105c4a       0x2c ../core/os/usb/USB-CDC.o
+                0x00105c4a                pxProductStringDescriptor
+ .rodata.pxManufacturerStringDescriptor
+                0x00105c76       0x1c ../core/os/usb/USB-CDC.o
+                0x00105c76                pxManufacturerStringDescriptor
+=======
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .rodata.pxLanguageStringDescriptor
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105c92        0x4 ../core/os/usb/USB-CDC.o
+                0x00105c92                pxLanguageStringDescriptor
+=======
                 0x00105ca1        0x4 ../core/os/usb/USB-CDC.o
                 0x00105ca1                pxLanguageStringDescriptor
  .rodata.pxManufacturerStringDescriptor
@@ -413,59 +927,196 @@ prog            0x00101044     0x4d6c
  *fill*         0x00105d8e        0x2 00
  .rodata.C.25.4299
                 0x00105d90       0x14 ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .rodata.pxLineCoding
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105c96        0x7 ../core/os/usb/USB-CDC.o
+ *fill*         0x00105c9d        0x3 00
+=======
                 0x00105da4        0x7 ../core/os/usb/USB-CDC.o
  *fill*         0x00105dab        0x1 00
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .rodata.str1.4
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105ca0        0x2 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+=======
                 0x00105dac        0x2 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                                   0x4 (size before relaxing)
  *(.glue_7)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ *fill*         0x00105ca2        0x2 00
+=======
  *fill*         0x00105dae        0x2 00
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.glue_7t)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105ca4                __end_of_text__ = .
+=======
                 0x00105db0                __end_of_text__ = .
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+.data           0x00200000      0x9a8 load address 0x00105ca4
+=======
 .data           0x00200000      0x958 load address 0x00105db0
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                 0x00200000                __data_beg__ = .
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00105ca4                __data_beg_src__ = __end_of_text__
+=======
                 0x00105db0                __data_beg_src__ = __end_of_text__
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.data)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .data          0x00200000       0x20 /tmp/ccBI8hW8.o
+=======
  .data          0x00200000       0x20 /tmp/ccfnpovd.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
                 0x00200000                bootloader_orig
                 0x00200020                bootloader_orig_end
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .data          0x00200020      0x410 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+                0x00200020                __malloc_sbrk_base
+                0x00200028                __malloc_av_
+                0x00200024                __malloc_trim_threshold
+ .data          0x00200430      0x404 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+                0x00200830                _impure_ptr
+=======
  .data          0x00200020      0x410 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
                 0x0020042c                __malloc_sbrk_base
                 0x00200020                __malloc_av_
                 0x00200428                __malloc_trim_threshold
  .data          0x00200430      0x404 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
                 0x00200430                _impure_ptr
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.data.*)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .data.debug    0x00200834        0x4 application/proto.o
+                0x00200834                debug
+ .data.last_ping_seq
+                0x00200838        0x4 application/proto.o
+                0x00200838                last_ping_seq
+ .data.last_sequence
+                0x0020083c        0x4 application/proto.o
+                0x0020083c                last_sequence
+ .data.pings_lost
+                0x00200840        0x4 application/proto.o
+                0x00200840                pings_lost
+ .data.pt_dump_registers
+                0x00200844        0x4 application/proto.o
+ .data.pt_reset_type
+                0x00200848        0x4 application/proto.o
+ .data.jam_mac  0x0020084c        0x5 application/proto.o
+=======
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .data.wmcu_mac
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00200851        0x5 application/proto.o
+ *fill*         0x00200856        0x2 00
+ .data.dimmer_off
+                0x00200858        0x4 application/dimmer.o
+=======
                 0x00200834        0x5 application/proto.o
  .data.jam_mac  0x00200839        0x5 application/proto.o
  *fill*         0x0020083e        0x2 00
  .data.n.4613   0x00200840        0x4 application/usbshell.o
  .data.p.4612   0x00200844        0x4 application/usbshell.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .data.commands
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0020085c       0x78 application/usbshell.o
+ .data.p.2      0x002008d4        0x4 application/usbshell.o
+ .data.n.3      0x002008d8        0x4 application/usbshell.o
+ .data.pxCurrentTCB
+                0x002008dc        0x4 ../core/os/core/tasks.o
+                0x002008dc                pxCurrentTCB
+ .data.xMissedYield
+                0x002008e0        0x4 ../core/os/core/tasks.o
+ .data.xTickCount
+                0x002008e4        0x4 ../core/os/core/tasks.o
+ .data.xNumOfOverflows
+                0x002008e8        0x4 ../core/os/core/tasks.o
+ .data.uxTopReadyPriority
+                0x002008ec        0x4 ../core/os/core/tasks.o
+ .data.uxSchedulerSuspended
+                0x002008f0        0x4 ../core/os/core/tasks.o
+ .data.uxMissedTicks
+                0x002008f4        0x4 ../core/os/core/tasks.o
+ .data.uxCurrentNumberOfTasks
+                0x002008f8        0x4 ../core/os/core/tasks.o
+ .data.xSchedulerRunning
+                0x002008fc        0x4 ../core/os/core/tasks.o
+ .data.uxTasksDeleted
+                0x00200900        0x4 ../core/os/core/tasks.o
+ .data.uxTopUsedPriority
+                0x00200904        0x4 ../core/os/core/tasks.o
+=======
                 0x00200848       0x78 application/usbshell.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .data.ulCriticalNesting
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00200908        0x4 ../core/os/core/portISR.o
+                0x00200908                ulCriticalNesting
+=======
                 0x002008c0        0x4 ../core/os/core/portISR.o
                 0x002008c0                ulCriticalNesting
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .data.pxConfigDescriptorList
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0020090c        0x8 ../core/os/usb/USB-CDC.o
+                0x0020090c                pxConfigDescriptorList
+ .data.ucUSBConfig
+                0x00200914        0x1 ../core/os/usb/USB-CDC.o
+ *fill*         0x00200915        0x3 00
+ .data.eDriverState
+                0x00200918        0x4 ../core/os/usb/USB-CDC.o
+ .data.ulReceivedAddress
+                0x0020091c        0x4 ../core/os/usb/USB-CDC.o
+ .data.ulNextMessage.0
+                0x00200920        0x4 ../core/os/usb/USBIsr.o
+=======
                 0x002008c4        0x8 ../core/os/usb/USB-CDC.o
                 0x002008c4                pxConfigDescriptorList
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.ramfunc)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .ramfunc       0x00200924       0x84 ../core/openbeacon/env.o
+                0x00200924                env_flash_to
+                0x002009a8                __data_end__ = .
+=======
  .ramfunc       0x002008cc       0x8c ../core/openbeacon/env.o
                 0x002008cc                env_flash_to
                 0x00200958                __data_end__ = .
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+.bss            0x002009a8      0x9ac
+                0x002009a8                __bss_beg__ = .
+=======
 .bss            0x00200958      0xa04
                 0x00200958                __bss_beg__ = .
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.bss)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .bss           0x002009a8       0x34 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+                0x002009d8                __malloc_top_pad
+                0x002009d4                __malloc_max_sbrked_mem
+                0x002009a8                __malloc_current_mallinfo
+                0x002009d0                __malloc_max_total_mem
+=======
  .bss           0x00200958       0x34 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
                 0x00200958                __malloc_top_pad
                 0x0020095c                __malloc_max_sbrked_mem
                 0x00200964                __malloc_current_mallinfo
                 0x00200960                __malloc_max_total_mem
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  *(.bss.*)
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .bss.packet_count
+                0x002009dc        0x4 application/proto.o
+                0x002009dc                packet_count
+=======
  .bss.pings_lost
                 0x0020098c        0x4 application/proto.o
                 0x0020098c                pings_lost
@@ -483,20 +1134,49 @@ prog            0x00101044     0x4d6c
                 0x002009a0        0x4 application/proto.o
  .bss.dimmer_off
                 0x002009a4        0x4 application/dimmer.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.dimmer_step
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002009e0        0x4 application/dimmer.o
+=======
                 0x002009a8        0x4 application/dimmer.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.dimmer_emi_pulses
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002009e4        0x4 application/dimmer.o
+ .bss.buf.0     0x002009e8       0x80 application/usbshell.o
+ .bss.c.1       0x00200a68        0x1 application/usbshell.o
+ .bss.packet    0x00200a69      0x5dc application/usbshell.o
+                0x00200a69                packet
+ *fill*         0x00201045        0x3 00
+ .bss.heap_ptr  0x00201048        0x4 ../core/openbeacon/syscalls.o
+ .bss.env       0x0020104c       0x80 ../core/openbeacon/env.o
+                0x0020104c                env
+=======
                 0x002009ac        0x4 application/dimmer.o
  .bss.c.4611    0x002009b0        0x1 application/usbshell.o
  .bss.buf.4610  0x002009b1       0x80 application/usbshell.o
  *fill*         0x00200a31        0x3 00
  .bss.heap_ptr  0x00200a34        0x4 ../core/openbeacon/syscalls.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.spi_outbuf
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002010cc       0x21 ../core/openbeacon/nRF24L01/nRF_CMD.o
+=======
                 0x00200a38       0x21 ../core/openbeacon/nRF24L01/nRF_CMD.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.spi_inbuf
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002010ed       0x21 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ *fill*         0x0020110e        0x2 00
+=======
                 0x00200a59       0x21 ../core/openbeacon/nRF24L01/nRF_CMD.o
  *fill*         0x00200a7a        0x2 00
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.xnRF_SemaphoreDMA
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00201110        0x4 ../core/openbeacon/nRF24L01/nRF_CMD.o
+=======
                 0x00200a7c        0x4 ../core/openbeacon/nRF24L01/nRF_CMD.o
  .bss.pxCurrentTCB
                 0x00200a80        0x4 ../core/os/core/tasks.o
@@ -521,21 +1201,55 @@ prog            0x00101044     0x4d6c
                 0x00200aa4        0x4 ../core/os/core/tasks.o
  .bss.uxTopUsedPriority
                 0x00200aa8        0x4 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.pxReadyTasksLists
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00201114       0x64 ../core/os/core/tasks.o
+=======
                 0x00200aac       0x64 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.xDelayedTaskList1
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00201178       0x14 ../core/os/core/tasks.o
+=======
                 0x00200b10       0x14 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.xDelayedTaskList2
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0020118c       0x14 ../core/os/core/tasks.o
+=======
                 0x00200b24       0x14 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.pxDelayedTaskList
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002011a0        0x4 ../core/os/core/tasks.o
+=======
                 0x00200b38        0x4 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.pxOverflowDelayedTaskList
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002011a4        0x4 ../core/os/core/tasks.o
+=======
                 0x00200b3c        0x4 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.xPendingReadyList
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002011a8       0x14 ../core/os/core/tasks.o
+=======
                 0x00200b40       0x14 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.xTasksWaitingTermination
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002011bc       0x14 ../core/os/core/tasks.o
+=======
                 0x00200b54       0x14 ../core/os/core/tasks.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.xSuspendedTaskList
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002011d0       0x14 ../core/os/core/tasks.o
+ .bss.xRequest.0
+                0x002011e4        0x8 ../core/os/usb/USB-CDC.o
+=======
                 0x00200b68       0x14 ../core/os/core/tasks.o
  .bss.ucUSBConfig
                 0x00200b7c        0x1 ../core/os/usb/USB-CDC.o
@@ -546,22 +1260,59 @@ prog            0x00101044     0x4d6c
                 0x00200b84        0x4 ../core/os/usb/USB-CDC.o
  .bss.xRequest.4456
                 0x00200b88        0x8 ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.pxControlTx
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x002011ec       0x88 ../core/os/usb/USB-CDC.o
+=======
                 0x00200b90       0x88 ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.pxControlRx
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00201274       0x88 ../core/os/usb/USB-CDC.o
+ .bss.xUSBInterruptQueue
+                0x002012fc        0x4 ../core/os/usb/USB-CDC.o
+                0x002012fc                xUSBInterruptQueue
+ .bss.xRxCDC    0x00201300        0x4 ../core/os/usb/USB-CDC.o
+ .bss.xTxCDC    0x00201304        0x4 ../core/os/usb/USB-CDC.o
+=======
                 0x00200c18       0x88 ../core/os/usb/USB-CDC.o
  .bss.xRxCDC    0x00200ca0        0x4 ../core/os/usb/USB-CDC.o
  .bss.xTxCDC    0x00200ca4        0x4 ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.usb_zcopy_tx_queue
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00201308        0x4 ../core/os/usb/USB-CDC.o
+=======
                 0x00200ca8        0x4 ../core/os/usb/USB-CDC.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.ucControlState
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0020130c        0x1 ../core/os/usb/USB-CDC.o
+ *fill*         0x0020130d        0x3 00
+=======
                 0x00200cac        0x1 ../core/os/usb/USB-CDC.o
  *fill*         0x00200cad        0x3 00
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.uiCurrentBank
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00201310        0x4 ../core/os/usb/USB-CDC.o
+=======
                 0x00200cb0        0x4 ../core/os/usb/USB-CDC.o
  .bss.ulNextMessage.3416
                 0x00200cb4        0x4 ../core/os/usb/USBIsr.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .bss.xISRMessages
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00201314       0x40 ../core/os/usb/USBIsr.o
+                0x00201354                . = ALIGN (0x4)
+                0x00201354                . = ALIGN (0x4)
+                0x00201354                _end = .
+                0x00201354                _bss_end__ = .
+                0x00201354                __bss_end__ = .
+                0x00201354                __end__ = .
+                0x00201354                PROVIDE (end, .)
+=======
                 0x00200cb8       0x40 ../core/os/usb/USBIsr.o
  COMMON         0x00200cf8        0x4 application/proto.o
                 0x00200cf8                packet_count
@@ -578,8 +1329,51 @@ prog            0x00101044     0x4d6c
                 0x0020135c                __bss_end__ = .
                 0x0020135c                __end__ = .
                 0x0020135c                PROVIDE (end, .)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+.debug_abbrev   0x00000000     0x2cc3
+ .debug_abbrev  0x00000000      0x155 application/main.o
+ .debug_abbrev  0x00000155      0x294 application/proto.o
+ .debug_abbrev  0x000003e9      0x1ea application/dimmer.o
+ .debug_abbrev  0x000005d3       0xcc application/update.o
+ .debug_abbrev  0x0000069f      0x213 application/usbshell.o
+ .debug_abbrev  0x000008b2       0xfe application/debug_print.o
+ .debug_abbrev  0x000009b0       0xb9 application/xxtea.o
+ .debug_abbrev  0x00000a69       0x9b ../core//openbeacon/crc32.o
+ .debug_abbrev  0x00000b04       0x7f ../core//openbeacon/rnd.o
+ .debug_abbrev  0x00000b83      0x119 ../core/openbeacon/dbgu.o
+ .debug_abbrev  0x00000c9c      0x202 ../core/openbeacon/syscalls.o
+ .debug_abbrev  0x00000e9e      0x149 ../core/openbeacon/led.o
+ .debug_abbrev  0x00000fe7      0x22b ../core/openbeacon/env.o
+ .debug_abbrev  0x00001212       0x73 ../core/openbeacon/sort.o
+ .debug_abbrev  0x00001285      0x13d ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_abbrev  0x000013c2      0x21e ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_abbrev  0x000015e0       0x8c ../core/os/boot/Cstartup_SAM7.o
+ .debug_abbrev  0x0000166c      0x205 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_abbrev  0x00001871       0xb2 ../core/os/core/list.o
+ .debug_abbrev  0x00001923      0x181 ../core/os/core/queue.o
+ .debug_abbrev  0x00001aa4      0x212 ../core/os/core/tasks.o
+ .debug_abbrev  0x00001cb6      0x11b ../core/os/core/port.o
+ .debug_abbrev  0x00001dd1       0x9d ../core/os/core/portISR.o
+ .debug_abbrev  0x00001e6e       0x93 ../core/os/core/MemMang/heap_3.o
+ .debug_abbrev  0x00001f01      0x2a3 ../core/os/usb/USB-CDC.o
+ .debug_abbrev  0x000021a4       0xca ../core/os/usb/USBIsr.o
+ .debug_abbrev  0x0000226e       0x10 /tmp/ccSVIDF6.o
+ .debug_abbrev  0x0000227e       0x14 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_udivsi3.o)
+ .debug_abbrev  0x00002292       0x14 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_divsi3.o)
+ .debug_abbrev  0x000022a6       0x14 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_umodsi3.o)
+ .debug_abbrev  0x000022ba       0x14 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_dvmd_tls.o)
+ .debug_abbrev  0x000022ce      0x187 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_abbrev  0x00002455      0x214 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_abbrev  0x00002669       0x99 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_abbrev  0x00002702       0x9a /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_abbrev  0x0000279c      0x16a /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_abbrev  0x00002906       0x8d /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_abbrev  0x00002993      0x1d9 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+ .debug_abbrev  0x00002b6c      0x157 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+=======
 .debug_abbrev   0x00000000     0x316d
  .debug_abbrev  0x00000000      0x170 application/main.o
  .debug_abbrev  0x00000170      0x2de application/proto.o
@@ -620,7 +1414,50 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .debug_abbrev  0x00002da1       0x8d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
  .debug_abbrev  0x00002e2e      0x1e8 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
  .debug_abbrev  0x00003016      0x157 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+.debug_info     0x00000000     0xc787
+ .debug_info    0x00000000      0x244 application/main.o
+ .debug_info    0x00000244      0x795 application/proto.o
+ .debug_info    0x000009d9      0x9ba application/dimmer.o
+ .debug_info    0x00001393      0x187 application/update.o
+ .debug_info    0x0000151a      0x591 application/usbshell.o
+ .debug_info    0x00001aab      0x1bf application/debug_print.o
+ .debug_info    0x00001c6a      0x18f application/xxtea.o
+ .debug_info    0x00001df9       0xeb ../core//openbeacon/crc32.o
+ .debug_info    0x00001ee4       0xb1 ../core//openbeacon/rnd.o
+ .debug_info    0x00001f95      0x5eb ../core/openbeacon/dbgu.o
+ .debug_info    0x00002580      0xd26 ../core/openbeacon/syscalls.o
+ .debug_info    0x000032a6      0x5a5 ../core/openbeacon/led.o
+ .debug_info    0x0000384b      0x45b ../core/openbeacon/env.o
+ .debug_info    0x00003ca6       0xcb ../core/openbeacon/sort.o
+ .debug_info    0x00003d71      0x53e ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_info    0x000042af      0xe54 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_info    0x00005103      0x1fa ../core/os/boot/Cstartup_SAM7.o
+ .debug_info    0x000052fd     0x15b7 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_info    0x000068b4      0x289 ../core/os/core/list.o
+ .debug_info    0x00006b3d      0x6e2 ../core/os/core/queue.o
+ .debug_info    0x0000721f      0xbd5 ../core/os/core/tasks.o
+ .debug_info    0x00007df4      0x1b5 ../core/os/core/port.o
+ .debug_info    0x00007fa9      0x1b4 ../core/os/core/portISR.o
+ .debug_info    0x0000815d       0xcc ../core/os/core/MemMang/heap_3.o
+ .debug_info    0x00008229      0xa4e ../core/os/usb/USB-CDC.o
+ .debug_info    0x00008c77      0x1b6 ../core/os/usb/USBIsr.o
+ .debug_info    0x00008e2d       0x80 /tmp/ccSVIDF6.o
+ .debug_info    0x00008ead       0x7c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_udivsi3.o)
+ .debug_info    0x00008f29       0x7c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_divsi3.o)
+ .debug_info    0x00008fa5       0x7c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_umodsi3.o)
+ .debug_info    0x00009021       0x7c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_dvmd_tls.o)
+ .debug_info    0x0000909d      0x94f /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_info    0x000099ec      0xc95 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_info    0x0000a681       0xfc /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_info    0x0000a77d      0x102 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_info    0x0000a87f      0x93c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_info    0x0000b1bb      0x117 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_info    0x0000b2d2      0xb93 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+ .debug_info    0x0000be65      0x922 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+=======
 .debug_info     0x00000000     0xc8f3
  .debug_info    0x00000000      0x246 application/main.o
  .debug_info    0x00000246      0x73e application/proto.o
@@ -661,9 +1498,54 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .debug_info    0x0000b2f9      0x127 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
  .debug_info    0x0000b420      0xbb1 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
  .debug_info    0x0000bfd1      0x922 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+.debug_line     0x00000000     0x36ab
+=======
 .debug_line     0x00000000     0x366d
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_line    0x00000000       0xf5 application/main.o
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .debug_line    0x000000f5      0x2e1 application/proto.o
+ .debug_line    0x000003d6      0x261 application/dimmer.o
+ .debug_line    0x00000637       0x79 application/update.o
+ .debug_line    0x000006b0      0x28f application/usbshell.o
+ .debug_line    0x0000093f       0x9d application/debug_print.o
+ .debug_line    0x000009dc       0x8d application/xxtea.o
+ .debug_line    0x00000a69       0x82 ../core//openbeacon/crc32.o
+ .debug_line    0x00000aeb       0x88 ../core//openbeacon/rnd.o
+ .debug_line    0x00000b73       0xf7 ../core/openbeacon/dbgu.o
+ .debug_line    0x00000c6a      0x222 ../core/openbeacon/syscalls.o
+ .debug_line    0x00000e8c      0x116 ../core/openbeacon/led.o
+ .debug_line    0x00000fa2      0x149 ../core/openbeacon/env.o
+ .debug_line    0x000010eb       0x69 ../core/openbeacon/sort.o
+ .debug_line    0x00001154      0x299 ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_line    0x000013ed      0x386 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_line    0x00001773       0x91 ../core/os/boot/Cstartup_SAM7.o
+ .debug_line    0x00001804      0x315 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_line    0x00001b19      0x102 ../core/os/core/list.o
+ .debug_line    0x00001c1b      0x31a ../core/os/core/queue.o
+ .debug_line    0x00001f35      0x4ba ../core/os/core/tasks.o
+ .debug_line    0x000023ef      0x108 ../core/os/core/port.o
+ .debug_line    0x000024f7       0xb9 ../core/os/core/portISR.o
+ .debug_line    0x000025b0       0xb1 ../core/os/core/MemMang/heap_3.o
+ .debug_line    0x00002661      0x3aa ../core/os/usb/USB-CDC.o
+ .debug_line    0x00002a0b       0xe5 ../core/os/usb/USBIsr.o
+ .debug_line    0x00002af0       0x8a /tmp/ccSVIDF6.o
+ .debug_line    0x00002b7a       0x7d /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_udivsi3.o)
+ .debug_line    0x00002bf7       0x89 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_divsi3.o)
+ .debug_line    0x00002c80       0x6f /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_umodsi3.o)
+ .debug_line    0x00002cef       0x5a /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_dvmd_tls.o)
+ .debug_line    0x00002d49      0x10f /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_line    0x00002e58      0x244 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_line    0x0000309c       0xc8 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_line    0x00003164       0xc5 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_line    0x00003229      0x109 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_line    0x00003332       0xce /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_line    0x00003400      0x1b4 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+ .debug_line    0x000035b4       0xf7 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+=======
  .debug_line    0x000000f5      0x2af application/proto.o
  .debug_line    0x000003a4      0x237 application/dimmer.o
  .debug_line    0x000005db       0x77 application/update.o
@@ -740,7 +1622,44 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .debug_frame   0x00001494       0x30 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
  .debug_frame   0x000014c4       0x2c /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
  .debug_frame   0x000014f0       0x54 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+.debug_frame    0x00000000     0x17ac
+ .debug_frame   0x00000000       0x60 application/main.o
+ .debug_frame   0x00000060       0xac application/proto.o
+ .debug_frame   0x0000010c      0x108 application/dimmer.o
+ .debug_frame   0x00000214       0x30 application/update.o
+ .debug_frame   0x00000244      0x1e0 application/usbshell.o
+ .debug_frame   0x00000424       0x8c application/debug_print.o
+ .debug_frame   0x000004b0       0x68 application/xxtea.o
+ .debug_frame   0x00000518       0x28 ../core//openbeacon/crc32.o
+ .debug_frame   0x00000540       0x3c ../core//openbeacon/rnd.o
+ .debug_frame   0x0000057c       0x54 ../core/openbeacon/dbgu.o
+ .debug_frame   0x000005d0       0xbc ../core/openbeacon/syscalls.o
+ .debug_frame   0x0000068c       0x54 ../core/openbeacon/led.o
+ .debug_frame   0x000006e0       0x8c ../core/openbeacon/env.o
+ .debug_frame   0x0000076c       0x2c ../core/openbeacon/sort.o
+ .debug_frame   0x00000798      0x2ac ../core/openbeacon/nRF24L01/nRF_API.o
+ .debug_frame   0x00000a44      0x1f4 ../core/openbeacon/nRF24L01/nRF_CMD.o
+ .debug_frame   0x00000c38       0x28 ../core/os/boot/Cstartup_SAM7.o
+ .debug_frame   0x00000c60      0x1ac ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_frame   0x00000e0c       0x68 ../core/os/core/list.o
+ .debug_frame   0x00000e74      0x19c ../core/os/core/queue.o
+ .debug_frame   0x00001010      0x33c ../core/os/core/tasks.o
+ .debug_frame   0x0000134c       0x50 ../core/os/core/port.o
+ .debug_frame   0x0000139c       0x80 ../core/os/core/portISR.o
+ .debug_frame   0x0000141c       0x50 ../core/os/core/MemMang/heap_3.o
+ .debug_frame   0x0000146c      0x188 ../core/os/usb/USB-CDC.o
+ .debug_frame   0x000015f4       0x44 ../core/os/usb/USBIsr.o
+ .debug_frame   0x00001638       0x30 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+ .debug_frame   0x00001668       0x3c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .debug_frame   0x000016a4       0x28 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .debug_frame   0x000016cc       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+ .debug_frame   0x000016ec       0x30 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+ .debug_frame   0x0000171c       0x2c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .debug_frame   0x00001748       0x64 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+=======
 .debug_loc      0x00000000     0x41f7
  .debug_loc     0x00000000       0x3e application/main.o
  .debug_loc     0x0000003e      0x232 application/proto.o
@@ -773,6 +1692,7 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .debug_loc     0x00003c60       0xa9 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
  .debug_loc     0x00003d09      0x15f /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
  .debug_loc     0x00003e68      0x38f /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
 .debug_pubnames
                 0x00000000     0x1343
@@ -829,21 +1749,53 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .debug_pubnames
                 0x00001119       0x3c ../core/os/usb/USBIsr.o
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00001155       0x26 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+=======
                 0x00001155       0x26 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0000117b       0xce /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+=======
                 0x0000117b       0xce /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00001249       0x1d /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+=======
                 0x00001249       0x1d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00001266       0x1d /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+=======
                 0x00001266       0x1d /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00001283       0x38 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+=======
                 0x00001283       0x38 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x000012bb       0x1e /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+=======
                 0x000012bb       0x1e /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x000012d9       0x31 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+=======
                 0x000012d9       0x31 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_pubnames
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x0000130a       0x39 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+=======
                 0x0000130a       0x39 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
 .debug_aranges  0x00000000      0xad8
  .debug_aranges
@@ -899,30 +1851,149 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .debug_aranges
                 0x00000920       0x30 ../core/os/usb/USBIsr.o
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000950       0x28 /tmp/ccSVIDF6.o
+=======
                 0x00000950       0x28 /tmp/ccoUNcln.o
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000978       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_udivsi3.o)
+=======
                 0x00000978       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_udivsi3.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000998       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_divsi3.o)
+=======
                 0x00000998       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_divsi3.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x000009b8       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_umodsi3.o)
+=======
                 0x000009b8       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_umodsi3.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x000009d8       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/libgcc.a(_dvmd_tls.o)
+=======
                 0x000009d8       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/libgcc.a(_dvmd_tls.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x000009f8       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+=======
                 0x000009f8       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000a18       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+=======
                 0x00000a18       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000a38       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+=======
                 0x00000a38       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000a58       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+=======
                 0x00000a58       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memset.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000a78       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+=======
                 0x00000a78       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mlock.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000a98       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+=======
                 0x00000a98       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
  .debug_aranges
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+                0x00000ab8       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+=======
                 0x00000ab8       0x20 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+.debug_str      0x00000000     0x3530
+ .debug_str     0x00000000      0x194 application/main.o
+                                0x1e5 (size before relaxing)
+ .debug_str     0x00000194      0x220 application/proto.o
+                                0x3b5 (size before relaxing)
+ .debug_str     0x000003b4      0x454 application/dimmer.o
+                                0x5ce (size before relaxing)
+ .debug_str     0x00000808       0x5d application/update.o
+                                0x1a9 (size before relaxing)
+ .debug_str     0x00000865      0x106 application/usbshell.o
+                                0x29a (size before relaxing)
+ .debug_str     0x0000096b       0x5b application/debug_print.o
+                                0x170 (size before relaxing)
+ .debug_str     0x000009c6       0x3c application/xxtea.o
+                                 0xf9 (size before relaxing)
+ .debug_str     0x00000a02       0x37 ../core//openbeacon/crc32.o
+                                 0xe6 (size before relaxing)
+ .debug_str     0x00000a39       0x4b ../core//openbeacon/rnd.o
+                                 0xfa (size before relaxing)
+ .debug_str     0x00000a84      0x15a ../core/openbeacon/dbgu.o
+                                0x380 (size before relaxing)
+ .debug_str     0x00000bde      0x4d1 ../core/openbeacon/syscalls.o
+                                0x5ef (size before relaxing)
+ .debug_str     0x000010af       0xaf ../core/openbeacon/led.o
+                                0x30f (size before relaxing)
+ .debug_str     0x0000115e      0x102 ../core/openbeacon/env.o
+                                0x26e (size before relaxing)
+ .debug_str     0x00001260       0x2a ../core/openbeacon/sort.o
+                                 0xdd (size before relaxing)
+ .debug_str     0x0000128a      0x258 ../core/openbeacon/nRF24L01/nRF_API.o
+                                0x354 (size before relaxing)
+ .debug_str     0x000014e2      0x35a ../core/openbeacon/nRF24L01/nRF_CMD.o
+                                0x735 (size before relaxing)
+ .debug_str     0x0000183c       0x33 ../core/os/boot/Cstartup_SAM7.o
+                                0x198 (size before relaxing)
+ .debug_str     0x0000186f      0x714 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+                                0xa99 (size before relaxing)
+ .debug_str     0x00001f83      0x135 ../core/os/core/list.o
+                                0x21c (size before relaxing)
+ .debug_str     0x000020b8      0x2cb ../core/os/core/queue.o
+                                0x47b (size before relaxing)
+ .debug_str     0x00002383      0x56f ../core/os/core/tasks.o
+                                0x770 (size before relaxing)
+ .debug_str     0x000028f2       0xd5 ../core/os/core/port.o
+                                0x1cf (size before relaxing)
+ .debug_str     0x000029c7       0xa1 ../core/os/core/portISR.o
+                                0x14f (size before relaxing)
+ .debug_str     0x00002a68       0x4d ../core/os/core/MemMang/heap_3.o
+                                0x128 (size before relaxing)
+ .debug_str     0x00002ab5      0x544 ../core/os/usb/USB-CDC.o
+                                0x69c (size before relaxing)
+ .debug_str     0x00002ff9       0x50 ../core/os/usb/USBIsr.o
+                                0x19d (size before relaxing)
+ .debug_str     0x00003049       0x7e /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+                                0x4bd (size before relaxing)
+ .debug_str     0x000030c7      0x200 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+                                0x69e (size before relaxing)
+ .debug_str     0x000032c7       0xa2 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+                                 0xd5 (size before relaxing)
+ .debug_str     0x00003369       0x4d /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+                                0x11f (size before relaxing)
+ .debug_str     0x000033b6       0x6b /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+                                0x4c4 (size before relaxing)
+ .debug_str     0x00003421       0x42 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+                                0x135 (size before relaxing)
+ .debug_str     0x00003463       0x3c /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+                                0x5f0 (size before relaxing)
+ .debug_str     0x0000349f       0x91 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+                                0x4bb (size before relaxing)
+=======
 .debug_ranges   0x00000000      0x7f8
  .debug_ranges  0x00000000       0x40 application/main.o
  .debug_ranges  0x00000040       0xa0 application/proto.o
@@ -1006,6 +2077,7 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
                                 0x602 (size before relaxing)
  .debug_str     0x000035b8       0xa3 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
                                 0x4cd (size before relaxing)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
 
 .comment        0x00000000      0x264
  .comment       0x00000000       0x12 application/main.o
@@ -1034,6 +2106,26 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .comment       0x0000019e       0x12 ../core/os/core/MemMang/heap_3.o
  .comment       0x000001b0       0x12 ../core/os/usb/USB-CDC.o
  .comment       0x000001c2       0x12 ../core/os/usb/USBIsr.o
+<<<<<<< HEAD:firmware/openbeacon-brn-test/openbeacon-brn-test.map
+ .comment       0x000001d4       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(malloc.o)
+ .comment       0x000001e6       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+ .comment       0x000001f8       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memcpy.o)
+ .comment       0x0000020a       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(memset.o)
+ .comment       0x0000021c       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mlock.o)
+ .comment       0x0000022e       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(strncpy.o)
+ .comment       0x00000240       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(freer.o)
+ .comment       0x00000252       0x12 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(impure.o)
+
+.debug_ranges   0x00000000      0x218
+ .debug_ranges  0x00000000       0x28 application/proto.o
+ .debug_ranges  0x00000028       0x20 application/usbshell.o
+ .debug_ranges  0x00000048       0x18 ../core/openbeacon/env.o
+ .debug_ranges  0x00000060       0x40 ../core/os/core/ARM7_AT91SAM7/lib_AT91SAM7.o
+ .debug_ranges  0x000000a0       0x80 ../core/os/core/tasks.o
+ .debug_ranges  0x00000120       0x18 ../core/os/core/port.o
+ .debug_ranges  0x00000138       0xc0 ../core/os/usb/USB-CDC.o
+ .debug_ranges  0x000001f8       0x20 /usr/local/toolchains/arm-elf/lib/gcc/arm-elf/3.4.6/../../../../arm-elf/lib/libg.a(mallocr.o)
+=======
  .comment       0x000001d4       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(malloc.o)
  .comment       0x000001e6       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(mallocr.o)
  .comment       0x000001f8       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(memcpy.o)
@@ -1042,3 +2134,4 @@ OUTPUT(openbeacon-brn-test.elf elf32-littlearm)
  .comment       0x0000022e       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(strncpy.o)
  .comment       0x00000240       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(freer.o)
  .comment       0x00000252       0x12 /share/Studienarbeit/projects/openbeacon/arm/bin/../lib/gcc/arm-elf/4.1.0/../../../../arm-elf/lib/libg.a(impure.o)
+>>>>>>> 9777db70e8f992adafc1010314b9433292077b18:firmware/openbeacon-brn-test/openbeacon-brn-test.map
