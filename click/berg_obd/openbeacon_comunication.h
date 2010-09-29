@@ -24,6 +24,7 @@
 #endif
 
 typedef struct {
+  unsigned portCHAR  start;
   unsigned portCHAR  length;
   unsigned portCHAR  type;
   unsigned portCHAR  reserved;
@@ -73,6 +74,7 @@ unsigned int write_to_channel( portCHAR* out, unsigned portCHAR len, portLONG de
 unsigned int read_to_channel( portCHAR* out, unsigned portCHAR len, portLONG device );
 		
 void debug_msg(char* msg, unsigned portCHAR msg_len);
+void debug_hex_msg(char* msg, unsigned portCHAR msg_len);
 
 #define USBCHANNEL_BUFFER_SIZE     500
 extern portCHAR getDataFromUSBChannel_buffer[];
@@ -136,8 +138,14 @@ extern portCHAR putDataToUSBChannel_buffer[];
 
 		if(len>= sizeof(OBD2HW_Header)+ph->length) { // can full send
 			// TODO: encoding for usb-channel
+			debug_msg("putData: ", 9);
+			debug_hex_msg((char*)putDataToUSBChannel_buffer, sizeof(OBD2HW_Header)+ph->length);
+			
+			ph->start		= 0;
+			ph->reserved	= 0;
 			
 			write_to_channel( (char*)putDataToUSBChannel_buffer, sizeof(OBD2HW_Header)+ph->length, fd );
+			
 			len -= sizeof(OBD2HW_Header)+ph->length;
 			memmove( putDataToUSBChannel_buffer, putDataToUSBChannel_buffer+sizeof(OBD2HW_Header)+ph->length, len );
 		}		
@@ -158,6 +166,8 @@ extern portCHAR putDataToUSBChannel_buffer[];
 				
 				if(len >= sizeof(OBD2HW_Header) + ph->length  	// ) {// packet full recive
 					&& *blen>= sizeof(OBD2HW_Header) + ph->length) { 
+					ph->start		= 0;						
+					ph->reserved = 0;
 						
 					// TODO: buffer overflow
 					for(i=0; i<sizeof(OBD2HW_Header)+ph->length; i++) {
@@ -168,6 +178,9 @@ extern portCHAR putDataToUSBChannel_buffer[];
 					}			
 					
 					len -= *blen;
+					
+					debug_msg("getData: ", 9);					
+					debug_hex_msg((char*)buffer, *blen);
 					memmove( getDataFromUSBChannel_buffer, getDataFromUSBChannel_buffer+(*blen), len );
 				
 					return STATUS_OK;

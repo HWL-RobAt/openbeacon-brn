@@ -145,7 +145,23 @@ void *tx_from_click_to_ob_thread(void *p)
 	pthread_exit(NULL);
 }
 void debug_msg(char* msg, unsigned portCHAR msg_len) {
-//	printf("DEBUG: %s\n", msg);
+	int i;
+		
+	for(i=0; i<msg_len; i++) {
+//		printf("%c", msg[i] );
+	}
+//	printf("\n");
+}
+void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {
+	int i;
+//	printf("HEX:\n\t");
+	
+//	for(i=0; i<msg_len; i++) {
+//		if(i%2==0) printf("%.2X", msg[i] );
+//		else printf("%.2X ", msg[i] );
+//	}
+	
+//	printf("\n");
 }
 
 void *rx_from_ob_to_click_thread(void *p)
@@ -225,9 +241,7 @@ void *input_thread(void *p)
 					buffer[ sizeof(OBD2HW_Header)+i ] = ch;
 					ph->length++;
 				}
-				// TODO: umstellen auf die neue Funktion   putDataToODBSerial(dev->fd,  &usb_buffer );
 				putDataToUSBChannel(device_list[ InOut_Device_id ].fd,  buffer, ph->length+sizeof(OBD2HW_Header) );
-//				write_obd_serial( device_list[ InOut_Device_id ].fd, buffer, ph->length+ sizeof(OBD2HW_Header) );
 			}
 	}
 }

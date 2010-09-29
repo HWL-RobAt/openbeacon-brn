@@ -62,9 +62,6 @@
 
 #include "fifoqueue.h"
 
-#define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
-#include "openbeacon_comunication.h"
-
 #define usbNO_BLOCK ( ( portTickType ) 0 )
 
 /* Reset all endpoints */
@@ -350,7 +347,6 @@ vUSBRecvByte (portCHAR *cByte,portLONG size)
 
     res=0;
     
-    // xQueueReceive(xRxCDC, cByte++, 0))
     while(size-- &&  FIFOQueue_elements(&xRxCDC)>0 ) {
 	FIFOQueue_pop(&xRxCDC, (unsigned char**)&cByte);
 	cByte++;

@@ -353,27 +353,28 @@ main_input_task (void *pvParameters)
 					break;
 				case 'h':	
 				case '?':
-					DumpStringToUSB(" *********************************************************\n\r");
-					DumpStringToUSB(" * OpenBeacon USB terminal                               *\n\r");
-					DumpStringToUSB(" * (C) 2007 Milosch Meriac <meriac@openbeacon.de>        *\n\r");
-					DumpStringToUSB(" *********************************************************\n\r");
-					DumpStringToUSB(" *\n\r");
-					DumpStringToUSB(" * r[0-1]\t- rate for transmit \n\r");
-					DumpStringToUSB(" * c[0-125]\t- channel for transmit \n\r");
-					DumpStringToUSB(" * k[0-255]\t- transmit x packet over hw link\n\r");
-					DumpStringToUSB(" * ?,h\t\t- display this help screen\n\r *\n\r");
-					DumpStringToUSB(" *********************************************************\n\r");
-					DumpStringToUSB(" * d[0-9]\t- switch to device \n\r");
-					DumpStringToUSB(" * x\t\t- exit \n\r");
-					DumpStringToUSB(" *********************************************************\n\r");
-					DumpStringToUSB(" * Status:\n\r");
+					DumpStringToUSB(" ********************************************************\n\r");
+					DumpStringToUSB(" * OpenBeacon USB terminal\t\t\t\t*\n\r");
+					DumpStringToUSB(" * (C) 2007 Milosch Meriac <meriac@openbeacon.de>\t*\n\r");
+					DumpStringToUSB(" ********************************************************\n\r");
+					DumpStringToUSB(" *\t\t\t\t\t\t\t*\n\r");
+					DumpStringToUSB(" * r[0-1]\t- rate for transmit \t\t\t*\n\r");
+					DumpStringToUSB(" * c[0-125]\t- channel for transmit\t\t\t*\n\r");
+					DumpStringToUSB(" * k[0-255]\t- transmit x packet over hw link\t*\n\r");
+					DumpStringToUSB(" * ?,h\t\t- display this help screen\t\t*\n\r *\t\t\t\t\t\t\t*\n\r");
+					DumpStringToUSB(" ********************************************************\n\r");
+					DumpStringToUSB(" * d[0-9]\t- switch to device \t\t\t*\n\r");
+					DumpStringToUSB(" * x\t\t- exit \t\t\t\t\t*\n\r");
+					DumpStringToUSB(" ********************************************************\n\r");
+					DumpStringToUSB(" * Status:\t\t\t\t\t\t*\n\r");
 					DumpStringToUSB(" *       Power: ");
 					DumpUIntToUSB( global_TxPowerLevel );
 					DumpStringToUSB("    Rate: ");
 					DumpUIntToUSB( global_TxRate );
 					DumpStringToUSB("    Channel: ");
 					DumpUIntToUSB( global_TxChannel );
-					DumpStringToUSB("\n\r *********************************************************\n\r");
+					DumpStringToUSB("\t\t*\n\r");
+					DumpStringToUSB(" ********************************************************\n\r");
 					break;
 			}
 			usb_status[0] = 0;

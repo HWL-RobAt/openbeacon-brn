@@ -29,6 +29,7 @@
 #include <task.h>
 #include <semphr.h>
 
+#define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
 #include "openbeacon_comunication.h"
 
 #include "openbeacon.h"
@@ -76,11 +77,30 @@ void debug_msg(char* msg, unsigned portCHAR msg_len) {
 	for(i=0; i<msg_len; i++) {
 		buffer[sizeof(OBD2HW_Header)+i] = msg[i];
 	}
-
-        ph->type    = MONITOR_PRINT;
-	ph->length = msg_len;
 	
-	vUSBSendBytes(buffer, msg_len+sizeof(OBD2HW_Header), 10);	
+	ph->start		= 0;
+        ph->type		= MONITOR_PRINT;
+	ph->length	= msg_len;
+	ph->reserved	= 0;
+	
+//	vUSBSendBytes(buffer, msg_len+sizeof(OBD2HW_Header), 10);	
+}
+void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {	
+	portCHAR buffer[300];
+	OBD2HW_Header *ph = (OBD2HW_Header *) buffer;
+	unsigned portLONG i = 0;
+	
+	for(i=0; i<msg_len; i++) {
+		// TODO: convert to hex
+		buffer[sizeof(OBD2HW_Header)+i] = msg[i];
+	}
+	
+	ph->start		= 0;
+        ph->type		= MONITOR_PRINT;
+	ph->length	= msg_len;
+	ph->reserved	= 0;
+	
+//	vUSBSendBytes(buffer, msg_len+sizeof(OBD2HW_Header), 10);		
 }
 
 extern char USB_SYNC;
@@ -109,7 +129,7 @@ usbshell_task (void *pvParameters)
 		// recive from usb
 		packet_len = PACKET_SIZE+CHUNK_SIZE;
 	
-		if( getDataFromUSBChannel(0,  packet,  &packet_len )==STATUS_OK ) {
+		if( getDataFromUSBChannel(0,  packet,  &packet_len )==STATUS_OK ) {		
 			ph = (OBD2HW_Header *)  packet;
 			c2obdh = (Click2OBD_header *)( packet + sizeof(OBD2HW_Header) );
 			
