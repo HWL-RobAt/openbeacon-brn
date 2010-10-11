@@ -28,7 +28,7 @@ typedef struct {
   unsigned portCHAR  length;
   unsigned portCHAR  type;
   unsigned portCHAR  reserved;
-} __attribute__((packed)) OBD2HW_Header;
+} __attribute__((packed)) OBD2HW_Header;   // 4 Bytes
 
 /*
 	Comunication Protocol Header for comunication between Click and Openbeacon Deamon.
@@ -38,6 +38,7 @@ typedef struct {
 #define STATUS_CRC_CHECK		0x04				// hw set 1, if crc is ok
 #define STATUS_NO_TX			0x08				// set 1, if packet no send
 #define STATUS_hw_rxtx_test		0x10				// set 1, if hw must send [count ] packets
+#define STATUS_full_test			0x20				// set 1, if packet send from HOST to HOST
 
 typedef struct {													//             rx/tx?    // TODO:  beim empfangen auswerten, ob packet CRC ok ist
     unsigned portCHAR  status;									 	// State:   echo_ok?, echo_error?;  crc? , no_tx?, hw_rxtx_test?  ...
@@ -47,7 +48,7 @@ typedef struct {													//             rx/tx?    // TODO:  beim empfangen a
     unsigned portCHAR  power;   					     				 	// power:		        	00 =  -18 dBm,		01 = -12 dBm		10 = -6 dBm		11 = 0 dBm
     unsigned portCHAR  openbeacon_dmac[ OPENBEACON_MACSIZE ];	 		// kann von 3-5 Byte variieren
     unsigned portCHAR  openbeacon_smac[ OPENBEACON_MACSIZE ];		 	// kann von 3-5 Byte variieren
-} __attribute__ ((packed)) Click2OBD_header;
+} __attribute__ ((packed)) Click2OBD_header;   // 15
 
 
 /*
@@ -66,7 +67,7 @@ typedef struct {
 	unsigned portLONG test_begin;
 	unsigned portLONG test_end;
 	unsigned portLONG test_time;
-} __attribute__ ((packed)) HW_rxtx_Test;
+} __attribute__ ((packed)) HW_rxtx_Test;   // 6 + 5*4 = 26    =>  26+15+4 = 30 + 15 = 45 - 4 = 41
 
 portCHAR putDataToUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR blen);
 portCHAR getDataFromUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR *blen );
@@ -80,41 +81,10 @@ void debug_hex_msg(char* msg, unsigned portCHAR msg_len);
 extern portCHAR getDataFromUSBChannel_buffer[];
 extern portCHAR putDataToUSBChannel_buffer[];
 
-	#define STATUS_OK							0
-	#define STATUS_ERROR_NO_DATA				-1
-	#define STRUKTUR_BUFFER_MAX_LENGTH	       200
+#define STATUS_OK							0
+#define STATUS_ERROR_NO_DATA				-1
+#define STRUKTUR_BUFFER_MAX_LENGTH	       200
 
-	/*
-		De-/Encoding for transmit data over 
-                
-		0x00   <-->   0x01 0x30
-		0x01   <-->   0x01 0x31
-                0x02   <-->   0x01 0x32   
-			...
-		0x1F   <->    0x01 0x4F
-
-		j=0;
-		k=0;
-		for(i=0; i<b->length && k<max; i++) {
-			if(encoding) {
-				if( b->buffer[i] >= 0x00 && b->buffer[i] <= 0x0F ) {  // bytes 0x00 - 0x0F transform to 0x0102 - 0x0111
-					b->buffer[b->block + j] = 0x01;  j++;
-					b->buffer[b->block + j] = b->buffer[i] + 2;  j++;
-				} else {
-					b->buffer[b->block + j] = b->buffer[i];  j++;
-				}
-			} else {
-				if( b->buffer[i]==0x01 ) {
-					i++;
-					b->buffer[b->block + j] = b->buffer[i] - 2;   // TODO: bugs ??
-				} else {
-					b->buffer[b->block + j] = b->buffer[i];
-				}
-				j++;
-			}
-			k++;
-		}
-	*/
 #ifdef __OPENBEACON_COMUNICATION_H__WITH_ENCODING	
 	typedef struct {
 		unsigned portCHAR buffer[ STRUKTUR_BUFFER_MAX_LENGTH ];
@@ -125,10 +95,11 @@ extern portCHAR putDataToUSBChannel_buffer[];
 		Send and Recive Packets over USB(HOST)
 	*/
 	portCHAR putDataToUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR blen) {
-		
 		static unsigned portLONG len=0;
 		OBD2HW_Header *ph = (OBD2HW_Header *)putDataToUSBChannel_buffer;
-
+		unsigned portCHAR tmp_buffer[150];
+		unsigned int i, j;
+		
 		if( USBCHANNEL_BUFFER_SIZE-len>blen) {
 			memcpy(putDataToUSBChannel_buffer+len, buffer, blen);
 			len += blen;
@@ -137,50 +108,48 @@ extern portCHAR putDataToUSBChannel_buffer[];
 		}
 
 		if(len>= sizeof(OBD2HW_Header)+ph->length) { // can full send
-			// TODO: encoding for usb-channel
-			debug_msg("putData: ", 9);
-			debug_hex_msg((char*)putDataToUSBChannel_buffer, sizeof(OBD2HW_Header)+ph->length);
-			
-			ph->start		= 0;
-			ph->reserved	= 0;
-			
-			write_to_channel( (char*)putDataToUSBChannel_buffer, sizeof(OBD2HW_Header)+ph->length, fd );
+			tmp_buffer[0] = putDataToUSBChannel_buffer[0];     //  is 0
+			j=1;
+			for(i=1; i<sizeof(OBD2HW_Header)+ph->length; i++) {
+				// encoding for usb-channel
+				if( putDataToUSBChannel_buffer[i]==0x00 || (putDataToUSBChannel_buffer[i]>0x00 && putDataToUSBChannel_buffer[i]<=0x1F) ) {
+					tmp_buffer[j] = 0x01;
+					j++;
+					tmp_buffer[j] = putDataToUSBChannel_buffer[i]+0x20;
+				} else {
+					tmp_buffer[j] = putDataToUSBChannel_buffer[i];
+				}				
+				j++;
+			}		
+			write_to_channel( (char*)tmp_buffer, j, fd );
 			
 			len -= sizeof(OBD2HW_Header)+ph->length;
 			memmove( putDataToUSBChannel_buffer, putDataToUSBChannel_buffer+sizeof(OBD2HW_Header)+ph->length, len );
 		}		
-
-// write_to_channel( (char*)buffer, blen, fd );
-		
 		return STATUS_OK;
 	}
 	portCHAR getDataFromUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR *blen ) {
-		static unsigned portLONG len=0, prev_len;
-			
-		OBD2HW_Header *ph;
-		unsigned int i;
+		static portLONG len=0, prev_len;
 		
-		while(1) { 	
-			if( len > sizeof(OBD2HW_Header) ) {
+		OBD2HW_Header *ph;
+		unsigned int i, j;
+		static unsigned portCHAR tmp_buffer[150];
+		static unsigned int tmp_len = 0;
+		int tmp_switch_break;
+		
+		while(1) {		
+			if( len > (portLONG)sizeof(OBD2HW_Header) ) {
 				ph = (OBD2HW_Header *) getDataFromUSBChannel_buffer;
 				
-				if(len >= sizeof(OBD2HW_Header) + ph->length  	// ) {// packet full recive
+				if(len >= (portLONG)(sizeof(OBD2HW_Header) + ph->length)  	// ) {// packet full recive
 					&& *blen>= sizeof(OBD2HW_Header) + ph->length) { 
-					ph->start		= 0;						
-					ph->reserved = 0;
 						
-					// TODO: buffer overflow
-					for(i=0; i<sizeof(OBD2HW_Header)+ph->length; i++) {
-						// TODO: decoding from usb-channel
-			
+					for(i=0; i<sizeof(OBD2HW_Header)+ph->length; i++) {	
 						buffer[i] = getDataFromUSBChannel_buffer[i];
 						*blen = sizeof(OBD2HW_Header)+ph->length;
 					}			
 					
 					len -= *blen;
-					
-					debug_msg("getData: ", 9);					
-					debug_hex_msg((char*)buffer, *blen);
 					memmove( getDataFromUSBChannel_buffer, getDataFromUSBChannel_buffer+(*blen), len );
 				
 					return STATUS_OK;
@@ -188,10 +157,51 @@ extern portCHAR putDataToUSBChannel_buffer[];
 			}
 			prev_len = len;
 			if( USBCHANNEL_BUFFER_SIZE-len>0 ) {
-				len += read_to_channel( (char*)(getDataFromUSBChannel_buffer+len), USBCHANNEL_BUFFER_SIZE-len, fd );
+				unsigned int htmp_len = 150;
+				
+				if(( USBCHANNEL_BUFFER_SIZE-len)>(portLONG)(150-htmp_len-tmp_len) ) {
+					tmp_len += read_to_channel( (char*) (tmp_buffer+tmp_len),  htmp_len, fd);
+				} else {
+					tmp_len += read_to_channel( (char*) (tmp_buffer+tmp_len),  (USBCHANNEL_BUFFER_SIZE-len), fd);
+				}
+				
+				j=0;
+				tmp_switch_break = 0;
+				for(i=0; i<tmp_len && tmp_switch_break==0; i++) {
+					// decoding data from usb-channel					
+					switch( tmp_buffer[i] ) {
+						case 0x00:	
+//									ph = (OBD2HW_Header *) getDataFromUSBChannel_buffer;
+//									if( !(ph->start==0 && len+j==ph->length+sizeof(OBD2HW_Header)) ) {
+//										len=-j;
+//										prev_len=0;
+//									}
+									
+									getDataFromUSBChannel_buffer[len+j] = tmp_buffer[i];
+									break;
+						case 0x01:
+									if(i<(tmp_len-1) ) {
+										i++;
+										getDataFromUSBChannel_buffer[len+j] = tmp_buffer[i]-0x20;
+									} else {
+										tmp_buffer[0] = tmp_buffer[i];
+										tmp_switch_break=1;
+										j--;
+										i--;
+									}
+									break;
+						default:
+									getDataFromUSBChannel_buffer[len+j] = tmp_buffer[i];
+					}
+					j++;
+				}
+				len += j;
+				tmp_len -= i;
 			}
 
-			if(prev_len == len) return STATUS_ERROR_NO_DATA;
+			if(prev_len == len) {
+				return STATUS_ERROR_NO_DATA;
+			}
 		}		
 		return STATUS_ERROR_NO_DATA;
 	}
