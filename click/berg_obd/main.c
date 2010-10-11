@@ -18,8 +18,33 @@
 
 #define BUFFERSIZE 2048
 
-portCHAR getDataFromUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
-portCHAR putDataToUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b0[ USBCHANNEL_BUFFER_SIZE ], b1[ USBCHANNEL_BUFFER_SIZE ], b2[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b3[ USBCHANNEL_BUFFER_SIZE ], b4[ USBCHANNEL_BUFFER_SIZE ], b5[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b6[ USBCHANNEL_BUFFER_SIZE ], b7[ USBCHANNEL_BUFFER_SIZE ], b8[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b9[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b10[ USBCHANNEL_BUFFER_SIZE ], b11[ USBCHANNEL_BUFFER_SIZE ], b12[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b13[ USBCHANNEL_BUFFER_SIZE ], b14[ USBCHANNEL_BUFFER_SIZE ], b15[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b16[ USBCHANNEL_BUFFER_SIZE ], b17[ USBCHANNEL_BUFFER_SIZE ], b18[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR b19[ USBCHANNEL_BUFFER_SIZE ];
+
+portCHAR t0[ 150 ], t1[ 150 ], t2[ 150 ];
+portCHAR t3[ 150 ], t4[ 150 ], t5[ 150 ];
+portCHAR t6[ 150 ], t7[ 150 ], t8[ 150 ];
+portCHAR t9[ 150 ];
+
+
+static_buffer_info sbi_dev[10] = {	
+							 { b0, 0, b10, 0, t0, 0  }
+							,{ b1, 0, b11, 0, t1, 0  }
+							,{ b2, 0, b12, 0, t2, 0  }
+							,{ b3, 0, b13, 0, t3, 0  }
+							,{ b4, 0, b14, 0, t4, 0  }
+							,{ b5, 0, b15, 0, t5, 0  }
+							,{ b6, 0, b16, 0, t6, 0  }
+							,{ b7, 0, b17, 0, t7, 0  }
+							,{ b8, 0, b18, 0, t8, 0  }
+							,{ b9, 0, b19, 0, t9, 0  }
+						};
 
 unsigned int write_to_channel( portCHAR* out, unsigned portCHAR len, int device ) {
 	return write_obd_serial( device, (char*)out, len );
@@ -63,7 +88,7 @@ int use_dev(int argc, char** argv) {
 	device_list = (struct device_data*) calloc ( argc+1, sizeof(struct device_data) );
 	device_list_size = argc;
 
-	for(j=0; j<argc; j++) {
+	for(j=0; j<argc; j++) {	
 		device_list[j].device_name = argv[j];
 
 		device_list[j].rx_running = 1;

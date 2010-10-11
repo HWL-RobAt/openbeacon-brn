@@ -298,9 +298,9 @@ main_input_task (void *pvParameters)
 					    
 					pc2obdh->status = STATUS_hw_rxtx_test;
 					pc2obdh->count  = tx_count-1;
-					pc2obdh->rate     = nRFAPI_GetTxRate();
-					pc2obdh->power  = nRFAPI_GetTxPower();
-					pc2obdh->channel = DEFAULT_CHANNEL;
+					pc2obdh->rate     = 0;
+					pc2obdh->power  = 0;
+					pc2obdh->channel = 0;
 					   
 					memcpy(pc2obdh->openbeacon_dmac, mac, sizeof(mac));
 					memcpy(pc2obdh->openbeacon_smac, mac, sizeof(mac));

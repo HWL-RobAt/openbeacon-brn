@@ -48,6 +48,11 @@ portCHAR usb_status[10] = {0,0,0,0,0,0,0,0,0,0};
 
 portCHAR getDataFromUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
 portCHAR putDataToUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
+portCHAR tmp_buffer[150];
+
+static_buffer_info sbi_dev[1] = 	{	
+							{ getDataFromUSBChannel_buffer, 0, putDataToUSBChannel_buffer, 0, tmp_buffer, 0 }
+						};
 
 void Msg2USB_encap(unsigned char* msg, unsigned portCHAR len, unsigned portCHAR type) {
 	OBD2HW_Header *ph = (OBD2HW_Header *) msg;

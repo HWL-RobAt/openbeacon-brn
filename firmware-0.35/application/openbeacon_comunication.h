@@ -78,8 +78,16 @@ void debug_msg(char* msg, unsigned portCHAR msg_len);
 void debug_hex_msg(char* msg, unsigned portCHAR msg_len);
 
 #define USBCHANNEL_BUFFER_SIZE     500
-extern portCHAR getDataFromUSBChannel_buffer[];
-extern portCHAR putDataToUSBChannel_buffer[];
+typedef struct {
+	portCHAR *getDataFromUSBChannel_buffer;
+	portLONG getDataFromUSBChannel_buffer_len;
+	portCHAR *putDataToUSBChannel_buffer;
+	portLONG putDataToUSBChannel_buffer_len;	
+	portCHAR *tmp_buffer;
+	portCHAR tmp_buffer_len;
+} __attribute__ ((packed)) static_buffer_info;
+
+extern static_buffer_info sbi_dev[];
 
 #define STATUS_OK							0
 #define STATUS_ERROR_NO_DATA				-1
@@ -95,81 +103,77 @@ extern portCHAR putDataToUSBChannel_buffer[];
 		Send and Recive Packets over USB(HOST)
 	*/
 	portCHAR putDataToUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR blen) {
-		static unsigned portLONG len=0;
-		OBD2HW_Header *ph = (OBD2HW_Header *)putDataToUSBChannel_buffer;
+		OBD2HW_Header *ph = (OBD2HW_Header *)sbi_dev[fd].putDataToUSBChannel_buffer;
 		unsigned portCHAR tmp_buffer[150];
 		unsigned int i, j;
 		
-		if( USBCHANNEL_BUFFER_SIZE-len>blen) {
-			memcpy(putDataToUSBChannel_buffer+len, buffer, blen);
-			len += blen;
+		if( USBCHANNEL_BUFFER_SIZE-sbi_dev[fd].putDataToUSBChannel_buffer_len>blen) {
+			memcpy(sbi_dev[fd].putDataToUSBChannel_buffer+sbi_dev[fd].putDataToUSBChannel_buffer_len, buffer, blen);
+			sbi_dev[fd].putDataToUSBChannel_buffer_len += blen;
 		} else { // TODO: other error?
 			return STATUS_ERROR_NO_DATA;
 		}
 
-		if(len>= sizeof(OBD2HW_Header)+ph->length) { // can full send
-			tmp_buffer[0] = putDataToUSBChannel_buffer[0];     //  is 0
+		if(sbi_dev[fd].putDataToUSBChannel_buffer_len>= (portLONG)(sizeof(OBD2HW_Header)+ph->length) ) { // can full send
+			tmp_buffer[0] = sbi_dev[fd].putDataToUSBChannel_buffer[0];     //  is 0
 			j=1;
 			for(i=1; i<sizeof(OBD2HW_Header)+ph->length; i++) {
 				// encoding for usb-channel
-				if( putDataToUSBChannel_buffer[i]==0x00 || (putDataToUSBChannel_buffer[i]>0x00 && putDataToUSBChannel_buffer[i]<=0x1F) ) {
+				if( sbi_dev[fd].putDataToUSBChannel_buffer[i]==0x00 || (sbi_dev[fd].putDataToUSBChannel_buffer[i]>0x00 && sbi_dev[fd].putDataToUSBChannel_buffer[i]<=0x1F) ) {
 					tmp_buffer[j] = 0x01;
 					j++;
-					tmp_buffer[j] = putDataToUSBChannel_buffer[i]+0x20;
+					tmp_buffer[j] = sbi_dev[fd].putDataToUSBChannel_buffer[i]+0x20;
 				} else {
-					tmp_buffer[j] = putDataToUSBChannel_buffer[i];
+					tmp_buffer[j] = sbi_dev[fd].putDataToUSBChannel_buffer[i];
 				}				
 				j++;
 			}		
 			write_to_channel( (char*)tmp_buffer, j, fd );
 			
-			len -= sizeof(OBD2HW_Header)+ph->length;
-			memmove( putDataToUSBChannel_buffer, putDataToUSBChannel_buffer+sizeof(OBD2HW_Header)+ph->length, len );
+			sbi_dev[fd].putDataToUSBChannel_buffer_len -= sizeof(OBD2HW_Header)+ph->length;
+			memmove( sbi_dev[fd].putDataToUSBChannel_buffer, sbi_dev[fd].putDataToUSBChannel_buffer+sizeof(OBD2HW_Header)+ph->length, sbi_dev[fd].putDataToUSBChannel_buffer_len );
 		}		
 		return STATUS_OK;
 	}
 	portCHAR getDataFromUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR *blen ) {
-		static portLONG len=0, prev_len;
-		
+		portLONG prev_len;	
 		OBD2HW_Header *ph;
-		unsigned int i, j;
-		static unsigned portCHAR tmp_buffer[150];
-		static unsigned int tmp_len = 0;
+		int i, j;
 		int tmp_switch_break;
 		
 		while(1) {		
-			if( len > (portLONG)sizeof(OBD2HW_Header) ) {
-				ph = (OBD2HW_Header *) getDataFromUSBChannel_buffer;
+			if( sbi_dev[fd].getDataFromUSBChannel_buffer_len > (portLONG)sizeof(OBD2HW_Header) ) {
+				ph = (OBD2HW_Header *) sbi_dev[fd].getDataFromUSBChannel_buffer;
 				
-				if(len >= (portLONG)(sizeof(OBD2HW_Header) + ph->length)  	// ) {// packet full recive
+				if(sbi_dev[fd].getDataFromUSBChannel_buffer_len >= (portLONG)(sizeof(OBD2HW_Header) + ph->length)  	// ) {// packet full recive
 					&& *blen>= sizeof(OBD2HW_Header) + ph->length) { 
 						
-					for(i=0; i<sizeof(OBD2HW_Header)+ph->length; i++) {	
-						buffer[i] = getDataFromUSBChannel_buffer[i];
+					for(i=0; i<(int)(sizeof(OBD2HW_Header)+ph->length); i++) {	
+						buffer[i] = sbi_dev[fd].getDataFromUSBChannel_buffer[i];
 						*blen = sizeof(OBD2HW_Header)+ph->length;
 					}			
 					
-					len -= *blen;
-					memmove( getDataFromUSBChannel_buffer, getDataFromUSBChannel_buffer+(*blen), len );
+					sbi_dev[fd].getDataFromUSBChannel_buffer_len -= *blen;
+					memmove( sbi_dev[fd].getDataFromUSBChannel_buffer, sbi_dev[fd].getDataFromUSBChannel_buffer+(*blen), sbi_dev[fd].getDataFromUSBChannel_buffer_len );
 				
 					return STATUS_OK;
 				}
 			}
-			prev_len = len;
-			if( USBCHANNEL_BUFFER_SIZE-len>0 ) {
-				unsigned int htmp_len = 150;
+			prev_len = sbi_dev[fd].getDataFromUSBChannel_buffer_len;
+			if( USBCHANNEL_BUFFER_SIZE-sbi_dev[fd].getDataFromUSBChannel_buffer_len>0 ) {
+				unsigned int htmp_len = sizeof(OBD2HW_Header);
 				
-				if(( USBCHANNEL_BUFFER_SIZE-len)>(portLONG)(150-htmp_len-tmp_len) ) {
-					tmp_len += read_to_channel( (char*) (tmp_buffer+tmp_len),  htmp_len, fd);
+				if(( USBCHANNEL_BUFFER_SIZE-sbi_dev[fd].getDataFromUSBChannel_buffer_len)>(portLONG)(150-htmp_len-sbi_dev[fd].tmp_buffer_len) ) {
+					sbi_dev[fd].tmp_buffer_len += read_to_channel( (char*) (sbi_dev[fd].tmp_buffer+sbi_dev[fd].tmp_buffer_len),  htmp_len, fd);
 				} else {
-					tmp_len += read_to_channel( (char*) (tmp_buffer+tmp_len),  (USBCHANNEL_BUFFER_SIZE-len), fd);
+					sbi_dev[fd].tmp_buffer_len += read_to_channel( (char*) (sbi_dev[fd].tmp_buffer+sbi_dev[fd].tmp_buffer_len),  (USBCHANNEL_BUFFER_SIZE-sbi_dev[fd].getDataFromUSBChannel_buffer_len), fd);
 				}
 				
 				j=0;
 				tmp_switch_break = 0;
-				for(i=0; i<tmp_len && tmp_switch_break==0; i++) {
+				for(i=0; i<sbi_dev[fd].tmp_buffer_len && tmp_switch_break==0; i++) {
 					// decoding data from usb-channel					
-					switch( tmp_buffer[i] ) {
+					switch( sbi_dev[fd].tmp_buffer[i] ) {
 						case 0x00:	
 //									ph = (OBD2HW_Header *) getDataFromUSBChannel_buffer;
 //									if( !(ph->start==0 && len+j==ph->length+sizeof(OBD2HW_Header)) ) {
@@ -177,29 +181,29 @@ extern portCHAR putDataToUSBChannel_buffer[];
 //										prev_len=0;
 //									}
 									
-									getDataFromUSBChannel_buffer[len+j] = tmp_buffer[i];
+									sbi_dev[fd].getDataFromUSBChannel_buffer[sbi_dev[fd].getDataFromUSBChannel_buffer_len+j] = sbi_dev[fd].tmp_buffer[i];
 									break;
 						case 0x01:
-									if(i<(tmp_len-1) ) {
+									if(i<(sbi_dev[fd].tmp_buffer_len-1) ) {
 										i++;
-										getDataFromUSBChannel_buffer[len+j] = tmp_buffer[i]-0x20;
+										sbi_dev[fd].getDataFromUSBChannel_buffer[sbi_dev[fd].getDataFromUSBChannel_buffer_len+j] = sbi_dev[fd].tmp_buffer[i]-0x20;
 									} else {
-										tmp_buffer[0] = tmp_buffer[i];
+										sbi_dev[fd].tmp_buffer[0] = sbi_dev[fd].tmp_buffer[i];
 										tmp_switch_break=1;
 										j--;
 										i--;
 									}
 									break;
 						default:
-									getDataFromUSBChannel_buffer[len+j] = tmp_buffer[i];
+									sbi_dev[fd].getDataFromUSBChannel_buffer[sbi_dev[fd].getDataFromUSBChannel_buffer_len+j] = sbi_dev[fd].tmp_buffer[i];
 					}
 					j++;
 				}
-				len += j;
-				tmp_len -= i;
+				sbi_dev[fd].getDataFromUSBChannel_buffer_len += j;
+				sbi_dev[fd].tmp_buffer_len -= i;
 			}
 
-			if(prev_len == len) {
+			if(prev_len == sbi_dev[fd].getDataFromUSBChannel_buffer_len) {
 				return STATUS_ERROR_NO_DATA;
 			}
 		}		
