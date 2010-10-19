@@ -51,24 +51,25 @@ portCHAR putDataToUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
 portCHAR tmp_buffer[150];
 
 static_buffer_info sbi_dev[1] = 	{	
-							{ getDataFromUSBChannel_buffer, 0, putDataToUSBChannel_buffer, 0, tmp_buffer, 0 }
+							{ getDataFromUSBChannel_buffer, 0, putDataToUSBChannel_buffer, 0, tmp_buffer, 0, 0 }
 						};
 
 void Msg2USB_encap(unsigned char* msg, unsigned portCHAR len, unsigned portCHAR type) {
 	OBD2HW_Header *ph = (OBD2HW_Header *) msg;
+	ph->start		= 0;
         ph->type    = type;
 	ph->length = len-sizeof(OBD2HW_Header);
+	ph->reserved	= 0;
 	
-//	vUSBSendBytes((char*)msg, len);	
 	putDataToUSBChannel(0,  msg,  len);
 }
 
-unsigned int read_to_channel( portCHAR* out, unsigned portCHAR len, portLONG device ) {
+unsigned int read_to_channel( portCHAR* out, portLONG len, portLONG device ) {
 	if(device>0) return 0;
 	return vUSBRecvByte (out, len);
 }
 
-unsigned int write_to_channel( portCHAR* out, unsigned portCHAR len, portLONG device ) {
+unsigned int write_to_channel( portCHAR* out, portLONG len, portLONG device ) {
 	if(device>0) return 0;
 	vUSBSendBytes((char*)out, len, 10);
 	return len;
@@ -88,7 +89,7 @@ void debug_msg(char* msg, unsigned portCHAR msg_len) {
 	ph->length	= msg_len;
 	ph->reserved	= 0;
 	
-//	vUSBSendBytes(buffer, msg_len+sizeof(OBD2HW_Header), 10);	
+//	putDataToUSBChannel(0,  buffer,  msg_len+sizeof(OBD2HW_Header));
 }
 void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {	
 	portCHAR buffer[300];
@@ -104,8 +105,8 @@ void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {
         ph->type		= MONITOR_PRINT;
 	ph->length	= msg_len;
 	ph->reserved	= 0;
-	
-//	vUSBSendBytes(buffer, msg_len+sizeof(OBD2HW_Header), 10);		
+
+//	putDataToUSBChannel(0,  buffer,  msg_len+sizeof(OBD2HW_Header));	
 }
 
 extern char USB_SYNC;
@@ -124,9 +125,9 @@ usbshell_task (void *pvParameters)
 	// workloop
         for (;;)
         {
-		if( xTaskGetTickCount()-xLastBlink>100 ) {
-//			memcpy( packet+sizeof(OBD2HW_Header), "get? ", 5);
-//			Msg2USB_encap(packet, 5+sizeof(OBD2HW_Header), MONITOR_PRINT);
+		if( xTaskGetTickCount()-xLastBlink>5000 ) {
+			memcpy( packet+sizeof(OBD2HW_Header), "get? ", 5);
+			Msg2USB_encap(packet, 5+sizeof(OBD2HW_Header), MONITOR_PRINT);
 				
 			xLastBlink = xTaskGetTickCount();
 		}

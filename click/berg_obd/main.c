@@ -46,11 +46,11 @@ static_buffer_info sbi_dev[10] = {
 							,{ b9, 0, b19, 0, t9, 0  }
 						};
 
-unsigned int write_to_channel( portCHAR* out, unsigned portCHAR len, int device ) {
+unsigned int write_to_channel( portCHAR* out, portLONG len, int device ) {
 	return write_obd_serial( device, (char*)out, len );
 }
 
-unsigned int  read_to_channel( portCHAR* out, unsigned portCHAR len, int device ) {
+unsigned int  read_to_channel( portCHAR* out, portLONG len, int device ) {
 	return read_obd_serial(device, (char*)out, len );
 }
 
@@ -179,14 +179,14 @@ void debug_msg(char* msg, unsigned portCHAR msg_len) {
 }
 void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {
 	int i;
-//	printf("HEX:\n\t");
+	printf("HEX:\n\t");
 	
-//	for(i=0; i<msg_len; i++) {
-//		if(i%2==0) printf("%.2X", msg[i] );
-//		else printf("%.2X ", msg[i] );
-//	}
+	for(i=0; i<msg_len; i++) {
+		if(i%2==0) printf("%.2X", msg[i] );
+		else printf("%.2X ", msg[i] );
+	}
 	
-//	printf("\n");
+	printf("\n");
 }
 
 void *rx_from_ob_to_click_thread(void *p)
@@ -223,8 +223,7 @@ void *rx_from_ob_to_click_thread(void *p)
 			}
 		} else {
 			printf("BUFFER(%d):\n", usb_buffer.length);
-			for(i=0; i<usb_buffer.length; i++) printf("%c", usb_buffer.buffer[i]); 
-			printf("\n");
+			debug_hex_msg(usb_buffer.buffer, usb_buffer.length);
 		}		
 	}  
 	pthread_exit(NULL);
