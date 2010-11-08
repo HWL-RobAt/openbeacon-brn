@@ -58,7 +58,7 @@ void *tx_from_click_to_ob_thread(void *p);
 void *rx_from_ob_to_click_thread(void *p);
 
 struct device_data {
-	char* device_name;
+	char device_name[50];
 	
 	int rx_running;
 	int tx_running;
@@ -88,8 +88,8 @@ int use_dev(int argc, char** argv) {
 	device_list = (struct device_data*) calloc ( argc+1, sizeof(struct device_data) );
 	device_list_size = argc;
 
-	for(j=0; j<argc; j++) {	
-		device_list[j].device_name = argv[j];
+	for(j=0; j<argc; j++) {
+		sprintf(device_list[j].device_name, "/dev/ttyACM%s\0", argv[j] );
 
 		device_list[j].rx_running = 1;
 		device_list[j].tx_running = 1;
@@ -137,7 +137,7 @@ int use_dev(int argc, char** argv) {
 }
 int use_help(int argc, char** argv) { return -1; }
 
-static struct param2func pam[2] = {	  {"-d",  use_dev, "[DEVICE1] [DEVICE2] ... [DEVICEn] - USB Device for OpenBeacon HW\n" }
+static struct param2func pam[2] = {	  {"-d",  use_dev, "[DEVICE1] [DEVICE2] ... [DEVICEn] - USB Device for OpenBeacon HW\nsample: berg_odb -d 0 1 - for device ttyACM0 und ttyACM1\n" }
 					, {"--help",  use_help, "print this help text\n" } };
 static struct hListe plist = { (int)sizeof(pam)/sizeof(struct param2func), (struct param2func *)&pam };
 
@@ -179,8 +179,7 @@ void debug_msg(char* msg, unsigned portCHAR msg_len) {
 }
 void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {
 	int i;
-	printf("HEX:\n\t");
-	
+		
 	for(i=0; i<msg_len; i++) {
 		if(i%2==0) printf("%.2X", msg[i] );
 		else printf("%.2X ", msg[i] );
@@ -211,9 +210,15 @@ void *rx_from_ob_to_click_thread(void *p)
 			usb_buffer.buffer[sizeof(OBD2HW_Header) + ph->length] = 0;
 			fprintf(dev->output_file, "[Debug: Read %d Bytes: %s\n", usb_buffer.length, &(usb_buffer.buffer[ sizeof(OBD2HW_Header) ] ));
 			fflush(dev->output_file);
+		}else if ( ph->type == MONITOR_HEX_PRINT ) { 
+			printf("MONITOR_HEX_PRINT:\n\t");
+			usb_buffer.buffer[sizeof(OBD2HW_Header) + ph->length] = 0;
+			debug_hex_msg(&(usb_buffer.buffer[ sizeof(OBD2HW_Header) + sizeof(Click2OBD_header) - OPENBEACON_MACSIZE] ), usb_buffer.length-sizeof(OBD2HW_Header)-sizeof(Click2OBD_header)+OPENBEACON_MACSIZE );
+			fflush(stdout);
 		}else if ( ph->type == MONITOR_PRINT ) {
 			// print monitor prints
 			usb_buffer.buffer[sizeof(OBD2HW_Header) + ph->length ] = 0;
+			
 			for(i=0; i<ph->length; i++) {
 				printf("%c", usb_buffer.buffer[sizeof(OBD2HW_Header) + i]);
 				if(usb_buffer.buffer[sizeof(OBD2HW_Header) + i] =='\r') {

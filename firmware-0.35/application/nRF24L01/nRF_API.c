@@ -138,7 +138,7 @@ unsigned char nRFAPI_GetTxPower()
 {
     unsigned char ret;
 	
-    ret = nRFCMD_RegRead(RF_SETUP ) & 6>>1 ;
+    ret = (nRFCMD_RegRead(RF_SETUP ) >>1) &  3;
     return ret;
 }
 
@@ -153,7 +153,7 @@ unsigned char nRFAPI_GetTxRate()
 {
     unsigned char ret;
 	
-    ret = nRFCMD_RegRead(RF_SETUP )>>3;	
+    ret = (nRFCMD_RegRead(RF_SETUP )>>3) & 1;	
     return ret;
 }
 

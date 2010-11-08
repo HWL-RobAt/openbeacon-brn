@@ -34,4 +34,6 @@ extern FIFOQueue hw_buffer_queue;
 
 // Data für die Queue, evtl. struct Click2OBD_header verwenden
 
+#define SEND_TESTPACKET_INTERVALL	10
+
 #endif/*__MAIN_H__*/

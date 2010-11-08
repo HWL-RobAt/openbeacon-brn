@@ -60,7 +60,6 @@ void FIFOQueue_debug(FIFOQueue* fq, void (*FIFOQueue_function)(unsigned char* en
         printf("\tIN(%d), OUT(%d), COUNT(%d)\n", fq->queue_in, fq->queue_out, fq->queue_count);
         printf("\tBuffer: ");
 
-        //        99                   9               0
         for(i=fq->queue_out; (i+1)%fq->queue_count!=fq->queue_in; i++ ) {
                 FIFOQueue_function( fq->queue_mem+(i+1)%fq->queue_count*fq->queue_struct_len );
         }
@@ -68,20 +67,6 @@ void FIFOQueue_debug(FIFOQueue* fq, void (*FIFOQueue_function)(unsigned char* en
 }
 #endif
 
-
-/*
-        count:   10
-
-	in:      out:        elements:
-         0         9			0
-         1         9                  1
-         2         9                  2
-	 7         9			7
-         8         9                  8
-	 9         9                  9
-
-
-*/
 
 
 

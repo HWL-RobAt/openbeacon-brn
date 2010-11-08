@@ -89,7 +89,7 @@ void debug_msg(char* msg, unsigned portCHAR msg_len) {
 	ph->length	= msg_len;
 	ph->reserved	= 0;
 	
-//	putDataToUSBChannel(0,  buffer,  msg_len+sizeof(OBD2HW_Header));
+	putDataToUSBChannel(0,  (unsigned portCHAR*)buffer,  msg_len+sizeof(OBD2HW_Header));
 }
 void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {	
 	portCHAR buffer[300];
@@ -102,11 +102,11 @@ void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {
 	}
 	
 	ph->start		= 0;
-        ph->type		= MONITOR_PRINT;
+        ph->type		= MONITOR_HEX_PRINT;
 	ph->length	= msg_len;
 	ph->reserved	= 0;
 
-//	putDataToUSBChannel(0,  buffer,  msg_len+sizeof(OBD2HW_Header));	
+	putDataToUSBChannel(0,  (unsigned portCHAR*)buffer,  msg_len+sizeof(OBD2HW_Header));	
 }
 
 extern char USB_SYNC;
@@ -114,7 +114,7 @@ extern char USB_SYNC;
 void
 usbshell_task (void *pvParameters)
 {
-	portTickType xLastBlink=0;
+//	portTickType xLastBlink=0;
 	unsigned portCHAR packet_len=0;
 	OBD2HW_Header *ph;
 	Click2OBD_header *c2obdh;
@@ -125,13 +125,6 @@ usbshell_task (void *pvParameters)
 	// workloop
         for (;;)
         {
-		if( xTaskGetTickCount()-xLastBlink>5000 ) {
-			memcpy( packet+sizeof(OBD2HW_Header), "get? ", 5);
-			Msg2USB_encap(packet, 5+sizeof(OBD2HW_Header), MONITOR_PRINT);
-				
-			xLastBlink = xTaskGetTickCount();
-		}
-		
 		// recive from usb
 		packet_len = PACKET_SIZE+CHUNK_SIZE;
 	
@@ -147,17 +140,9 @@ usbshell_task (void *pvParameters)
 			if(ph->type==PACKET_DATA) {
 				if(c2obdh->status&STATUS_NO_TX ) {  // no send 
 					c2obdh->status = c2obdh->status | STATUS_ECHO_OK | STATUS_ECHO_ERROR;   // set STATUS_ECHO_OK and STATUS_ECHO_ERROR to 1 => Testpacket Antwort
-					// TODO: zeitliche Bewertung
-
-					
 					Msg2USB_encap(packet, ph->length+sizeof(OBD2HW_Header), PACKET_DATA);
-				} else {						
-					if( FIFOQueue_push( &hw_buffer_queue,  (unsigned char**)&c2obdh) ) {
-						memcpy( packet+sizeof(OBD2HW_Header), "push into queue\n\r", 17);
-					} else {
-						memcpy( packet+sizeof(OBD2HW_Header), "no packet send \n\r", 17);
-					}
-					Msg2USB_encap(packet, 17+sizeof(OBD2HW_Header), MONITOR_PRINT);
+				} else {					
+					FIFOQueue_push( &hw_buffer_queue,  (unsigned char**)&c2obdh);
 				}
 			}
 		}

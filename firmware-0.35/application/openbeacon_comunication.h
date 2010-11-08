@@ -1,3 +1,5 @@
+// TODO: make function putData* and getData* THREAD-SAVE
+
 #ifndef __OPENBEACON_COMUNICATION_H__
 #define __OPENBEACON_COMUNICATION_H__
 
@@ -12,6 +14,8 @@
 #define DEBUG_PRINT 		3
 #define MONITOR_PRINT 		4
 #define MONITOR_INPUT 		5
+#define MONITOR_HEX_PRINT   6
+#define DEBUG_HEX_PRINT	7
 
 #ifndef portCHAR
 	#define portCHAR	char
@@ -20,7 +24,7 @@
 	#define portLONG	int
 #endif
 #ifndef portTickType 
-	#define portTickType	unsigned long
+	#define portTickType	unsigned short
 #endif
 
 typedef struct {
@@ -62,12 +66,12 @@ typedef struct {
 	unsigned portCHAR number;
 	portTickType timestamp_send;	
 	portTickType timestamp_recive;
-	// extensions 
+	// extensions
 	// Testbegin, Testend
 	unsigned portLONG test_begin;
 	unsigned portLONG test_end;
 	unsigned portLONG test_time;
-} __attribute__ ((packed)) HW_rxtx_Test;   // 6 + 5*4 = 26    =>  26+15+4 = 30 + 15 = 45 - 4 = 41
+} __attribute__ ((packed)) HW_rxtx_Test;   // 5 + 5 + 5*4 = 20 + 10 = 30
 
 portCHAR putDataToUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR blen);
 portCHAR getDataFromUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR *blen );
@@ -85,7 +89,7 @@ typedef struct {
 	portLONG putDataToUSBChannel_buffer_len;	
 	portCHAR *tmp_buffer;
 	portLONG tmp_buffer_len;
-	portCHAR reserved;
+	portLONG putDataToUSBChannel_lastpacket;
 } __attribute__ ((packed)) static_buffer_info;
 
 extern static_buffer_info sbi_dev[];
@@ -132,6 +136,8 @@ extern static_buffer_info sbi_dev[];
 			tmp_buffer[j] = 0;  write_to_channel( (char*)tmp_buffer, j+1, fd );
 			
 			sbi_dev[fd].putDataToUSBChannel_buffer_len -= sizeof(OBD2HW_Header)+ph->length;
+			if(sbi_dev[fd].putDataToUSBChannel_lastpacket<0) sbi_dev[fd].putDataToUSBChannel_lastpacket = 0;
+			
 			memmove( sbi_dev[fd].putDataToUSBChannel_buffer, sbi_dev[fd].putDataToUSBChannel_buffer+sizeof(OBD2HW_Header)+ph->length, sbi_dev[fd].putDataToUSBChannel_buffer_len );
 		}		
 		return STATUS_OK;
@@ -155,8 +161,9 @@ extern static_buffer_info sbi_dev[];
 					}			
 					
 					sbi_dev[fd].getDataFromUSBChannel_buffer_len -= *blen;
+					if(sbi_dev[fd].putDataToUSBChannel_lastpacket>0) sbi_dev[fd].putDataToUSBChannel_lastpacket -= sizeof(OBD2HW_Header)+ph->length;
+					
 					memmove( sbi_dev[fd].getDataFromUSBChannel_buffer, sbi_dev[fd].getDataFromUSBChannel_buffer+(*blen), sbi_dev[fd].getDataFromUSBChannel_buffer_len );
-				
 					return STATUS_OK;
 				}
 			}
@@ -171,7 +178,19 @@ extern static_buffer_info sbi_dev[];
 					switch( sbi_dev[fd].tmp_buffer[i] ) {
 						case 0x00:	if(i<(sbi_dev[fd].tmp_buffer_len-1) ) {
 										if( sbi_dev[fd].tmp_buffer[i+1]!=0) {
+											if( ((sbi_dev[fd].getDataFromUSBChannel_buffer_len-sbi_dev[fd].putDataToUSBChannel_lastpacket)+j )>0 ) { 								
+												if( ((sbi_dev[fd].getDataFromUSBChannel_buffer_len-sbi_dev[fd].putDataToUSBChannel_lastpacket)+j )>=(portLONG)sizeof(OBD2HW_Header) ) {
+													ph = (OBD2HW_Header *) (sbi_dev[fd].getDataFromUSBChannel_buffer+sbi_dev[fd].putDataToUSBChannel_lastpacket);
+													sbi_dev[fd].getDataFromUSBChannel_buffer_len = sbi_dev[fd].putDataToUSBChannel_lastpacket+sizeof(OBD2HW_Header)+ph->length;
+													j = 0;													
+												} else {
+													sbi_dev[fd].getDataFromUSBChannel_buffer_len = sbi_dev[fd].putDataToUSBChannel_lastpacket;
+													j = 0;														
+												}
+											}
+
 											sbi_dev[fd].getDataFromUSBChannel_buffer[sbi_dev[fd].getDataFromUSBChannel_buffer_len+j] = sbi_dev[fd].tmp_buffer[i];
+											sbi_dev[fd].putDataToUSBChannel_lastpacket = sbi_dev[fd].getDataFromUSBChannel_buffer_len+j;
 										} else {
 											j--;
 										}
