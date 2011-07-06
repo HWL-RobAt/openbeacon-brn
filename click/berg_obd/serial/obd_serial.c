@@ -64,13 +64,19 @@ int close_obd_serial(int fd) {
 }
 
 int write_obd_serial(int fd, char *buffer, int size) {
-  // translate datastream
-  write(fd, buffer, size);	
+  int ret = write(fd, buffer, size);
+  
+  if( ret != size ) {
+	ret = write(fd, buffer, size);
+	if( ret != size ) {
+		ret = write(fd, buffer, size);
+		if(ret != size) printf("writeodb:  ret(%d), size(%d)\n", ret, size);
+	}
+  }
   return 0;
 }
 
 int read_obd_serial(int fd, char *buffer, int size) {
-  // translate datastream
   int readbytes;
   readbytes = read(fd, buffer, size);
   return readbytes;
