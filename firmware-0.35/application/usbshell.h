@@ -23,6 +23,4 @@
 
 extern void usbshell_task(void *pvParameters);
 
-void Msg2USB_encap(unsigned char* msg, unsigned portCHAR len, unsigned portCHAR type);
-
 #endif /* __USBSHELL_H__ */

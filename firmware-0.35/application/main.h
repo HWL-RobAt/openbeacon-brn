@@ -26,11 +26,9 @@
 #define __MAIN_H__
 
 #include "openbeacon.h"
-#include "fifoqueue.h"
 
 extern OpenBeacon_data g_Beacon;
 extern portCHAR usb_status[10];
-extern FIFOQueue hw_buffer_queue;
 
 // Data für die Queue, evtl. struct Click2OBD_header verwenden
 

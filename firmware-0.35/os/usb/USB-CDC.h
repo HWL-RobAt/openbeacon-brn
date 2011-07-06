@@ -38,8 +38,18 @@
 
 #include "usb.h"
 
-#define USB_CDC_QUEUE_SIZE	4000
-#define CHUNK_SIZE    			60
+#define USB_CDC_QUEUE_SIZE	6000
+#define CHUNK_SIZE    			5
+
+// Structur for Send-/Recive
+typedef struct {
+	unsigned char type;
+	unsigned char length;
+	union {
+		char buffer[CHUNK_SIZE];
+		char* pbuffer;
+	} data;
+} chunk_queue ;
 
 /* Structure used to take a snapshot of the USB status from within the ISR. */
 typedef struct X_ISR_STATUS
@@ -84,6 +94,7 @@ void vUSBCDCTask (void *pvParameters);
 sent unless the port is connected. */
 void vUSBSendByte (portCHAR cByte);
 void vUSBSendBytes (portCHAR *buffer, portBASE_TYPE length);
+void vUSBZeroCopySendBytes (portCHAR *buffer, portBASE_TYPE length);
 
 portLONG vUSBRecvByte (portCHAR *cByte,portLONG size);
 

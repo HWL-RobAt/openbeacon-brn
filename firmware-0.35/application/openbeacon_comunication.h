@@ -94,6 +94,9 @@ typedef struct {
 
 extern static_buffer_info sbi_dev[];
 
+extern unsigned int thread_mutex_lock_read;
+extern unsigned int thread_mutex_lock_write;
+
 #define STATUS_OK							0
 #define STATUS_ERROR_NO_DATA				-1
 #define STRUKTUR_BUFFER_MAX_LENGTH	       200
@@ -108,6 +111,9 @@ extern static_buffer_info sbi_dev[];
 		Send and Recive Packets over USB(HOST)
 	*/
 	portCHAR putDataToUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR blen) {
+		// Threadsave:
+		while(thread_mutex_lock_write!=0) thread_mutex_lock_write=1;
+		
 		OBD2HW_Header *ph = (OBD2HW_Header *)sbi_dev[fd].putDataToUSBChannel_buffer;
 		unsigned portCHAR tmp_buffer[150];
 		unsigned int i, j;
@@ -116,6 +122,7 @@ extern static_buffer_info sbi_dev[];
 			memcpy(sbi_dev[fd].putDataToUSBChannel_buffer+sbi_dev[fd].putDataToUSBChannel_buffer_len, buffer, blen);
 			sbi_dev[fd].putDataToUSBChannel_buffer_len += blen;
 		} else { // TODO: other error?
+			thread_mutex_lock_write=0;
 			return STATUS_ERROR_NO_DATA;
 		}
 
@@ -140,6 +147,7 @@ extern static_buffer_info sbi_dev[];
 			
 			memmove( sbi_dev[fd].putDataToUSBChannel_buffer, sbi_dev[fd].putDataToUSBChannel_buffer+sizeof(OBD2HW_Header)+ph->length, sbi_dev[fd].putDataToUSBChannel_buffer_len );
 		}		
+		thread_mutex_lock_write=0;
 		return STATUS_OK;
 	}
 	portCHAR getDataFromUSBChannel(portLONG fd,  unsigned portCHAR* buffer,  unsigned portCHAR *blen ) {
@@ -147,6 +155,9 @@ extern static_buffer_info sbi_dev[];
 		OBD2HW_Header *ph;
 		int i, j;
 		int tmp_switch_break;
+		
+		// Threadsave:
+		while(thread_mutex_lock_read!=0) thread_mutex_lock_read=1;
 		
 		while(1) {		
 			if( sbi_dev[fd].getDataFromUSBChannel_buffer_len > (portLONG)sizeof(OBD2HW_Header) ) {
@@ -164,6 +175,7 @@ extern static_buffer_info sbi_dev[];
 					if(sbi_dev[fd].putDataToUSBChannel_lastpacket>0) sbi_dev[fd].putDataToUSBChannel_lastpacket -= sizeof(OBD2HW_Header)+ph->length;
 					
 					memmove( sbi_dev[fd].getDataFromUSBChannel_buffer, sbi_dev[fd].getDataFromUSBChannel_buffer+(*blen), sbi_dev[fd].getDataFromUSBChannel_buffer_len );
+					thread_mutex_lock_read=0;
 					return STATUS_OK;
 				}
 			}
@@ -221,9 +233,11 @@ extern static_buffer_info sbi_dev[];
 			}
 
 			if(prev_len == sbi_dev[fd].getDataFromUSBChannel_buffer_len) {
+				thread_mutex_lock_read=0;
 				return STATUS_ERROR_NO_DATA;
 			}
 		}		
+		thread_mutex_lock_read=0;
 		return STATUS_ERROR_NO_DATA;
 	}
 #endif

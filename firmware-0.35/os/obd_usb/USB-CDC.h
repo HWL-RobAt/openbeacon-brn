@@ -37,20 +37,34 @@
 #define USB_CDC_H
 
 #include "usb.h"
+#include "openbeacon_communication.h"
 
-#define USB_CDC_QUEUE_SIZE_TX	  500
-#define USB_CDC_QUEUE_SIZE_RX	1500
-#define CHUNK_SIZE    			5
-#define MAX_USB_BLOCK_SIZE    	50
+#define USB_CDC_QUEUE_SIZE_TX		35
+#define USB_CDC_QUEUE_SIZE_RX		35
+#define USB_CDC_QUEUE_SIZE_FREE	72
 
-typedef struct obd_chunk {
-	unsigned portCHAR type;   // 0 - data,  1 - pointer to data
+#define USB_MAX_TRANSMIT_COUNT	64
+#define USB_PACKETSIZE				60
+
+#define MEMBLOCK_TYPE_NORMAL		1
+#define MEMBLOCK_TYPE_DYNMEM		3
+#define MEMBLOCK_TYPE_USE			5
+#define MEMBLOCK_MAX_SIZE			100
+
+extern unsigned portLONG	rxCounter_enc, rxCounterMAX_enc, rxCounter_dec, rxCounterMAX_dec;
+extern unsigned portLONG	txCounter_enc, txCounterMAX_enc, txCounter_dec, txCounterMAX_dec;
+extern unsigned portLONG	idle_tread_counter;
+
+typedef struct {
+	unsigned portCHAR type;
+	unsigned int index;
+	
 	unsigned portCHAR length;
-	union {
-		unsigned portCHAR *p_value;
-		unsigned portCHAR value[ CHUNK_SIZE ];
-	} data;
-} obd_chunk;
+	unsigned portCHAR pos;
+	unsigned portCHAR count;
+	unsigned char flag;	
+	portCHAR pValue[MEMBLOCK_MAX_SIZE];
+} MemBlock, chunk_queue;
 
 /* Structure used to take a snapshot of the USB status from within the ISR. */
 typedef struct X_ISR_STATUS
@@ -93,10 +107,17 @@ void vUSBCDCTask (void *pvParameters);
 
 /* Send cByte down the USB port.  Characters are simply buffered and not
 sent unless the port is connected. */
-unsigned int vUSBSendByte (portCHAR cByte, portTickType time_diff);
-unsigned int vUSBSendBytes (portCHAR *buffer, portCHAR length, portTickType time_diff);
-unsigned int vUSBSendZeroCopyBytes(portCHAR *buffer, portCHAR length, portTickType time_diff);  // TODO: CALLBACK ?
+void vUSBSendPacket(MemBlock *daten, unsigned portBASE_TYPE length);
+unsigned portBASE_TYPE vUSBRecivePacket(MemBlock **pq);
 
-portLONG vUSBRecvByte (portCHAR *cByte,portLONG size);
+MemBlock *pullFreeBlock(void);
+void pushFreeBlock(MemBlock *b);
+
+unsigned portBASE_TYPE getTXSize( void );
+unsigned portBASE_TYPE getRXSize( void );
+unsigned portBASE_TYPE getFreeSize( void );
+
+MemBlock *statusBlock, *debug_block;
+extern unsigned char input[];
 
 #endif

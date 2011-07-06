@@ -29,12 +29,9 @@
 #include <task.h>
 #include <semphr.h>
 
-#define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
-#include "openbeacon_comunication.h"
-
 #include "openbeacon.h"
 #include "env.h"
-#include "../obd_usb/USB-CDC.h"
+#include  "../obd_usb/USB-CDC.h"
 #include "usbshell.h"
 #include "main.h"
 #include "nRF24L01/nRF_HW.h"
@@ -42,107 +39,153 @@
 #include "nRF24L01/nRF_LL.h"
 #include "nRF24L01/nRF_API.h"
 
-#define PACKET_SIZE 	64
-unsigned char packet[PACKET_SIZE+CHUNK_SIZE];
-portCHAR usb_status[10] = {0,0,0,0,0,0,0,0,0,0};
 
-portCHAR getDataFromUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
-portCHAR putDataToUSBChannel_buffer[ USBCHANNEL_BUFFER_SIZE ];
-portCHAR tmp_buffer[150];
-
-static_buffer_info sbi_dev[1] = 	{	
-							{ getDataFromUSBChannel_buffer, 0, putDataToUSBChannel_buffer, 0, tmp_buffer, 0, 0 }
-						};
-
-void Msg2USB_encap(unsigned char* msg, unsigned portCHAR len, unsigned portCHAR type) {
-	OBD2HW_Header *ph = (OBD2HW_Header *) msg;
-	ph->start		= 0;
-        ph->type    = type;
-	ph->length = len-sizeof(OBD2HW_Header);
-	ph->reserved	= 0;
+void insertLONG(portCHAR* buffer, portLONG l) {
+	char i;
+	portLONG tmp = l;
 	
-	putDataToUSBChannel(0,  msg,  len);
+	for(i=0; i<sizeof(portLONG); i++) {
+		buffer[i] = tmp%256;
+		tmp = tmp/256;		
+	}	
 }
 
-unsigned int read_to_channel( portCHAR* out, portLONG len, portLONG device ) {
-	if(device>0) return 0;
-	return vUSBRecvByte (out, len);
-}
-
-unsigned int write_to_channel( portCHAR* out, portLONG len, portLONG device ) {
-	if(device>0) return 0;
-	vUSBSendBytes((char*)out, len, 10);
-	return len;
-}	
-
-void debug_msg(char* msg, unsigned portCHAR msg_len) {	
-	portCHAR buffer[300];
-	OBD2HW_Header *ph = (OBD2HW_Header *) buffer;
-	unsigned portLONG i = 0;
-	
-	for(i=0; i<msg_len; i++) {
-		buffer[sizeof(OBD2HW_Header)+i] = msg[i];
-	}
-	
-	ph->start		= 0;
-        ph->type		= MONITOR_PRINT;
-	ph->length	= msg_len;
-	ph->reserved	= 0;
-	
-	putDataToUSBChannel(0,  (unsigned portCHAR*)buffer,  msg_len+sizeof(OBD2HW_Header));
-}
-void debug_hex_msg(char* msg, unsigned portCHAR msg_len) {	
-	portCHAR buffer[300];
-	OBD2HW_Header *ph = (OBD2HW_Header *) buffer;
-	unsigned portLONG i = 0;
-	
-	for(i=0; i<msg_len; i++) {
-		// TODO: convert to hex
-		buffer[sizeof(OBD2HW_Header)+i] = msg[i];
-	}
-	
-	ph->start		= 0;
-        ph->type		= MONITOR_HEX_PRINT;
-	ph->length	= msg_len;
-	ph->reserved	= 0;
-
-	putDataToUSBChannel(0,  (unsigned portCHAR*)buffer,  msg_len+sizeof(OBD2HW_Header));	
-}
+unsigned portLONG tx_queue = 0;
+unsigned portLONG rx_queue = 0;
+unsigned portLONG queue_free = USB_CDC_QUEUE_SIZE_FREE;
 
 extern char USB_SYNC;
+
+MemBlock regBlock, *pRegBlock;
 
 void
 usbshell_task (void *pvParameters)
 {
-//	portTickType xLastBlink=0;
-	unsigned portCHAR packet_len=0;
-	OBD2HW_Header *ph;
-	Click2OBD_header *c2obdh;
-	
-	(void) pvParameters;	
+	(void) pvParameters;
 	while( USB_SYNC==0 );
-		
-	// workloop
-        for (;;)
-        {
-		// recive from usb
-		packet_len = PACKET_SIZE+CHUNK_SIZE;
+	unsigned portBASE_TYPE len, i;
+	portTickType xMovBig=0;
+	OBD2HW_Header* p_hwh;
+	MemBlock *bl=NULL;
+	unsigned portBASE_TYPE ret;
+
+	vTaskDelay (portTICK_RATE_MS*1000);
+
+	xMovBig = 0;
 	
-		if( getDataFromUSBChannel(0,  packet,  &packet_len )==STATUS_OK ) {		
-			ph = (OBD2HW_Header *)  packet;
-			c2obdh = (Click2OBD_header *)( packet + sizeof(OBD2HW_Header) );
+	pRegBlock = NULL;
+	
+	debug_block = &regBlock;
+	p_hwh = (OBD2HW_Header*)debug_block->pValue;
+	debug_block->pos =   0;
+	debug_block->flag = 10;
 			
-			// TODO: for all recive packet
-			if(ph->type==MONITOR_INPUT) {
-				memcpy((char*) (usb_status+1), packet+sizeof(OBD2HW_Header),  ph->length<9?ph->length:9);
-				usb_status[0]=ph->length<9?ph->length:9;
+	memcpy(debug_block->pValue+sizeof(OBD2HW_Header), "Hallo, wer ist da!\0\0\0\0\0\0\0\0\0\0\0\0", 28);
+			
+	p_hwh->length = 28;
+	p_hwh->type    = DEBUG_HEX_PRINT;
+	p_hwh->start = 0;
+	p_hwh->reserved = 0xFF;		
+				
+	debug_block->length 	= sizeof(OBD2HW_Header)+p_hwh->length;
+	debug_block->count 	= 1;	
+
+	// debug_block = NULL;
+
+	while(true) {
+		xMovBig++;
+		if( getTXSize()   > tx_queue ) tx_queue = getTXSize();
+		if( getRXSize()   > rx_queue ) rx_queue = getRXSize();
+		if( getFreeSize() < queue_free ) queue_free = getFreeSize();
+
+		if( pRegBlock==NULL && xMovBig>500 && statusBlock==NULL) {
+			pRegBlock = pullFreeBlock();
+			if(pRegBlock==NULL) continue;
+			
+			portENTER_CRITICAL ();
+			{			
+				xMovBig = 0;
+				
+				p_hwh = (OBD2HW_Header*)pRegBlock->pValue;
+				pRegBlock->pos =   0;
+				pRegBlock->flag = 10;
+			
+				memcpy(pRegBlock->pValue+sizeof(OBD2HW_Header), "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0", 28);
+			
+				p_hwh->length = 48;
+				p_hwh->type    = SPEZIAL_PRINT;
+				p_hwh->start = 0;
+				p_hwh->reserved = 0xFF;		
+				
+				pRegBlock->length 	= sizeof(OBD2HW_Header)+p_hwh->length;
+				pRegBlock->count 	= 1;
+						
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  0*sizeof(portLONG), txCounter_enc ); 
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  1*sizeof(portLONG), txCounterMAX_enc );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  2*sizeof(portLONG), txCounter_dec );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  3*sizeof(portLONG), txCounterMAX_dec );
+				if(txCounter_dec>0xFFFFF) { 
+					txCounter_dec=0; 
+					txCounterMAX_dec=0;
+					txCounter_enc=0; 
+					txCounterMAX_enc=0;					
+				}
+				
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  4*sizeof(portLONG), rxCounter_enc );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  5*sizeof(portLONG), rxCounterMAX_enc );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  6*sizeof(portLONG), rxCounter_dec );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  7*sizeof(portLONG), rxCounterMAX_dec );				
+				if(rxCounter_dec>0xFFFFF) { 
+					rxCounter_dec=0; 
+					rxCounterMAX_dec=0; 
+					rxCounter_enc=0; 
+					rxCounterMAX_enc=0; 					
+				}
+					
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  8*sizeof(portLONG), tx_queue );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+  9*sizeof(portLONG), rx_queue );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+ 10*sizeof(portLONG), queue_free );
+				insertLONG(pRegBlock->pValue+sizeof(OBD2HW_Header)+ 11*sizeof(portLONG), idle_tread_counter);
+				idle_tread_counter=0;
+				
+				pRegBlock->type = MEMBLOCK_TYPE_USE;
+
+				txCounterMAX_dec += pRegBlock->length;
+				txCounterMAX_enc += pRegBlock->length;
+				for(i=0; i<pRegBlock->length; i++) 				
+					if( pRegBlock->pValue[i]<ENCODING_PARAMETER ) txCounterMAX_enc++;
+				
+				statusBlock =  pRegBlock;
+				statusBlock->pos=0;
+				pRegBlock = NULL;
+				
+				tx_queue = 0;
+				rx_queue = 0;
+				queue_free = USB_CDC_QUEUE_SIZE_FREE;
 			}
-			if(ph->type==PACKET_DATA) {
-				if(c2obdh->status&STATUS_NO_TX ) {  // no send 
-					c2obdh->status = c2obdh->status | STATUS_ECHO_OK | STATUS_ECHO_ERROR;   // set STATUS_ECHO_OK and STATUS_ECHO_ERROR to 1 => Testpacket Antwort
-					Msg2USB_encap(packet, ph->length+sizeof(OBD2HW_Header), PACKET_DATA);
-				} else {					
-					FIFOQueue_push( &hw_buffer_queue,  (unsigned char**)&c2obdh);
+			portEXIT_CRITICAL ();
+				
+		}		
+		if(getRXSize()>0 && getTXSize()<USB_CDC_QUEUE_SIZE_TX ) {
+			if(bl!=NULL) {
+				portENTER_CRITICAL ();
+				{			
+					pushFreeBlock(bl);
+					bl=NULL;
+				}
+				portEXIT_CRITICAL ();
+			}
+				
+			if( vUSBRecivePacket(&bl)>0 && bl!=NULL) {	
+				p_hwh = (OBD2HW_Header*)bl->pValue;
+				if( p_hwh->type!=PACKET_DATA ) {		// send to host
+					vUSBSendPacket(bl,  bl->length);   
+					bl=NULL;
+				} else {
+					Click2OBD_header* ph =  (Click2OBD_header*)(bl->pValue+sizeof(OBD2HW_Header));
+					TransmitBeacon( bl->pValue+sizeof(OBD2HW_Header)+sizeof(Click2OBD_header)-OPENBEACON_MACSIZE-1, ph->power, ph->rate, ph->channel, ph->openbeacon_dmac, OPENBEACON_MACSIZE) ;
+					pushFreeBlock(bl);
+					bl=NULL;
 				}
 			}
 		}

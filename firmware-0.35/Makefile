@@ -33,12 +33,14 @@ OBJCOPY=arm-elf-objcopy
 ARCH=arm-elf-ar
 CRT0=os/boot/boot.s
 DEBUG=-g
-OPTIM=-O2
+OPTIM=-O2 -fno-builtin
 LDSCRIPT=config/atmel-rom.ld
 ARCH=AT91SAM7S128
 
 #
 # CFLAGS common to both the THUMB and ARM mode builds
+# -Wall  \
+#
 #
 
 CFLAGS= \
@@ -48,7 +50,6 @@ CFLAGS= \
 -Ios/core/include  \
 -Ios/obd_usb  \
 -Ios/core/ARM7_AT91SAM7S  \
--Wall  \
 -Werror \
 -Wextra  \
 -Wstrict-prototypes  \
@@ -73,7 +74,6 @@ ARM_SRC= \
   application/env.c \
   application/rnd.c \
   application/usbshell.c \
-  application/fifoqueue.c \
   application/nRF24L01/nRF_API.c \
   application/nRF24L01/nRF_CMD.c \
   application/nRF24L01/nRF_LL.c \
@@ -84,7 +84,7 @@ ARM_SRC= \
   os/core/ARM7_AT91SAM7S/lib_AT91SAM7.c \
   os/core/ARM7_AT91SAM7S/port.c \
   os/core/ARM7_AT91SAM7S/portISR.c \
-  os/core/MemMang/heap_2.c \
+  os/core/MemMang/heap_1.c \
   os/obd_usb/USB-CDC.c \
   os/obd_usb/USBIsr.c 
 

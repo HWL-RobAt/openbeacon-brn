@@ -65,7 +65,7 @@
 /* Type definitions. */
 #define portCHAR		char
 #define portFLOAT		float
-#define portDOUBLE		double
+#define portDOUBLE 	double
 #define portLONG		long
 #define portSHORT		short
 #define portSTACK_TYPE	unsigned portLONG

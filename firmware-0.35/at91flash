@@ -1,8 +1,8 @@
 #!/bin/bash
 # (C) Milosch Meriac <meriac@bitmanufaktur.de> 2006
 
-UART='/dev/ttyUSB0'
-SAM7='/usr/local/bin/sam7'
+UART='/dev/ttyACM'$2
+SAM7='sam7'
 
 if [[ -a $1 ]]; then
 
@@ -16,7 +16,7 @@ if [[ -a $1 ]]; then
     echo "8. press [ENTER] to start flashing"    
     read
     echo -e "9. flashing '$1'...\n"
-    $SAM7 << ENDOFMYTEXT
+    $SAM7 -l $UART << ENDOFMYTEXT
 set_clock
 unlock_regions
 flash $1

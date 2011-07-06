@@ -2,6 +2,9 @@
 *.bin
 *.elf
 *.map
+*.log
+*.error
+*_old.*
 click/obd/obd
 click/obd/obd_test
 .gitignore
