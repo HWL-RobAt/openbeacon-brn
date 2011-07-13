@@ -388,7 +388,8 @@ void vApplicationIdleHook(void)
 					
 					memcpy( ph->openbeacon_dmac,  global_MAC, OPENBEACON_MACSIZE );				
 					
-					vUSBSendPacket(data_pack,  data_pack->length);					
+					vUSBSendPacket(data_pack,  data_pack->length);
+					sendText_shortint("CRC OK:      \r\n", 15, ph->length, 8);					
 				} else {
 					sendText("CRC Fail   \r\n", 13);
 					pushFreeBlock( data_pack );

@@ -361,13 +361,14 @@ void *tx_from_click_to_ob_thread(void *p)
 			// TODO: kernel Blockierzeit mit einrechnen  
 			gettimeofday(&se_time, 0);
 			usleep(  packet_intervall );
-		} else { // read from click and send to beacon
+		} else if(dev->click_read_buffer_length>sizeof(Click2OBD_header) ) { // read from click and send to beacon
 			pthread_mutex_lock(&dev->click_read_mutex);
 				p_obdh = (Click2OBD_header*)dev->click_read_tmp_buffer;
 				packet_len = p_obdh->length + sizeof(Click2OBD_header);
 			
-				if(dev->click_read_buffer_length>sizeof(Click2OBD_header) &&  dev->click_read_buffer_length>=packet_len) {
-					memcpy(buffer+ sizeof(OBD2HW_Header), dev->click_read_buffer, p_obdh->length);
+				if( dev->click_read_buffer_length>=packet_len) {
+				
+					memcpy(buffer+ sizeof(OBD2HW_Header), dev->click_read_buffer, packet_len);
 					p_hwh =   (OBD2HW_Header*)buffer;
 					p_hwh->start 		= 0;
 					p_hwh->length 	= packet_len;
@@ -376,7 +377,7 @@ void *tx_from_click_to_ob_thread(void *p)
 					                         
 					dev->click_read_buffer_length -= packet_len;
 					if(dev->click_read_buffer_length>0) memcpy(dev->click_read_buffer, dev->click_read_buffer+packet_len, dev->click_read_buffer_length);
-
+					
 					putDataToUSBChannel(dev,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
 					
 				}
@@ -549,7 +550,7 @@ void *rx_from_ob_to_click_thread(void *p)
 				// send to click
 				send_to_peer(dev->con, buffer+sizeof(OBD2HW_Header),  p_hwh->length);
 
-				printf("packet recive \n");
+				printf("packet recive %d \n", p_hwh->length);
 			} else {				
 				usb_channel_counter9++;
 			}
