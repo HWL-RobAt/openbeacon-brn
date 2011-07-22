@@ -453,7 +453,9 @@ void *rx_from_ob_to_click_thread(void *p)
 		}
 		
 		if(status==STATUS_OK && hlen>0) {
-			printf("Packet FromOpenbeacon\n");
+			if( p_hwh->type!=SPEZIAL_PRINT ) {
+				printf("Packet FromOpenbeacon\n");
+			}
 			if( p_hwh->type==MONITOR_PRINT ) {
 				buffer[  sizeof(OBD2HW_Header) + p_hwh->length ] = 0;
 				printf("%s\n", buffer+sizeof(OBD2HW_Header) );

@@ -254,6 +254,7 @@ extern unsigned long usb_channel_counter5, usb_channel_counter6, usb_channel_cou
 			return STATUS_OK;
 		}
 		
+		*blen=0;
 		return STATUS_ERROR_NO_DATA;
 	}
 #endif
