@@ -130,8 +130,6 @@ static inline void prvSetupHardware (void)
 // TODO:  payload size?
 void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate, unsigned char TxChannel, unsigned char* mac, unsigned char mac_length)   // payload length = 30
 {
-    // TODO: check TX_FULL
-    // TODO: check free space and use it
     unsigned int i=0;
     unsigned long crc;
 
@@ -183,6 +181,7 @@ void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsi
     
     vTaskDelay(portTICK_RATE_MS);
     AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_RED );
+    nRFAPI_SetRxMode(1);
 }
 
 unsigned char input[100];
@@ -358,6 +357,8 @@ void vApplicationIdleHook(void)
 
 		status=nRFAPI_GetStatus();
 
+		sendText(".", 1);
+		
 		if(status & MASK_RX_DR_FLAG)
 		{
 			data_pack = pullFreeBlock();		
@@ -394,14 +395,12 @@ void vApplicationIdleHook(void)
 					sendText("CRC Fail   \r\n", 13);
 					pushFreeBlock( data_pack );
 				}
+				
 				nRFAPI_FlushRX();
 				data_pack=NULL;
 			}
 		}
 		
-		if(status & MASK_MAX_RT_FLAG)
-		    nRFAPI_FlushTX();
-
 		nRFAPI_ClearIRQ(status);
 	}
 }
