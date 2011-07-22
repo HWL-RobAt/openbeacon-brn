@@ -348,6 +348,7 @@ void *tx_from_click_to_ob_thread(void *p)
 				insertLONG(buffer+sizeof(OBD2HW_Header), PacketID);
 				putDataToUSBChannel(dev,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
 				
+				printf("Packet FromClick\n");
 				// Time/PacketID in Datei1 packen
 				gettimeofday(&c_time, 0);
 				fprintf(dev->send_file_log, "%d.%.6d: %.6d\t%.3d\t%.3d\t%.3d \n", (unsigned int)c_time.tv_sec, (unsigned int)c_time.tv_usec, PacketID, coding_h, packet_size, coding_d );
@@ -452,6 +453,7 @@ void *rx_from_ob_to_click_thread(void *p)
 		}
 		
 		if(status==STATUS_OK && hlen>0) {
+			printf("Packet FromOpenbeacon\n");
 			if( p_hwh->type==MONITOR_PRINT ) {
 				buffer[  sizeof(OBD2HW_Header) + p_hwh->length ] = 0;
 				printf("%s\n", buffer+sizeof(OBD2HW_Header) );
