@@ -120,12 +120,15 @@ int use_dev(int argc, char** argv) {
 		printf("open socket(localhost, %d, %d)\n", device_list[j].sendPort, device_list[j].recivePort );
 		device_list[j].con = open_socket_connection("localhost", device_list[j].sendPort, device_list[j].recivePort );
 		
-		char filename[20];
+		char filename[120];
+		
 		int i;
 		int l = strlen(device_list[j].device_name);
 		
 		for(i=l; i>=0 && device_list[j].device_name[i-1]!='/'; i-- )  ;
 		strncpy(filename, device_list[j].device_name+i, l-i);
+		
+		sprintf(filename,"/tmp/%s",device_list[j].device_name+i);
 		
 		strncpy(filename+(l-i), "_b.log", 7);			device_list[j].output_file 		= fopen(filename, "a");
 		strncpy(filename+(l-i), "_h.log", 7);			device_list[j].hostoutput_file	= fopen(filename, "a");
@@ -453,7 +456,9 @@ void *rx_from_ob_to_click_thread(void *p)
 		}
 		
 		if(status==STATUS_OK && hlen>0) {
-			printf("Packet FromOpenbeacon\n");
+		        //if ( p_hwh->type!=SPEZIAL_PRINT) {
+			//  printf("Packet FromOpenbeacon %d %d\n",hlen, p_hwh->type);
+			//}
 			if( p_hwh->type==MONITOR_PRINT ) {
 				buffer[  sizeof(OBD2HW_Header) + p_hwh->length ] = 0;
 				printf("%s\n", buffer+sizeof(OBD2HW_Header) );
@@ -681,7 +686,7 @@ int main( int argc, char **argv) {
 	InOut_Device_id = 0;  
 	
 	// Input-Thread
-	pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, NULL);
+//	pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, NULL);
 	
 	for(i=0; i<device_list_size; i++) {
 		pthread_join(dev->txThread,&dev->txThreadJoin);
