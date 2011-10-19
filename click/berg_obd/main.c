@@ -60,6 +60,7 @@ static unsigned long bytes_per_intervall	= 	63000;
 static char use_rand					= 		0;
 static char use_gen					=		0;
 static char use_ech						=		0;
+static char use_daemon					=		0;
 						
 struct device_data * device_list;
 unsigned int device_list_size;
@@ -216,8 +217,13 @@ int use_echo(int argc, char** argv){
 	use_ech = 1;
 	return 0;
 }
+int use_daemon_mode(int argc, char** argv){ 
+	use_daemon = 1;
+	return 0;
+}
 
-static struct param2func pam[9] = {	  
+
+static struct param2func pam[10] = {	  
 					{"--help",  use_help, "\t\t\t- print this help text\n" }
 					, {"-O",  use_dev, "[O1] [O2] ... [On]\t- USB Device for OpenBeacon HW\n\t\t\t\tsample: berg_odb -d 0 1 - for device ttyACM0 und ttyACM1" }
 					, {"-Q", use_exittime, "[TIME]\t\t- Exittime (0 for no terminate)"} 
@@ -226,7 +232,8 @@ static struct param2func pam[9] = {
 					, {"-e", use_echo, "\t\t\t- with echo from openbeacon"}
 					, {"-p", use_packetsize, "[PACKET_SIZE]\t\t- size of a packet (5...95)"} 
 					, {"-I", use_packetintv, "[bytes per seconds]\t- rate for sending data to openbeacon"}
-					, {"-r", use_random, "\t\t\t- random data aktivate "}};
+					, {"-r", use_random, "\t\t\t- random data activate "}
+					, {"-d", use_daemon_mode, "\t\t\t- daemon mode activate "} };
 					
 static struct hListe plist = { (int)sizeof(pam)/sizeof(struct param2func), (struct param2func *)&pam };
 
@@ -640,24 +647,26 @@ int input_function(void *p) {
 	while(1) {
 		if(exit_time>0 && exit_time<time(0)) break;
 		
-		while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
-		switch( buffer[sizeof(OBD2HW_Header) ] ) {
-			case '\n':  break;
-			case 'd':  	dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
+		if( use_daemon!=1 ) {
+			while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
+			switch( buffer[sizeof(OBD2HW_Header) ] ) {
+				case '\n':  break;
+				case 'd':  	dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
 			
-					if(dev_num>=0 && dev_num<device_list_size && default_index != dev_num) {
-						default_index = dev_num;
-						printf("switch device to: %d\n", default_index);
-					}
-			
-					break;
-			case 'x': 	exit_time = time(0)-1;
-					break;
-			default:	p_hwh->length = len;
-					putDataToUSBChannel(device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
-					break;
+						if(dev_num>=0 && dev_num<device_list_size && default_index != dev_num) {
+							default_index = dev_num;
+							printf("switch device to: %d\n", default_index);
+						}
+				
+						break;
+				case 'x': 	exit_time = time(0)-1;
+						break;
+				default:	p_hwh->length = len;
+						putDataToUSBChannel(device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
+						break;
+			}
+			len=0;
 		}
-		len=0;
 	}
 	printf("exit: input\n");
 	pthread_exit(p);

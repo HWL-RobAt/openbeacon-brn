@@ -179,7 +179,7 @@ void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsi
     nRFLL_CE(1);
     status_mode=1;
     
-    vTaskDelay(portTICK_RATE_MS);
+    vTaskDelay(portTICK_RATE_MS*2);
     AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_RED );
     nRFAPI_SetRxMode(1);
 }
@@ -279,6 +279,7 @@ void vApplicationIdleHook(void)
 
 	idle_tread_counter++;
 	if(input[0]!='\0') {
+		nRFAPI_SetRxMode(1);
 		switch(input[0]) {
 			case 'm':
 					j=1;
