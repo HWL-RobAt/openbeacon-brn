@@ -383,6 +383,12 @@ void *tx_from_click_to_ob_thread(void *p)
 					p_hwh->type 		= PACKET_DATA;
 					p_hwh->reserved 	= 0xFF;
 					                         
+					
+					// HEXDUMP:
+					// printf("DATEN: %d, %d, %d\n", p_obdh->channel,  p_obdh->power,  p_obdh->rate);
+					// for(i=0; i<p_hwh->length; i++) printf("%.2X ", buffer[i]);
+					// printf("\n\n");
+					
 					dev->click_read_buffer_length -= packet_len;
 					if(dev->click_read_buffer_length>0) memcpy(dev->click_read_buffer, dev->click_read_buffer+packet_len, dev->click_read_buffer_length);
 					

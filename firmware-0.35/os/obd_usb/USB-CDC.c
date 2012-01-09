@@ -144,12 +144,12 @@ unsigned portLONG	txCounter_enc=0, txCounterMAX_enc=0, txCounter_dec=0, txCounte
 unsigned portLONG	idle_tread_counter=0;
   
 MemBlock *statusBlock = NULL;
-
+  
 void vUSBCDCTask (void *pvParameters)
 {
 	xISRStatus *pxMessage;
 	unsigned portLONG ulStatus;
-	unsigned portLONG ulRxBytes;
+	static unsigned portLONG ulRxBytes=0;
 	unsigned portCHAR ucByte=0, hbyte=0x30;
 	static portTickType xLastSend=0;
 	OBD2HW_Header* recv_hdr=NULL, *send_hdr=NULL;
@@ -158,6 +158,7 @@ void vUSBCDCTask (void *pvParameters)
 	unsigned int xByte, bankcount;
 	(void) pvParameters;
 	MemBlock* recv_block=NULL, *send_block=NULL;
+
 	portCHAR recive_packet_state=0;
 	portCHAR recive_last_enc=0;
 	portCHAR sleep_counter=0;
@@ -176,7 +177,6 @@ void vUSBCDCTask (void *pvParameters)
 	portENTER_CRITICAL ();
 		vInitUSBInterface ();
 	portEXIT_CRITICAL ();
-
 	
 	/* Main task loop.  Process incoming endpoint 0 interrupts, handle data transfers. */
  	for (;;) {
@@ -246,10 +246,13 @@ void vUSBCDCTask (void *pvParameters)
 				/* Release the FIFO */
 				portENTER_CRITICAL ();
 				{
-					ulRxBytes = (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] >> 16) & usbRX_COUNT_MASK;
+					if(ulRxBytes==0) {
+						ulRxBytes = (AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] >> 16) & usbRX_COUNT_MASK;
+						ulRxBytes++;
+					}
 					
 					/* Only process FIFO if there's room to store it in the queue */
-					while(recv_block!=NULL && ulRxBytes--) {
+					while(recv_block!=NULL && --ulRxBytes ) {
 						ucByte = AT91C_BASE_UDP->UDP_FDR[usbEND_POINT_1];
 						
 						if(ucByte!=0x01) rxCounterMAX_dec++;
@@ -295,10 +298,12 @@ void vUSBCDCTask (void *pvParameters)
 											recv_hdr->length = recv_block->length-sizeof(OBD2HW_Header);
 										
 											if( xQueueSend(xRxCDC, &recv_block, usbNO_BLOCK)!=pdPASS ) pushFreeBlock(recv_block);
+											recv_block = NULL;
 									}
 									
 									recv_block = pullFreeBlock();
 									recive_packet_state = 0;
+									
 								} else recive_packet_state = 0;
 								continue;
 							}
@@ -309,18 +314,20 @@ void vUSBCDCTask (void *pvParameters)
 						}
 					}
 					
-					ulStatus = AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1];
-					usbCSR_CLEAR_BIT (&ulStatus, uiCurrentBank);
-					AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] = ulStatus;
+					if( ulRxBytes==0 ) {
+						ulStatus = AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1];
+						usbCSR_CLEAR_BIT (&ulStatus, uiCurrentBank);
+						AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_1] = ulStatus;
 
-					/* Re-enable endpoint 1's interrupts */
-					AT91C_BASE_UDP->UDP_IER = AT91C_UDP_EPINT1;
+						/* Re-enable endpoint 1's interrupts */
+						AT91C_BASE_UDP->UDP_IER = AT91C_UDP_EPINT1;
 
-					/* Update the current bank in use */
-					if (uiCurrentBank == AT91C_UDP_RX_DATA_BK0) {
-						uiCurrentBank = AT91C_UDP_RX_DATA_BK1;
-					} else {
-						uiCurrentBank = AT91C_UDP_RX_DATA_BK0;
+						/* Update the current bank in use */
+						if (uiCurrentBank == AT91C_UDP_RX_DATA_BK0) {
+							uiCurrentBank = AT91C_UDP_RX_DATA_BK1;
+						} else {
+							uiCurrentBank = AT91C_UDP_RX_DATA_BK0;
+						}
 					}
 				}
 				portEXIT_CRITICAL ();
