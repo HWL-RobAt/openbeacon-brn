@@ -3,7 +3,7 @@ all:
 	$(CC) $(CFLAGS) -I./socket -c socket/obd_socket.c -o socket/socket.o
 	$(CC) $(CFLAGS) -I./serial -c serial/obd_serial.c -o serial/serial.o
 	$(CC) $(CFLAGS) -fno-builtin -I./socket -I./serial -c main.c -o main.o
-	$(CC) $(CFLAGS) tools/tools.o main.o socket/socket.o serial/serial.o -lpthread -lm -o berg_obd 
+	$(CC) $(CFLAGS) tools/tools.o main.o socket/socket.o serial/serial.o -lpthread -lm -o obd-mips 
 
 clean:
 	@rm -f socket/socket.o

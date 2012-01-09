@@ -8,3 +8,6 @@
 click/obd/obd
 click/obd/obd_test
 .gitignore
+click/berg_obd/berg_obd
+click/berg_obd/obd-mips
+
