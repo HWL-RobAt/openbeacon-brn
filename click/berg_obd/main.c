@@ -657,26 +657,24 @@ int input_function(void *p) {
 	while(1) {
 		if(exit_time>0 && exit_time<time(0)) break;
 
-		if( use_daemon!=1 ) {
-			while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
-			switch( buffer[sizeof(OBD2HW_Header) ] ) {
-				case '\n':  break;
-				case 'd':  	dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
-			
-						if(dev_num>=0 && dev_num<device_list_size && default_index != dev_num) {
-							default_index = dev_num;
-							printf("switch device to: %d\n", default_index);
-						}
+		while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
+		switch( buffer[sizeof(OBD2HW_Header) ] ) {
+			case '\n':  break;
+			case 'd':  	dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
+		
+					if(dev_num>=0 && dev_num<device_list_size && default_index != dev_num) {
+						default_index = dev_num;
+						printf("switch device to: %d\n", default_index);
+					}
 				
-						break;
-				case 'x': 	exit_time = time(0)-1;
-						break;
-				default:	p_hwh->length = len;
-						putDataToUSBChannel(device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
-						break;
-			}
-			len=0;
+					break;
+			case 'x': 	exit_time = time(0)-1;
+					break;
+			default:	p_hwh->length = len;
+					putDataToUSBChannel(device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
+					break;
 		}
+		len=0;
 		usleep( SLEEP_TIME*10 );
 	}
 	printf("exit: input\n");
@@ -706,7 +704,9 @@ int main( int argc, char **argv) {
 	InOut_Device_id = 0;  
 	
 	// Input-Thread
-	pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, NULL);
+	if( use_daemon!=1 ) {
+		pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, NULL);
+	}
 	
 	for(i=0; i<device_list_size; i++) {
 		pthread_join(dev->txThread,&dev->txThreadJoin);
