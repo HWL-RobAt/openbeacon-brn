@@ -19,6 +19,7 @@
 #include "openbeacon_comunication.h"
 
 #define BUFFERSIZE 2048
+#define SLEEP_TIME 1000
 
 portCHAR b0[ USBCHANNEL_BUFFER_SIZE ], b1[ USBCHANNEL_BUFFER_SIZE ], b2[ USBCHANNEL_BUFFER_SIZE ];
 portCHAR b3[ USBCHANNEL_BUFFER_SIZE ], b4[ USBCHANNEL_BUFFER_SIZE ], b5[ USBCHANNEL_BUFFER_SIZE ];
@@ -258,6 +259,7 @@ void read_from_usb_thread(void *p) {
 				}
 			pthread_mutex_unlock(&dev->usb_read_mutex);
 		}
+		usleep( SLEEP_TIME );
 	}
 //	printf("exit: work");
 	pthread_exit(p);
@@ -283,6 +285,7 @@ void read_from_click_thread(void *p) {
 				}
 			pthread_mutex_unlock(&dev->click_read_mutex);
 		}
+		usleep( SLEEP_TIME );
 	}
 //	printf("exit: work");
 	pthread_exit(p);
@@ -400,6 +403,7 @@ void *tx_from_click_to_ob_thread(void *p)
 				}
 			pthread_mutex_unlock(&dev->click_read_mutex);
 		}
+		usleep( SLEEP_TIME );
 	}
 	printf("exit: click -> obd\n");
 	pthread_exit(p);
@@ -569,8 +573,7 @@ void *rx_from_ob_to_click_thread(void *p)
 			} else if(p_hwh->type==PACKET_DATA) {			
 				// send to click
 				send_to_peer(dev->con, buffer+sizeof(OBD2HW_Header),  p_hwh->length);
-
-				printf("packet recive %d \n", p_hwh->length);
+				// printf("packet recive %d \n", p_hwh->length);
 			} else {				
 				usb_channel_counter9++;
 			}
@@ -616,6 +619,7 @@ void *rx_from_ob_to_click_thread(void *p)
 			
 			gettimeofday(&opb_time, 0);
 		}
+		usleep( SLEEP_TIME );
 	}  
 	printf("exit: obd -> click\n");
 	pthread_exit(p);
@@ -652,7 +656,7 @@ int input_function(void *p) {
 	
 	while(1) {
 		if(exit_time>0 && exit_time<time(0)) break;
-		
+
 		if( use_daemon!=1 ) {
 			while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
 			switch( buffer[sizeof(OBD2HW_Header) ] ) {
@@ -673,6 +677,7 @@ int input_function(void *p) {
 			}
 			len=0;
 		}
+		usleep( SLEEP_TIME*10 );
 	}
 	printf("exit: input\n");
 	pthread_exit(p);
@@ -701,7 +706,7 @@ int main( int argc, char **argv) {
 	InOut_Device_id = 0;  
 	
 	// Input-Thread
-//	pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, NULL);
+	pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, NULL);
 	
 	for(i=0; i<device_list_size; i++) {
 		pthread_join(dev->txThread,&dev->txThreadJoin);
