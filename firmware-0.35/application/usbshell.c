@@ -182,6 +182,7 @@ usbshell_task (void *pvParameters)
 					vUSBSendPacket(bl,  bl->length);   
 					bl=NULL;
 				} else {
+					// TODO: Testprotokoll erkennen und verarbeiten
 					Click2OBD_header* ph =  (Click2OBD_header*)(bl->pValue+sizeof(OBD2HW_Header));
 					TransmitBeacon( bl->pValue+sizeof(OBD2HW_Header)+sizeof(Click2OBD_header)-OPENBEACON_MACSIZE-1, ph->power, ph->rate, ph->channel, ph->openbeacon_dmac, OPENBEACON_MACSIZE) ;
 					pushFreeBlock(bl);

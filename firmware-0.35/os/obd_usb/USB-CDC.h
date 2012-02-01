@@ -39,17 +39,17 @@
 #include "usb.h"
 #include "openbeacon_communication.h"
 
-#define USB_CDC_QUEUE_SIZE_TX		35
-#define USB_CDC_QUEUE_SIZE_RX		35
-#define USB_CDC_QUEUE_SIZE_FREE	72
+#define USB_CDC_QUEUE_SIZE_TX		 71
+#define USB_CDC_QUEUE_SIZE_RX		 71
+#define USB_CDC_QUEUE_SIZE_FREE		142
 
-#define USB_MAX_TRANSMIT_COUNT	64
-#define USB_PACKETSIZE				60
+#define USB_MAX_TRANSMIT_COUNT		64
+//#define USB_PACKETSIZE			60
 
 #define MEMBLOCK_TYPE_NORMAL		1
 #define MEMBLOCK_TYPE_DYNMEM		3
-#define MEMBLOCK_TYPE_USE			5
-#define MEMBLOCK_MAX_SIZE			100
+#define MEMBLOCK_TYPE_USE		5
+#define MEMBLOCK_MAX_SIZE		50	
 
 extern unsigned portLONG	rxCounter_enc, rxCounterMAX_enc, rxCounter_dec, rxCounterMAX_dec;
 extern unsigned portLONG	txCounter_enc, txCounterMAX_enc, txCounter_dec, txCounterMAX_dec;

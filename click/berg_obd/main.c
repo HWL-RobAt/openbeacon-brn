@@ -1,25 +1,21 @@
 #include <stdio.h>
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <dlfcn.h>
-#include <pthread.h>
 #include <dirent.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/time.h>
 #include <sys/stat.h>
 
 #include "socket/obd_socket.h"
 #include "serial/obd_serial.h"
 
-#include "tools/commandline.h"
-
-
-#define __OPENBEACON_COMUNICATION_H__WITH_ENCODING		
-#include "openbeacon_comunication.h"
+#define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
+#include "shell.h"
 
 #define BUFFERSIZE 2048
-#define SLEEP_TIME 500
+#define SLEEP_TIME 5
 
 portCHAR b0[ USBCHANNEL_BUFFER_SIZE ], b1[ USBCHANNEL_BUFFER_SIZE ], b2[ USBCHANNEL_BUFFER_SIZE ];
 portCHAR b3[ USBCHANNEL_BUFFER_SIZE ], b4[ USBCHANNEL_BUFFER_SIZE ], b5[ USBCHANNEL_BUFFER_SIZE ];
@@ -52,20 +48,7 @@ static_buffer_info sbi_dev[10] = {
 							,{ b8, 0, 0, 0, b18, 0, t8, 0, 0, 0, 0 }
 							,{ b9, 0, 0, 0, b19, 0, t9, 0, 0, 0, 0 }
 						};
-
-static time_t exit_time=0;
-static unsigned char packet_size			= 	      20;
-static unsigned long packet_intervall		=   		0;
-static unsigned long print_intervall		=  1000000;
-static unsigned long bytes_per_intervall	= 	63000;
-static char use_rand					= 		0;
-static char use_gen					=		0;
-static char use_ech						=		0;
-static char use_daemon					=		0;
-						
-struct device_data * device_list;
-unsigned int device_list_size;
-						
+												
 void read_from_usb_thread(void *p);
 void read_from_click_thread(void *p);
 
@@ -76,6 +59,7 @@ unsigned int write_to_channel( portCHAR* out, portLONG len, struct device_data* 
 	return ret;
 }
 
+// TODO: kapseln und unabhängige Statistik führen ( gelesene Bytes/gesamte Bytes )
 unsigned int  read_from_channel( portCHAR* out, portLONG len, struct device_data* dev ) {
 	unsigned int ret = len, i;
 	
@@ -94,150 +78,10 @@ unsigned int  read_from_channel( portCHAR* out, portLONG len, struct device_data
 void *tx_from_click_to_ob_thread(void *p);
 void *rx_from_ob_to_click_thread(void *p);
 
-int begin_ports = 20000;
 unsigned int InOut_Device_id;
+int begin_ports = 20000;
 
-int use_dev(int argc, char** argv) { 
-	unsigned int j=0;
-	
-	if(argc==0) return -1;
-
-	device_list = (struct device_data*) calloc ( argc+1, sizeof(struct device_data) );
-	device_list_size = argc;
-
-	for(j=0; j<argc; j++) {
-		device_list[j].index = j;
-		
-		sprintf(device_list[j].device_name, "/dev/ttyACM%s\0", argv[j] );
-
-		device_list[j].rx_running = 1;
-		device_list[j].tx_running = 1;
-		
-		device_list[j].fd = open_obd_serial( device_list[j].device_name );
-		if ( device_list[j].fd == -1 ) exit(-2);
-
-		device_list[j].sendPort   = begin_ports+j*2;
-		device_list[j].recivePort = begin_ports+j*2+1;
-
-		printf("open socket(localhost, %d, %d)\n", device_list[j].sendPort, device_list[j].recivePort );
-		device_list[j].con = open_socket_connection("localhost", device_list[j].sendPort, device_list[j].recivePort );
-		
-		char filename[120];
-		
-		int i;
-		int l = strlen(device_list[j].device_name);
-		
-		for(i=l; i>=0 && device_list[j].device_name[i-1]!='/'; i-- )  ;
-		strncpy(filename, device_list[j].device_name+i, l-i);
-		
-		sprintf(filename,"/tmp/%s",device_list[j].device_name+i);
-		
-		strncpy(filename+(l-i), "_b.log", 7);			device_list[j].output_file 		= fopen(filename, "a");
-		strncpy(filename+(l-i), "_h.log", 7);			device_list[j].hostoutput_file	= fopen(filename, "a");
-		strncpy(filename+(l-i), ".dat", 5);			device_list[j].debug_file 		= fopen(filename, "a");
-		strncpy(filename+(l-i), "_send.log", 10);		device_list[j].send_file_log 	= fopen(filename, "a");
-		strncpy(filename+(l-i), "_recv.log", 10);		device_list[j].recive_file_log 	= fopen(filename, "a");
-		
-		if(device_list[j].output_file==NULL || device_list[j].hostoutput_file==NULL || device_list[j].debug_file==NULL
-			|| device_list[j].send_file_log==NULL || device_list[j].recive_file_log==NULL) {
-			printf("Dateien konnten nicht erstellt werden\n", filename);
-			exit(-1);
-		}
-		
-		pthread_mutex_init( &device_list[j].usb_read_mutex,  NULL);
-		
-		device_list[j].threadResult = pthread_create(  &(device_list[j].txThread)
-							     ,  (pthread_attr_t*)NULL
-							     ,(void *)&tx_from_click_to_ob_thread
-							     ,(void*)&device_list[j]); 
-
-		device_list[j].threadResult = pthread_create(  &(device_list[j].usbReadThread)
-							     ,  (pthread_attr_t*)NULL
-							     ,(void *)&read_from_usb_thread
-							     ,(void*)&device_list[j]);
-		
-		device_list[j].threadResult = pthread_create(  &(device_list[j].clickReadThread)
-							     ,  (pthread_attr_t*)NULL
-							     ,(void *)&read_from_click_thread
-							     ,(void*)&device_list[j]);		
-
-		device_list[j].threadResult = pthread_create(  &(device_list[j].rxThread)
-							     ,  (pthread_attr_t*)NULL
-							     ,(void *)&rx_from_ob_to_click_thread
-							     ,(void*)&device_list[j]);
-		
-		// WICHTIG ab hier sollten keine änderungen mehr an device_list[j] gemacht werden.
-	}
-	return 0;
-}
-int use_help(int argc, char** argv) { return -1; }
-
-int use_exittime(int argc, char** argv){ 
-	if( argc==1 ) {
-		exit_time = time(0) + atoi( argv[0] );
-	
-		return 0;
-	}
-	return -1;
-}
-int use_packetsize(int argc, char** argv){ 
-	if( argc==1 ) {
-		packet_size = atoi( argv[0] );
-		if( !(packet_size>=5 && packet_size<96) ) return -1;
-		return 0;
-	}
-	return -1;
-}
-int use_packetintv(int argc, char** argv){ 
-	if( argc==1 ) {		
-		packet_intervall =  floor(1000000.0/( atoi(argv[0])/packet_size ) );
-		bytes_per_intervall = atoi(argv[0]);
-		
-		return 0;
-	}
-	return -1;
-}
-int use_printinterval(int argc, char** argv){ 
-	if( argc==1 ) {
-		print_intervall = atoi(argv[0]);
-		return 0;
-	}
-	return -1;
-}
-int use_random(int argc, char** argv){ 
-	use_rand = 1;
-	return 0;
-}
-
-int use_generate(int argc, char** argv){ 
-	use_gen = 1;
-	return 0;
-}
-
-int use_echo(int argc, char** argv){ 
-	use_ech = 1;
-	return 0;
-}
-int use_daemon_mode(int argc, char** argv){ 
-	use_daemon = 1;
-	return 0;
-}
-
-
-static struct param2func pam[10] = {	  
-					{"--help",  use_help, "\t\t\t- print this help text\n" }
-					, {"-O",  use_dev, "[O1] [O2] ... [On]\t- USB Device for OpenBeacon HW\n\t\t\t\tsample: berg_odb -d 0 1 - for device ttyACM0 und ttyACM1" }
-					, {"-Q", use_exittime, "[TIME]\t\t- Exittime (0 for no terminate)"} 
-					, {"-D", use_printinterval, "[microseconds]\t- time for display status infos "}
-					, {"-g", use_generate, "\t\t\t- send data to openbeacon"}
-					, {"-e", use_echo, "\t\t\t- with echo from openbeacon"}
-					, {"-p", use_packetsize, "[PACKET_SIZE]\t\t- size of a packet (5...95)"} 
-					, {"-I", use_packetintv, "[bytes per seconds]\t- rate for sending data to openbeacon"}
-					, {"-r", use_random, "\t\t\t- random data activate "}
-					, {"-d", use_daemon_mode, "\t\t\t- daemon mode activate "} };
-					
-static struct hListe plist = { (int)sizeof(pam)/sizeof(struct param2func), (struct param2func *)&pam };
-
+// TODO: kapseln und unabhängige Statistik führen ( gesendette Bytes/gesamte Bytes )
 void read_from_usb_thread(void *p) {
 	struct device_data* dev = (struct device_data*)p;
 	unsigned int ret = 0, i;
@@ -259,7 +103,7 @@ void read_from_usb_thread(void *p) {
 				}
 			pthread_mutex_unlock(&dev->usb_read_mutex);
 		}
-		usleep( SLEEP_TIME );
+//		usleep( SLEEP_TIME );
 	}
 //	printf("exit: work");
 	pthread_exit(p);
@@ -285,15 +129,11 @@ void read_from_click_thread(void *p) {
 				}
 			pthread_mutex_unlock(&dev->click_read_mutex);
 		}
-		usleep( SLEEP_TIME );
+//		usleep( SLEEP_TIME );
 	}
 //	printf("exit: work");
 	pthread_exit(p);
 }
-
-
-#define MAX_GENERATOR_SLEEP_TIME 300
-unsigned int sleep_genereator = MAX_GENERATOR_SLEEP_TIME;
 
 void insertLONG(portCHAR* buffer, long l) {
 	char i;
@@ -334,6 +174,7 @@ void *tx_from_click_to_ob_thread(void *p)
 	while( dev->tx_running == 1) {
 		if(exit_time>0 && exit_time<time(0)) break;
 
+		/*  generieren der Testdaten */
 		if(use_gen==1) {
 			p_hwh =   (OBD2HW_Header*)buffer;
 			memcpy(buffer+sizeof(OBD2HW_Header), textnachricht, 100);
@@ -351,6 +192,7 @@ void *tx_from_click_to_ob_thread(void *p)
 				coding_h = sizeof(OBD2HW_Header);
 				if(p_hwh->length<ENCODING_PARAMETER) coding_h++;
 				
+				// Kodierung der Daten
 				coding_d = 0;
 				for(rj=0; rj<packet_size; rj++) {
 					coding_d++;
@@ -361,7 +203,6 @@ void *tx_from_click_to_ob_thread(void *p)
 				insertLONG(buffer+sizeof(OBD2HW_Header), PacketID);
 				putDataToUSBChannel(dev,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
 				
-				printf("Packet FromClick\n");
 				// Time/PacketID in Datei1 packen
 				gettimeofday(&c_time, 0);
 				fprintf(dev->send_file_log, "%d.%.6d: %.6d\t%.3d\t%.3d\t%.3d \n", (unsigned int)c_time.tv_sec, (unsigned int)c_time.tv_usec, PacketID, coding_h, packet_size, coding_d );
@@ -374,7 +215,7 @@ void *tx_from_click_to_ob_thread(void *p)
 			
 			// TODO: kernel Blockierzeit mit einrechnen  
 			gettimeofday(&se_time, 0);
-			usleep(  packet_intervall );
+//			usleep(  packet_intervall );
 		} else if(dev->click_read_buffer_length>sizeof(Click2OBD_header) ) { // read from click and send to beacon
 			pthread_mutex_lock(&dev->click_read_mutex);
 				p_obdh = (Click2OBD_header*)dev->click_read_tmp_buffer;
@@ -403,12 +244,22 @@ void *tx_from_click_to_ob_thread(void *p)
 				}
 			pthread_mutex_unlock(&dev->click_read_mutex);
 		}
-		usleep( SLEEP_TIME );
+//		usleep( SLEEP_TIME );
 	}
 	printf("exit: click -> obd\n");
 	pthread_exit(p);
 }
 
+
+
+/*
+	THREAD:  
+		Ließt die Datenpakete vom Serial-Dev und und leitet sie zum Click weiter.
+		Hierbei werden Status Packete ausgewertet und Zusammenfassungen ausgegeben.
+
+	TODO:  Auswertung kapseln und de-/aktivierbar machen.
+	TODO:  Zusammenfassung kapseln und de-/aktivierbar machen.
+*/
 unsigned long usb_channel_counter1 = 0;
 unsigned long usb_channel_counter2 = 0;
 unsigned long usb_channel_counter3 = 0, usb_channel_counter4 = 0, usb_channel_counter5=0, usb_channel_counter6=0;
@@ -456,8 +307,6 @@ void *rx_from_ob_to_click_thread(void *p)
 			fprintf(dev->hostoutput_file, "%d.%.6d:\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld", tmp_time.tv_sec, tmp_time.tv_usec, usb_channel_counter1, usb_channel_counter2, usb_channel_counter3, usb_channel_counter5, usb_channel_counter4, usb_channel_counter6);
 			fprintf(dev->hostoutput_file, "\t%ld\t%ld\t%ld\n", usb_channel_counter7, usb_channel_counter8, usb_channel_counter9 );
 			fflush(dev->hostoutput_file);
-
-			///if( usb_channel_counter1 == 0  ) sleep_genereator = 1000*MAX_GENERATOR_SLEEP_TIME;
 			
 			usb_channel_counter1=0;
 			usb_channel_counter2=0;
@@ -619,12 +468,13 @@ void *rx_from_ob_to_click_thread(void *p)
 			
 			gettimeofday(&opb_time, 0);
 		}
-		usleep( SLEEP_TIME );
+//		usleep( SLEEP_TIME );
 	}  
 	printf("exit: obd -> click\n");
 	pthread_exit(p);
 }
 
+// Schließt alle offenen Dateine und beendet die Kommunikation zum socket und serial-dev.
 int exit_function() {
 	struct device_data* dev = device_list;
 	unsigned int i;
@@ -641,51 +491,93 @@ int exit_function() {
 	}
 }
 
-unsigned int default_index=0;
-
-int input_function(void *p) {
-	char buffer[100];
-	unsigned char len = 0;
-	OBD2HW_Header* p_hwh =   (OBD2HW_Header*)buffer;
-	unsigned int dev_num;
-		
-	p_hwh->start=0;
-	p_hwh->length=0;
-	p_hwh->type=MONITOR_INPUT;
-	p_hwh->reserved=0xFF;
+// Initialisierung Basisinformationen aller Geräte
+int init(int argc, char** argv) { 
+	unsigned int j=0;
 	
-	while(1) {
-		if(exit_time>0 && exit_time<time(0)) break;
+	if(argc==0) return -1;
 
-		while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
-		switch( buffer[sizeof(OBD2HW_Header) ] ) {
-			case '\n':  break;
-			case 'd':  	dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
+	device_list = (struct device_data*) calloc ( argc+1, sizeof(struct device_data) );
+	device_list_size = argc;
+
+	for(j=0; j<argc; j++) {
+		device_list[j].index = j;
 		
-					if(dev_num>=0 && dev_num<device_list_size && default_index != dev_num) {
-						default_index = dev_num;
-						printf("switch device to: %d\n", default_index);
-					}
-				
-					break;
-			case 'x': 	exit_time = time(0)-1;
-					break;
-			default:	p_hwh->length = len;
-					putDataToUSBChannel(device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
-					break;
+		sprintf(device_list[j].device_name, "/dev/ttyACM%s\0", argv[j] );
+
+		device_list[j].rx_running = 1;
+		device_list[j].tx_running = 1;
+		
+		device_list[j].fd = open_obd_serial( device_list[j].device_name );
+		if ( device_list[j].fd == -1 ) exit(-2);
+
+		device_list[j].sendPort   = begin_ports+j*2;
+		device_list[j].recivePort = begin_ports+j*2+1;
+
+		printf("open socket(localhost, %d, %d)\n", device_list[j].sendPort, device_list[j].recivePort );
+		device_list[j].con = open_socket_connection("localhost", device_list[j].sendPort, device_list[j].recivePort );
+		
+		char filename[120];
+		
+		int i;
+		int l = strlen(device_list[j].device_name);
+		
+		for(i=l; i>=0 && device_list[j].device_name[i-1]!='/'; i-- )  ;
+		strncpy(filename, device_list[j].device_name+i, l-i);
+	
+		sprintf(filename,"/tmp/%s",device_list[j].device_name+i);
+		i=strlen(device_list[j].device_name+i)+5;
+
+		printf("Daten werden unter %s_* gespeichert\n", filename);	
+	
+		strncpy(filename+i, "_b.log", 7);		device_list[j].output_file 		= fopen(filename, "a");
+		strncpy(filename+i, "_h.log", 7);		device_list[j].hostoutput_file	= fopen(filename, "a");
+		strncpy(filename+i, ".dat", 5);			device_list[j].debug_file 		= fopen(filename, "a");
+		strncpy(filename+i, "_send.log", 10);	device_list[j].send_file_log 	= fopen(filename, "a");
+		strncpy(filename+i, "_recv.log", 10);	device_list[j].recive_file_log 	= fopen(filename, "a");
+		
+		if(device_list[j].output_file==NULL || device_list[j].hostoutput_file==NULL || device_list[j].debug_file==NULL
+			|| device_list[j].send_file_log==NULL || device_list[j].recive_file_log==NULL) {
+			printf("Dateien konnten nicht erstellt werden\n", filename);
+			exit(-1);
 		}
-		len=0;
-		usleep( SLEEP_TIME*10 );
+		
+		pthread_mutex_init( &device_list[j].usb_read_mutex,  NULL);
+		
+		device_list[j].threadResult = pthread_create(  &(device_list[j].txThread)
+							     ,  (pthread_attr_t*)NULL
+							     ,(void *)&tx_from_click_to_ob_thread
+							     ,(void*)&device_list[j]); 
+
+		device_list[j].threadResult = pthread_create(  &(device_list[j].usbReadThread)
+							     ,  (pthread_attr_t*)NULL
+							     ,(void *)&read_from_usb_thread
+							     ,(void*)&device_list[j]);
+		
+		device_list[j].threadResult = pthread_create(  &(device_list[j].clickReadThread)
+							     ,  (pthread_attr_t*)NULL
+							     ,(void *)&read_from_click_thread
+							     ,(void*)&device_list[j]);		
+
+		device_list[j].threadResult = pthread_create(  &(device_list[j].rxThread)
+							     ,  (pthread_attr_t*)NULL
+							     ,(void *)&rx_from_ob_to_click_thread
+							     ,(void*)&device_list[j]);
+		
+		// WICHTIG ab hier sollten keine änderungen mehr an device_list[j] gemacht werden.
 	}
-	printf("exit: input\n");
-	pthread_exit(p);
+	return 0;
 }
 
+/**
+	Wertet mit Hilfe von parameter.h die Konsolenparameter aus und startet den input-Threads und wartet dann auf das beenden aller Threads
+**/
 int main( int argc, char **argv) {
 	struct device_data* dev;
 	unsigned int i=0;
 	pthread_t inputThread;
 	void* inputJoin;
+	struct hListe plist = { PARM2FUNC/sizeof(struct param2func), (struct param2func *)&pam };
 
 	srand ( time(NULL) );
 	
