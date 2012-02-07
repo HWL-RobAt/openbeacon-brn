@@ -573,7 +573,7 @@ void *rx_from_ob_to_click_thread(void *p)
 			} else if(p_hwh->type==PACKET_DATA) {			
 				// send to click
 				send_to_peer(dev->con, buffer+sizeof(OBD2HW_Header),  p_hwh->length);
-				// printf("packet recive %d \n", p_hwh->length);
+				printf("packet recive %d \n", p_hwh->length);
 			} else {				
 				usb_channel_counter9++;
 			}

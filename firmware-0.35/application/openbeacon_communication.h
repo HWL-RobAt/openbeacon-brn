@@ -3,7 +3,7 @@
 #ifndef __OPENBEACON_COMUNICATION_H__
 #define __OPENBEACON_COMUNICATION_H__
 
-#define OPENBEACON_MACSIZE                    5
+#define OPENBEACON_MACSIZE                    		5
 #define ENCODING_PARAMETER				0x20
 /*
 	Comunication Protocol Header for comunication between Openbeacon Deamon and Openbeacon HW.
