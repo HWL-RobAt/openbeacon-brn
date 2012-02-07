@@ -1,7 +1,18 @@
 #!/bin/bash
 # (C) Milosch Meriac <meriac@bitmanufaktur.de> 2006
 
-UART='/dev/ttyACM0'
+if [[ -z $1 ]]; then 
+	echo "Please give the flash image file and the number of the device /dev/ttyACM."
+	echo "example:	at91flash openbeacon.bin 0"
+	exit -1;
+fi
+if [[ -z $2 ]]; then
+	echo "Please give the flash image file and the number of the device /dev/ttyACM."
+        echo "example:  at91flash openbeacon.bin 0"
+        exit -1;
+fi
+
+UART='/dev/ttyACM'$2
 #SAM7='/usr/local/bin/sam7'
 SAM7='sam7'
 
