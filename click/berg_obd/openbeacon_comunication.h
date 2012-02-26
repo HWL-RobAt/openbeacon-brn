@@ -13,13 +13,14 @@ struct device_data {
 	int fd, index;
 	struct socket_connection *con;
 	
-	pthread_t rxThread, txThread, usbReadThread, clickReadThread;
+	pthread_t rxThread, txThread, usbReadThread, clickReadThread, writeOBdThread;
 	int threadResult;
-	void *rxThreadJoin,*txThreadJoin;
+	void *rxThreadJoin,*txThreadJoin, *usbThreadJoin, *clickReadThreadJoin, *writeOBdThreadJoin;
 	
+	char usb_write_buffer[10000], usb_write_tmp_buffer[100];
 	char usb_read_buffer[10000], usb_read_tmp_buffer[100];
 	char click_read_buffer[10000], click_read_tmp_buffer[100];
-	unsigned int usb_read_buffer_length, click_read_buffer_length;
+	unsigned int usb_write_buffer_length, usb_read_buffer_length, click_read_buffer_length;
 	
 	pthread_mutex_t usb_read_mutex, click_read_mutex;
 	pthread_mutex_t usb_write_mutex, click_write_mutex;
@@ -28,7 +29,7 @@ struct device_data {
 	unsigned int getDataFromClickChannel_buffer_length;
 
 	int sendPort, recivePort;
-	FILE *output_file, *hostoutput_file, *debug_file, *send_file_log, *recive_file_log;
+	FILE *beaconoutput_file, *hostoutput_file, *debug_file, *send_file_log, *recive_file_log;
 };
 
 #define OPENBEACON_MACSIZE                    5
@@ -36,27 +37,24 @@ struct device_data {
 /*
 	Comunication Protocol Header for comunication between Openbeacon Deamon and Openbeacon HW.
 */
-#define UNKNOWN_DATA1	1 + ENCODING_PARAMETER
-#define PACKET_DATA 		2 + ENCODING_PARAMETER
-#define CONFIG_DATA 		3 + ENCODING_PARAMETER
-#define DEBUG_PRINT 		4 + ENCODING_PARAMETER
-#define MONITOR_PRINT 		5 + ENCODING_PARAMETER
-#define MONITOR_INPUT 		6 + ENCODING_PARAMETER
-#define MONITOR_HEX_PRINT   7 + ENCODING_PARAMETER
-#define DEBUG_HEX_PRINT	8 + ENCODING_PARAMETER
-#define SPEZIAL_PRINT		9 + ENCODING_PARAMETER
-#define TEST_DATA			10 + ENCODING_PARAMETER
-#define TEST_DATA_ECHO	11 + ENCODING_PARAMETER
-#define UNKNOWN_DATA2	12 + ENCODING_PARAMETER
+#define MONITOR_INPUT 			1 	+ ENCODING_PARAMETER
+#define TEST_DATA				2 	+ ENCODING_PARAMETER
+#define TEST_DATA_ECHO			3 	+ ENCODING_PARAMETER
+#define PACKET_DATA 			10 	+ ENCODING_PARAMETER
+#define CONFIG_DATA 			11 	+ ENCODING_PARAMETER
+#define DEBUG_PRINT 			12 	+ ENCODING_PARAMETER
+#define MONITOR_PRINT 			13 	+ ENCODING_PARAMETER
+#define MONITOR_HEX_PRINT   	14 	+ ENCODING_PARAMETER
+#define DEBUG_HEX_PRINT			15 	+ ENCODING_PARAMETER
+#define SPEZIAL_PRINT			16 	+ ENCODING_PARAMETER    // unused
+#define STATUS_OPENBEACON_V1	17 	+ ENCODING_PARAMETER
+#define STATUS_OPENBEACON_V2	18 	+ ENCODING_PARAMETER
 
 #ifndef portCHAR
 	#define portCHAR	char
 #endif
 #ifndef portLONG
 	#define portLONG	int
-#endif
-#ifndef portTickType 
-	#define portTickType	unsigned short
 #endif
 
 typedef struct {
@@ -78,15 +76,36 @@ typedef struct {
 
 typedef struct {	
     unsigned portCHAR  status;									 	// State:   echo_ok?, echo_error?;  crc? , no_tx?, hw_rxtx_test?  ...
+    unsigned portCHAR  length;
     unsigned portCHAR  count;										
-    unsigned portCHAR  channel;                          							// channel frequency:      2400 MHz + rf_ch * a MHz       ( a=1 für 1 Mbps, 2 für 2 Mbps )
+    unsigned portCHAR  channel;                          							// channel frequency:      2400 MHz + rf_ch * a MHz       ( a=1 fï¿½r 1 Mbps, 2 fï¿½r 2 Mbps )
     unsigned portCHAR  rate;									 		// data rate value:      	  1 = 1 Mbps   ,		2 = 2 Mbps
     unsigned portCHAR  power;   					     				 	// power:		        	00 =  -18 dBm,		01 = -12 dBm		10 = -6 dBm		11 = 0 dBm
     unsigned portCHAR  openbeacon_dmac[ OPENBEACON_MACSIZE ];	 		// kann von 3-5 Byte variieren
     unsigned portCHAR  openbeacon_smac[ OPENBEACON_MACSIZE ];		 	// kann von 3-5 Byte variieren
-    unsigned portCHAR  length;	
-} __attribute__ ((packed)) Click2OBD_header;   // 15
+} __attribute__ ((packed)) Click2OBD_header;   // 16
 
+typedef struct {
+	unsigned char TxPowerLevel;
+	unsigned char TxRate;
+	unsigned char TxChannel;
+	unsigned char NetID[5];
+
+	/* Statistik  */
+	unsigned char send_count[4];
+	unsigned char send_fail_count[4];
+	unsigned char recv_count[4];
+	unsigned char recv_fail_count[4];
+} StatusOpenbeacon_V1;
+
+typedef struct {
+	/* Statistik  */
+	unsigned char tx_usb_packets[4], rx_usb_packets[4];
+	unsigned char tx_usb_enc_bytes[4], rx_usb_enc_bytes[4];
+	unsigned char tx_usb_dec_bytes[4], rx_usb_dec_bytes[4];
+	unsigned char fail_tx_usb_packets[4], fail_rx_usb_packets[4];
+	unsigned char qfree, rx_quse, tx_quse;
+} StatusOpenbeacon_V2;
 
 /*
 	the struct for HW_RXTX_TEST
@@ -94,16 +113,7 @@ typedef struct {
 typedef struct {
 	unsigned portCHAR  openbeacon_smac[ OPENBEACON_MACSIZE ];		 	// kann von 3-5 Byte variieren
 	unsigned char prot_type[2];										// Protokolltype: 0606  
-	unsigned portCHAR type;
-	unsigned portCHAR count;
-	unsigned portCHAR number;
-	portTickType timestamp_send;	
-	portTickType timestamp_recive;
-	// extensions
-	// Testbegin, Testend
-	unsigned portLONG test_begin;
-	unsigned portLONG test_end;
-	unsigned portLONG test_time;
+	unsigned portLONG pID;
 } __attribute__ ((packed)) HW_rxtx_Test;   // 5 + 5 + 5*4 = 20 + 10 = 30
 
 portCHAR putDataToUSBChannel(struct device_data* dev,  unsigned portCHAR* buffer,  unsigned portCHAR blen );
@@ -135,11 +145,10 @@ typedef struct {
 
 extern static_buffer_info sbi_dev[];
 
-extern unsigned long usb_channel_counter1;
-extern unsigned long usb_channel_counter2;
-extern unsigned long usb_channel_counter3;
-extern unsigned long usb_channel_counter4;
-extern unsigned long usb_channel_counter5, usb_channel_counter6, usb_channel_counter7, usb_channel_counter8, usb_channel_counter9;
+extern unsigned long usb_channel_counter1, usb_channel_counter2, usb_channel_counter3;
+extern unsigned long usb_channel_counter4, usb_channel_counter5, usb_channel_counter6;
+extern unsigned long usb_channel_counter7, usb_channel_counter8, usb_channel_counter9;
+extern unsigned long usb_channel_counter10;
 
 #define STATUS_OK							10
 #define STATUS_ERROR_NO_DATA				20
@@ -192,9 +201,9 @@ extern unsigned long usb_channel_counter5, usb_channel_counter6, usb_channel_cou
 	
 	/*
 		Neu bauen
-		1. Daten temporäre Laden
-		2. Packetanfang finden und Packet stück für Stück in den Packetpuffer übertragen 
-		3. Wenn Packet fertig ist, an den Anwender übergeben.
+		1. Daten temporï¿½re Laden
+		2. Packetanfang finden und Packet stï¿½ck fï¿½r Stï¿½ck in den Packetpuffer ï¿½bertragen 
+		3. Wenn Packet fertig ist, an den Anwender ï¿½bergeben.
 	*/	
 	static int in_count=0;
 
