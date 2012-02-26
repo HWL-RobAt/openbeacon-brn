@@ -5,6 +5,9 @@ all:
 	$(CC) $(CFLAGS) -fno-builtin -I./socket -I./serial -c main.c -o main.o
 	$(CC) $(CFLAGS) tools/tools.o main.o socket/socket.o serial/serial.o -lpthread -lm -o obd-mips 
 
+install: obd-mips
+	cp obd-mips ../../local/bin/
+
 clean:
 	@rm -f socket/socket.o
 	@rm -f serial/serial.o
