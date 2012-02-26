@@ -1,26 +1,26 @@
-/* usbshell.c - command line interface for configuration and status inquiry
- *
- * Copyright (c) 2008  The Blinkenlights Crew
- *                          Daniel Mack <daniel@caiaq.de>
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
 
-#ifndef __USBSHELL_H__
-#define __USBSHELL_H__
+#ifndef USBSHELL_H_
+#define USBSHELL_H_
 
-extern void usbshell_task(void *pvParameters);
+#include <FreeRTOS.h>
 
-#endif /* __USBSHELL_H__ */
+extern unsigned char usb_shell_input[];
+
+void useShell( void );
+
+/* Statistik  */
+typedef struct {
+	portTickType stat_time;
+	unsigned char tx_usb_packets[4], rx_usb_packets[4];
+	unsigned char tx_usb_enc_bytes[4], rx_usb_enc_bytes[4];
+	unsigned char tx_usb_dec_bytes[4], rx_usb_dec_bytes[4];
+	unsigned char fail_tx_usb_packets[4], fail_rx_usb_packets[4];
+	unsigned char qfree, rx_quse, tx_quse;
+} usb_Mgmt;
+
+extern usb_Mgmt usb_stat;
+
+
+void sendUSBStat( portTickType diff );
+
+#endif /* USBSHELL_H_ */

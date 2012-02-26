@@ -75,7 +75,7 @@
 
 #define MASK_RX_DR_FLAG		0x40
 #define MASK_TX_DS_FLAG		0x20
-#define MASK_MAX_RT_FLAG		0x10
+#define MASK_MAX_RT_FLAG	0x10
 #define MASK_IRQ_FLAGS		(MASK_MAX_RT_FLAG|MASK_TX_DS_FLAG|MASK_RX_DR_FLAG)
 
 #define NRF_MIN_MAC_SIZE 		3
@@ -89,5 +89,6 @@
 #define FIFO_STATUS_TX_FULL		0x20
 
 #define STATUS_CD				0x01
+#define STATUS_TX_DS			0x20
 
 #endif/*NRF_HW_H*/

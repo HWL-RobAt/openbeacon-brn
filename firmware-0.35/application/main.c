@@ -28,20 +28,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include <FreeRTOS.h>
-#include <AT91SAM7.h>
-#include <USB-CDC.h>
-#include <task.h>
-
-#include "env.h"
-#include "rnd.h"
-#include "board.h"
-#include "main.h"
-#include "nRF24L01/nRF_HW.h"
-#include "nRF24L01/nRF_CMD.h"
-#include "nRF24L01/nRF_LL.h"
-#include "nRF24L01/nRF_API.h"
+#include "openbeacon.h"
 #include "usbshell.h"
+#include "openbeacon_communication.h"
 
 /* Priorities/stacks for the various tasks within the demo application. */
 #define mainUSB_PRIORITY			( tskIDLE_PRIORITY )
@@ -52,31 +41,8 @@
 #define mainAPP_PRIORITY			( tskIDLE_PRIORITY )
 #define mainAPP_TASK_STACK			( 512 )
 
-/**********************************************************************/
-
-OpenBeacon_data g_Beacon;
-char USB_SYNC = 0;
-char status_mode;
-
-/**********************************************************************/
-
-static inline void HaltBlinking(void)
-{
-    while(1)
-    {
-	vTaskDelay (portTICK_RATE_MS * 500);
-        AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_MASK );
-
-	vTaskDelay (portTICK_RATE_MS * 500);
-        AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_MASK );
-    }
-}
-
-unsigned char global_TxPowerLevel=0, global_TxRate=0, global_TxChannel=DEFAULT_CHANNEL;
-unsigned char global_MAC[  OPENBEACON_MACSIZE ] = {0xF1,0xB2,0xC3,0xD2,0xE1};
-
 static inline void prvSetupHardware (void)
-{	
+{
     /*	When using the JTAG debugger the hardware is not always initialised to
 	the correct default state.  This line just ensures that this does not
 	cause all interrupts to be masked at the start. */
@@ -86,336 +52,178 @@ static inline void prvSetupHardware (void)
     AT91F_PIO_CfgInput ( AT91C_BASE_PIOA, IRQ_PIN  );
     AT91F_PIO_CfgOutput( AT91C_BASE_PIOA, LED_MASK );
     AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_MASK );
- 
+
     /*	Enable the peripheral clock. */
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA;
-    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOB;    
-    
-    if(!nRFAPI_Init(DEFAULT_CHANNEL, global_MAC, OPENBEACON_MACSIZE ))
-	HaltBlinking();
-    
-    /* Inititalize nRF24L01 */
-    nRFAPI_SetPipeSizeRX(0,sizeof(g_Beacon));
-    nRFAPI_SetRxMode(1);
-    nRFAPI_SetTxPowerRate(global_TxPowerLevel, global_TxRate);
-    
-    nRFLL_CE(1);
-    status_mode=0;
-    
-    /* initialize environment variables */
-    env_init();
-    if(!env_load())
-    {
-	env.e.speed=2;
-	env.e.mode=4;
-	env.e.tag_id=666;	
-	env_store();
-    }
-    
+    AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOB;
+
+    unsigned char mac[5] = {0xF1,0xB2,0xC3,0xD2,0xE1};
+    ob_init( 1, 2, DEFAULT_CHANNEL, mac );
+
     /* Initialization done - Turn on green LED */
-    AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_GREEN );
-}
-
-/**********************************************************************/
-	static inline unsigned short swapshort (unsigned short src)
-	{
-		return (src>>8)|(src<<8);
-	}
-	unsigned long swaplong (unsigned long src)
-	{
-		return (src>>24)|(src<<24)|((src>>8)&0x0000FF00)|((src<<8)&0x00FF0000);
-	}
-/**********************************************************************/
-
-// TODO:  payload size?
-void TransmitBeacon(unsigned portCHAR* payload, unsigned char TxPowerLevel, unsigned char TxRate, unsigned char TxChannel, unsigned char* mac, unsigned char mac_length)   // payload length = 30
-{
-    unsigned int i=0;
-    unsigned long crc;
-
-    AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_RED );
-    vTaskDelay(portTICK_RATE_MS);
-	
-    // set TX mode
-    nRFLL_CE(0);
-    nRFAPI_SetRxMode(0);
-
-    if(TxPowerLevel==0) TxPowerLevel = global_TxPowerLevel;	else TxPowerLevel--;	
-    if(TxRate==0) TxRate = global_TxRate;				else TxRate--;
-    if(TxChannel==0) TxChannel= global_TxChannel;			else TxChannel--;
-	
-    // check the limit
-    if(TxRate>1) TxRate=1;
-    if(TxChannel>125) TxChannel=125;
-    if(TxPowerLevel>3) TxPowerLevel=3;	
-
-//    if(mac_length==0) mac_length=0;	
-//    if(mac[0]==0) mac[0]=0;
-
-    if( global_TxPowerLevel != TxPowerLevel || global_TxRate!=TxRate ) {
-	    global_TxPowerLevel	= TxPowerLevel;
-	    global_TxRate		= TxRate;
-	    nRFAPI_SetTxPowerRate( global_TxPowerLevel, global_TxRate );    
-    }
-   if( global_TxChannel != TxChannel ) {
-	    global_TxChannel		= TxChannel;
-	   
-	    nRFAPI_SetChannel( global_TxChannel );
-    }
-
-   //  set DESC-MAC
-   // nRFAPI_SetTxMAC(mac, mac_length);
-	
-    // setup packet 
-    for(i=0; i<sizeof(g_Beacon.payload); i++) g_Beacon.payload[i] = payload[i];
-   
-    crc = env_crc16(g_Beacon.payload, sizeof (g_Beacon.payload) );
-    g_Beacon.crc = swapshort(crc);    
-    
-    // upload data to nRF24L01
-    nRFAPI_TX(g_Beacon.payload, sizeof(OpenBeacon_data) );
-    
-    // transmit data
-    nRFLL_CE(1);
-    status_mode=1;
-    
-    vTaskDelay(portTICK_RATE_MS*2);
+    AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_GREEN );
     AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_RED );
-    nRFAPI_SetRxMode(1);
 }
 
-unsigned char input[100];
+ob_data send_buffer, recv_buffer;
+portTickType ob_send_time, ob_app_start;
 
-void sendText(unsigned char* msg, unsigned char size) {
-	MemBlock *InputOutput = NULL;
-	OBD2HW_Header* p_hwh;
-	
-	InputOutput = pullFreeBlock();
-	if(InputOutput!=NULL) {
-		p_hwh = (OBD2HW_Header*)InputOutput->pValue;
-		p_hwh->type = MONITOR_PRINT;
-		p_hwh->length = size;
-		memcpy(InputOutput->pValue+sizeof(OBD2HW_Header), msg,  p_hwh->length);
-								
-		InputOutput->length = p_hwh->length+sizeof(OBD2HW_Header);
-		vUSBSendPacket(InputOutput, InputOutput->length);
-	}
-}
-void sendText_MAC(unsigned char* msg, unsigned char size, unsigned char* mac, unsigned int pos) {
-	MemBlock *InputOutput = NULL;
-	OBD2HW_Header* p_hwh;
-	unsigned int i, h=0;
-	
-	InputOutput = pullFreeBlock();
-	if(InputOutput!=NULL) {
-		p_hwh = (OBD2HW_Header*)InputOutput->pValue;
-		p_hwh->type = MONITOR_PRINT;
-		p_hwh->length = size;
-		memcpy(InputOutput->pValue+sizeof(OBD2HW_Header), msg,  p_hwh->length);
-		
-		for(i=0; i<OPENBEACON_MACSIZE; i++) {
-			if( ((mac[i]&0xF0)/0x0F)< 0x0A) InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+h ]  = '0'+((mac[i]&0xF0)/0x10);
-			else InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+h ]  = 'A'+((mac[i]&0xF0)/0x10) - 10;
-			h++;			
-			if( (mac[i]&0x0F) < 0x0A) InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+h ]  = '0'+( mac[i]&0x0F );
-			else InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+h ]  = 'A'+( mac[i]&0x0F ) - 10;
-			h++;
-			if(h==2 || h==5 || h==8 || h==11) {
-				InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+h ] = ':';
-				h++;
-			}			
-		}
-								
-		InputOutput->length = p_hwh->length+sizeof(OBD2HW_Header);
-		vUSBSendPacket(InputOutput, InputOutput->length);
-	}
-}
-
-unsigned long pow(unsigned long base, unsigned long exp) {
-        unsigned long ret=base;
-
-        if(exp==0) return 1;
-
-        while( (--exp)>0 ) {
-                ret = ret * base;
-        }
-        return ret;
-}
-
-void sendText_shortint(unsigned char* msg, unsigned char size, unsigned char value, unsigned int pos) {
-	MemBlock *InputOutput = NULL;
-	OBD2HW_Header* p_hwh;
-	unsigned int i, h=0, hp;
-	unsigned char z=value, leer=0;
-	
-	InputOutput = pullFreeBlock();
-	if(InputOutput!=NULL) {
-		p_hwh = (OBD2HW_Header*)InputOutput->pValue;
-		p_hwh->type = MONITOR_PRINT;
-		p_hwh->length = size;
-		memcpy(InputOutput->pValue+sizeof(OBD2HW_Header), msg,  p_hwh->length);
-		
-		for(i=0; i<3; i++) {
-			hp = pow( 10, (2-i) );
-			if( z/hp>0 ) {
-				InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+i ]  = '0'+  z/hp;
-				z = z%hp;
-				leer=1;
-			} else 
-				if(leer==0) InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+i ]  = ' ';
-				else InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+i ]  = '0';
-		}
-		if(InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+i-1]==' ') InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+i-1 ]  = '0';						
-		
-		InputOutput->length = p_hwh->length+sizeof(OBD2HW_Header);
-		vUSBSendPacket(InputOutput, InputOutput->length);
-	}
-}
+static MemBlock* last_usb_recvmesg=NULL;
+static MemBlock* last_usb_sendmesg=NULL;
 
 void vApplicationIdleHook(void)
-{                                      
-	unsigned char status, i,j, hvar;
-	MemBlock *data_pack = NULL;
+{
+	static char sending=0;
+	static char state=0;
+	static char* sendData=NULL;
+	OBD2HW_Header* pobd2hw;
 
-	idle_tread_counter++;
-	if(input[0]!='\0') {
-		nRFAPI_SetRxMode(1);
-		switch(input[0]) {
-			case 'm':
-					j=1;
-					for(i=0; i<OPENBEACON_MACSIZE; i++) {
-						if(input[j]>='0' && input[j]<='9') input[j] -= '0';
-						if(input[j]>='A' && input[j]<='F') input[j] = input[j] - 'A' + 10;
-						if(input[j]>='a' && input[j]<='f')  input[j] = input[j] - 'a' + 10;
-						
-						if(input[j+1]>='0' && input[j+1]<='9') input[j+1] -= '0';
-						if(input[j+1]>='A' && input[j+1]<='F') input[j+1] = input[j+1] - 'A' + 10;
-						if(input[j+1]>='a' && input[j+1]<='f')  input[j+1] = input[j+1] - 'a' + 10;
-						
-						global_MAC[i] = input[j]*0x10+input[j+1];
-						j += 2;
-						if(input[j]==':') j++;						
-					}
-			
-					break;			
-			case 'c':	hvar = 0;
-					for(i=0; i<3; i++) {
-						if( input[i+1]>='0' &&  input[i+1]<='9') {
-							hvar = hvar*10 + (input[i+1]-'0');
-						}
-					}						
-					if(hvar>127) hvar=127;
-					if(hvar>0) {
-						global_TxChannel = hvar - 1;
-					}
-					nRFAPI_SetChannel( global_TxChannel );
-					break;
-			case 'r':	hvar = 0;
-					if( input[1]>='0' &&  input[1]<='9') {
-						hvar = input[1]-'0';
-					}
-					
-					if(hvar>3) hvar=3;
-					if(hvar>0) {
-						global_TxRate = hvar - 1;
-					}
-				        nRFAPI_SetTxPowerRate( global_TxPowerLevel, global_TxRate );
-					break;
-			case 'p':	hvar = 0;
-					if( input[1]>='0' &&  input[1]<='9') {
-						hvar = input[1]-'0';
-					}
-					
-					if(hvar>5) hvar=5;
-					if(hvar>0) {
-						global_TxPowerLevel = hvar - 1;
-					}
-					nRFAPI_SetTxPowerRate( global_TxPowerLevel, global_TxRate );    
-					break;					
-			case 'h': case 'H':
-			default:	// print help 
-					sendText("**********************************************************", 58);
-					sendText("*        OpenBeacon Version 0.1.0                        *", 58);
-					sendText("**********************************************************", 58);
-					sendText_shortint("*   c[1-125]\t- channel\t\t*                *", 50, global_TxChannel, 32);
-					sendText_shortint("*   r[1-2]\t- rate\t\t\t*                *", 50, global_TxRate, 28);
-					sendText_shortint("*   p[1-4]\t- power\t\t\t*                *", 50, global_TxPowerLevel, 29);
-					sendText_MAC("*   m[#MAC]\t- set MAC Adresse\t* AA:BB:CC:DD:EE *", 50, global_MAC, 32);
-					sendText("**********************************************************", 58);
-					sendText("*   h\t\t- hilfe                                  *", 50);
-					sendText("*   x\t\t- Exit                                   *", 50);
-					sendText("**********************************************************", 58);
-					break;		
+	#ifdef APPLICATION_START_TIME
+		if(xTaskGetTickCount()-ob_app_start<APPLICATION_START_TIME) {
+			usb_stat.stat_time 	  = ob_app_start + 2*APPLICATION_START_TIME;
+			ob_int_mgmt.stat_time = ob_app_start + 2*APPLICATION_START_TIME + OPENBEACON_STATS_AUTO_SEND_TIME/2;
+
+			return;
 		}
-		input[0]='\0';
+	#endif
+
+	// TODO: erforsche diesen Einfluss | nRFAPI_GetStatus()&STATUS_TX_DS
+	if(xTaskGetTickCount()-ob_send_time > OPENBEACON_SEND_WIRELESS ) {
+		AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_RED );
+		sending=0;
+		ob_switchRXMode();
 	}
-	
-	if((AT91F_PIO_GetInput(AT91C_BASE_PIOA)&IRQ_PIN)==0)
-	{
-		OpenBeacon_packet* dph;
-		unsigned short crc;
-		OBD2HW_Header* p_hwh;
 
-		status=nRFAPI_GetStatus();
+	#ifdef OPENBEACON_RECIVE_WIRELESS
+		if( last_usb_sendmesg==NULL ) last_usb_sendmesg = pullFreeBlock();
 
-		// sendText(".", 1);
-		
-		if(status & MASK_RX_DR_FLAG)
-		{
-			data_pack = pullFreeBlock();		
-			// read packet from nRF chip
-			if(data_pack!=NULL)  {
-				nRFCMD_RegReadBuf(RD_RX_PLOAD, data_pack->pValue+sizeof(OBD2HW_Header)+sizeof(Click2OBD_header)-OPENBEACON_MACSIZE-1, sizeof(g_Beacon));
-					    
-				dph = (OpenBeacon_packet*) (data_pack->pValue+sizeof(OBD2HW_Header)+sizeof(Click2OBD_header)-OPENBEACON_MACSIZE-1 );
-				p_hwh =  (OBD2HW_Header*) (data_pack->pValue);
-				
-				// verify the crc checksum
-				crc = env_crc16(data_pack->pValue+sizeof(OBD2HW_Header)+sizeof(Click2OBD_header)-OPENBEACON_MACSIZE-1, sizeof(g_Beacon)-sizeof(dph->sp.crc));	    
-				if(swapshort(dph->sp.crc)==crc) {  
-					Click2OBD_header* ph =  (Click2OBD_header*)(data_pack->pValue+sizeof(OBD2HW_Header));
-					
-					ph->status	= 0;
-					ph->count	= 0;
-					ph->power 	= global_TxPowerLevel+1;
-					ph->rate 		= global_TxRate+1;
-					ph->channel 	= global_TxChannel+1;
-										
-					p_hwh->start = 0;
-					p_hwh->length = ph->length+sizeof(Click2OBD_header);
-					p_hwh->type = PACKET_DATA;
-					p_hwh->reserved = 0xFF;
-					
-					data_pack->length = p_hwh->length+sizeof(OBD2HW_Header);
-					
-					memcpy( ph->openbeacon_dmac,  global_MAC, OPENBEACON_MACSIZE );				
-					
-					vUSBSendPacket(data_pack,  data_pack->length);
-					// sendText_shortint("CRC OK:      \r\n", 15, ph->length, 8);					
-				} else {
-					// sendText("CRC Fail   \r\n", 13);
-					pushFreeBlock( data_pack );
-				}
-				
-				nRFAPI_FlushRX();
-				data_pack=NULL;
+		if(sending==0 && last_usb_sendmesg!=NULL) {
+			// Wirless Packete empfangen
+			pobd2hw = (OBD2HW_Header*) last_usb_sendmesg->pValue;
+			pobd2hw->length=recvBeacon( &recv_buffer );
+
+			if( pobd2hw->length>0 ) {
+				sending=1;
+				memcpy(last_usb_sendmesg->pValue+sizeof(OBD2HW_Header)+sizeof(Click2OBD_header)-OPENBEACON_MACSIZE, recv_buffer.payload, pobd2hw->length );
+
+				// TODO: auswerten der Daten (ggf. weiterleiten an Click)
+				pobd2hw->type=PACKET_DATA;
+				pobd2hw->length += sizeof(Click2OBD_header);
+
+				Click2OBD_header* pclick2obd = (Click2OBD_header*) (last_usb_recvmesg->pValue+sizeof(OBD2HW_Header) );
+				pclick2obd->channel = ob_int_mgmt.TxChannel;
+				pclick2obd->rate	= ob_int_mgmt.TxRate;
+				pclick2obd->power 	= ob_int_mgmt.TxPowerLevel;
+				#ifdef OPENBEACON_TRANSMIT_WIRELESS_TO_USB
+					vUSBSendPacket( last_usb_sendmesg, pobd2hw->length+sizeof(OBD2HW_Header) );
+					last_usb_sendmesg = NULL;
+				#endif
 			}
 		}
-		
-		nRFAPI_ClearIRQ(status);
-	}
+	#endif
+	#ifdef OPENBEACON_TEST_AUTO_SEND
+		if(sending==0 && xTaskGetTickCount()-ob_send_time > OPENBEACON_SEND_WIRELESS) {
+			if( ob_int_mgmt.test_hw_diff<255 && xTaskGetTickCount()-ob_send_time>ob_int_mgmt.test_hw_diff ) {
+				// TODO: Testpacket einrichten
+				HW_rxtx_Test *htestp = (HW_rxtx_Test *)send_buffer.payload;
+				char i;
+
+				for(i=0; i<OPENBEACON_MACSIZE; i++) htestp->openbeacon_smac[ i ] = 0xFF;
+				htestp->prot_type[0] = ETHERNET_TEST_PROTOCOL_FIRST;
+				htestp->prot_type[1] = ETHERNET_TEST_PROTOCOL_SECOND;
+				increment(htestp->pID, 4);
+
+				switch( sendBeacon( &send_buffer ) ) {
+					case 0:	sending=1;
+						AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_RED );
+						ob_send_time=xTaskGetTickCount();
+						break;
+					case -1:
+					break;
+				}
+			}
+		}
+	#endif
+
+	// Sendet USB-Statistics
+	#ifdef USB_STATS_AUTO_SEND
+		#ifdef USB_STATS_AUTO_SEND_TIME
+			sendUSBStat( USB_STATS_AUTO_SEND_TIME );
+		#else
+			sendUSBStat( 1000 );
+		#endif
+	#endif
+
+	// Sendet Wirless-Statistics
+	#ifdef OPENBEACON_STATS_AUTO_SEND
+		#ifdef OPENBEACON_STATS_AUTO_SEND_TIME
+			sendBeaconStat( OPENBEACON_STATS_AUTO_SEND_TIME );
+		#else
+			sendBeaconStat( 1000 );
+		#endif
+	#endif
+
+
+
+	// Shelleingaben verarbeiten
+	#ifdef APPLICATION_USBSHELL
+			useShell();
+	#endif
+
+	// verarbeiten der USB Packete ( Datenpackete )
+	#ifdef OPENBEACON_SEND_USB_PACKET_DATA
+		if(last_usb_recvmesg==NULL) vUSBRecivePacket( &last_usb_recvmesg );
+		if(sending==0 && last_usb_recvmesg!=NULL && xTaskGetTickCount()-ob_send_time > OPENBEACON_SEND_WIRELESS) {
+			OBD2HW_Header* pobd2hw = (OBD2HW_Header*) last_usb_recvmesg->pValue;
+
+			if( pobd2hw->type==PACKET_DATA ) {
+				Click2OBD_header* pclick2obd = (Click2OBD_header*) (last_usb_recvmesg->pValue+sizeof(OBD2HW_Header) );
+
+				ob_setChannel( pclick2obd->channel );
+				ob_setRate( pclick2obd->rate );
+				ob_setPower( pclick2obd->power );
+				ob_setNetID( pclick2obd->openbeacon_dmac );
+
+				// TODO: den Payload ob_data richtig festlegen
+				memcpy(send_buffer.payload, last_usb_recvmesg->pValue+sizeof(OBD2HW_Header)+sizeof(Click2OBD_header)-OPENBEACON_MACSIZE, OPENBEACON_MAX_DATA);
+
+				switch( sendBeacon( &send_buffer ) ) {
+					case 0:	sending=1;
+							AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_RED );
+							pushFreeBlock( last_usb_recvmesg );
+							last_usb_recvmesg=NULL;
+						break;
+					case -1:
+
+						break;
+				}
+				ob_send_time=xTaskGetTickCount();
+			} else {
+				pushFreeBlock( last_usb_recvmesg );
+				last_usb_recvmesg=NULL;
+			}
+		}
+	#endif
 }
 
 int main (void)
 {
-    input[0] = '\0';
-    USB_SYNC=0;
+	char i;
+
+	// shell init
+	usb_shell_input[0]='\0';
+
 	prvSetupHardware ();
-	xTaskCreate (vUSBCDCTask, (signed portCHAR *) "USB", mainUSB_TASK_STACK, NULL, mainUSB_PRIORITY, NULL);
-    USB_SYNC = 1;
-	   
-    xTaskCreate (usbshell_task	, (signed portCHAR *) "USBSHELL"	, mainAPP_TASK_STACK	, NULL, mainAPP_PRIORITY, NULL);
+	for(i=0; i<sizeof(ob_data); i++) {
+		send_buffer.payload[i]=0;
+		recv_buffer.payload[i]=0;
+	}
+	xTaskCreate (vUSBCDCTask	, (signed portCHAR *) "USB_CDC"	, mainUSB_TASK_STACK	, NULL, mainUSB_PRIORITY, NULL);
+
     vTaskStartScheduler ();
+
+    ob_app_start=xTaskGetTickCount();
+    ob_send_time=xTaskGetTickCount();
 
     return 0;
 }

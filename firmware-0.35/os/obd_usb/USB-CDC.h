@@ -37,34 +37,37 @@
 #define USB_CDC_H
 
 #include "usb.h"
-#include "openbeacon_communication.h"
+#include <usbshell.h>
 
 #define USB_CDC_QUEUE_SIZE_TX		35
 #define USB_CDC_QUEUE_SIZE_RX		35
-#define USB_CDC_QUEUE_SIZE_FREE	72
+#define USB_CDC_QUEUE_SIZE_FREE		72
 
-#define USB_MAX_TRANSMIT_COUNT	64
-#define USB_PACKETSIZE				60
+#define USB_MAX_TRANSMIT_COUNT		64
 
 #define MEMBLOCK_TYPE_NORMAL		1
 #define MEMBLOCK_TYPE_DYNMEM		3
 #define MEMBLOCK_TYPE_USE			5
 #define MEMBLOCK_MAX_SIZE			100
-
-extern unsigned portLONG	rxCounter_enc, rxCounterMAX_enc, rxCounter_dec, rxCounterMAX_dec;
-extern unsigned portLONG	txCounter_enc, txCounterMAX_enc, txCounter_dec, txCounterMAX_dec;
-extern unsigned portLONG	idle_tread_counter;
+#define ENCODING_PARAMETER			0x20
 
 typedef struct {
-	unsigned portCHAR type;
-	unsigned int index;
-	
-	unsigned portCHAR length;
-	unsigned portCHAR pos;
-	unsigned portCHAR count;
-	unsigned char flag;	
+	unsigned portCHAR type;         // wird verwendet oder ist frei
+	unsigned portCHAR length;		// belegte grösse von pValue
+	unsigned portCHAR pos;			// wird beim versenden verwendet
 	portCHAR pValue[MEMBLOCK_MAX_SIZE];
-} MemBlock, chunk_queue;
+} MemBlock;
+
+#define USB_MONITOR_INPUT 		1 + ENCODING_PARAMETER
+#define USB_TEST_DATA			2 + ENCODING_PARAMETER
+#define USB_TEST_DATA_ECHO		3 + ENCODING_PARAMETER
+
+typedef struct {
+	  unsigned portCHAR  start;
+	  unsigned portCHAR  length;
+	  unsigned portCHAR  type;
+	  unsigned portCHAR  reserved;
+} USB_Chunk;
 
 /* Structure used to take a snapshot of the USB status from within the ISR. */
 typedef struct X_ISR_STATUS
@@ -118,6 +121,5 @@ unsigned portBASE_TYPE getRXSize( void );
 unsigned portBASE_TYPE getFreeSize( void );
 
 MemBlock *statusBlock, *debug_block;
-extern unsigned char input[];
 
 #endif

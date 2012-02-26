@@ -47,7 +47,6 @@
 
 /* Demo application includes. */
 #include <board.h>
-#include <usb.h>
 #include <USB-CDC.h>
 
 #define usbINT_CLEAR_MASK	(AT91C_UDP_TXCOMP | AT91C_UDP_STALLSENT | AT91C_UDP_RXSETUP | AT91C_UDP_RX_DATA_BK0 | AT91C_UDP_RX_DATA_BK1 )
@@ -55,7 +54,7 @@
 
 /* Messages and queue used to communicate between the ISR and the USB task. */
 static xISRStatus xISRMessages[usbQUEUE_LENGTH + 1];
-extern xQueueHandle xUSBInterruptQueue;
+xQueueHandle xUSBInterruptQueue;
 /*-----------------------------------------------------------*/
 
 /* The ISR can cause a context switch so is declared naked. */
@@ -117,9 +116,7 @@ vUSB_ISR (void)
 	      AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_0] |= AT91C_UDP_DIR;
 
 	      /* Might not be wise in an ISR! */
-	      while (!
-		     (AT91C_BASE_UDP->
-		      UDP_CSR[usbEND_POINT_0] & AT91C_UDP_DIR));
+	      while (!(AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_0] & AT91C_UDP_DIR));
 	    }
 
 	  /* Clear RXSETUP */

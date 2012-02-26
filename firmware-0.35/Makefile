@@ -73,6 +73,7 @@ ARM_SRC= \
   application/main.c \
   application/env.c \
   application/rnd.c \
+  application/openbeacon.c \
   application/usbshell.c \
   application/nRF24L01/nRF_API.c \
   application/nRF24L01/nRF_CMD.c \
@@ -85,9 +86,24 @@ ARM_SRC= \
   os/core/ARM7_AT91SAM7S/port.c \
   os/core/ARM7_AT91SAM7S/portISR.c \
   os/core/MemMang/heap_1.c \
+  os/obd_usb/USBIsr.c \
   os/obd_usb/USB-CDC.c \
-  os/obd_usb/USBIsr.c 
 
+
+# TODO: restliche header mit aufführen
+ARM_HEADER= \
+	application/env.h \
+	application/openbeacon.h \
+	application/openbeacon_communication.h \
+	application/rnd.h \
+	application/usbshell.h \
+	config/board.h \
+	config/config.h \
+	config/FreeRTOSConfig.h \
+	os/obd_usb/descriptors.h \
+	os/obd_usb/usb.h \
+	os/obd_usb/USB-CDC.h	  
+		
 #
 # Define all object files.
 #
@@ -97,13 +113,13 @@ DEMO_APP_THMUB_OBJ = $(DEMO_APP_THMUB_SRC:.c=.o)
 
 all: openbeacon.bin
 
-openbeacon.bin : openbeacon.elf
+openbeacon.bin : openbeacon.elf 
 	$(OBJCOPY) openbeacon.elf -O binary openbeacon.bin
 
 openbeacon.hex : openbeacon.elf
 	$(OBJCOPY) openbeacon.elf -O ihex openbeacon.hex
 
-openbeacon.elf : $(ARM_OBJ) $(DEMO_APP_THMUB_OBJ) $(FREERTOS_THUMB_OBJ) $(CRT0) Makefile config/FreeRTOSConfig.h
+openbeacon.elf : $(ARM_OBJ) $(DEMO_APP_THMUB_OBJ) $(FREERTOS_THUMB_OBJ) $(CRT0) Makefile config/FreeRTOSConfig.h $(ARM_HEADER)
 	$(CC) $(CFLAGS) $(ARM_OBJ) $(DEMO_APP_THMUB_OBJ) $(FREERTOS_THUMB_OBJ) -nostartfiles $(CRT0) $(LINKER_FLAGS)
 
 $(DEMO_APP_THMUB_OBJ)  : %.o : %.c $(LDSCRIPT) Makefile config/FreeRTOSConfig.h
@@ -114,6 +130,9 @@ $(FREERTOS_THUMB_OBJ)  : %.o : %.c $(LDSCRIPT) Makefile config/FreeRTOSConfig.h
 
 $(ARM_OBJ) : %.o : %.c $(LDSCRIPT) Makefile config/FreeRTOSConfig.h
 	$(CC) -c $(CFLAGS) $< -o $@
+
+install: at91flash
+	cp at91flash ../../local/bin
 
 clean :
 	touch Makefile

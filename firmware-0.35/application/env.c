@@ -27,11 +27,11 @@
 #include <board.h>
 #include "env.h"
 
-#define EFCS_CMD_WRITE_PAGE		0x1
+#define EFCS_CMD_WRITE_PAGE			0x1
 #define EFCS_CMD_SET_LOCK_BIT		0x2
 #define EFCS_CMD_WRITE_PAGE_LOCK	0x3
-#define EFCS_CMD_CLEAR_LOCK		0x4
-#define EFCS_CMD_ERASE_ALL		0x8
+#define EFCS_CMD_CLEAR_LOCK			0x4
+#define EFCS_CMD_ERASE_ALL			0x8
 #define EFCS_CMD_SET_NVM_BIT		0xb
 #define EFCS_CMD_CLEAR_NVM_BIT		0xd
 #define EFCS_CMD_SET_SECURITY_BIT	0xf
@@ -112,8 +112,8 @@ void RAMFUNC env_store(void)
 	
 	src=env.data;
 	dst=ENV_FLASH;
-        for (i = 0; i < (sizeof(env.data)/sizeof(env.data[0])); i++)
-	    *dst++ = *src++;
+    for (i = 0; i < (sizeof(env.data)/sizeof(env.data[0])); i++)
+    	*dst++ = *src++;
 
 	flash_page(ENV_FLASH);
 

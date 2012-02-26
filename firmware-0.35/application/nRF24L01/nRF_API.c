@@ -114,8 +114,8 @@ unsigned char nRFAPI_Init(
 	// set selected channel
 	nRFAPI_SetChannel(channel);
 	
-        // set Tx power
-        nRFAPI_SetTxPower(3);
+    // set Tx power
+    nRFAPI_SetTxPower(3);
 	
 	// flush FIFOs
 	nRFAPI_FlushRX();
