@@ -211,6 +211,7 @@ void sendUSBStat( portTickType diff) {
 				sbv2->rx_usb_enc_bytes[i] = usb_stat.rx_usb_enc_bytes[i];
 				sbv2->tx_usb_enc_bytes[i] = usb_stat.tx_usb_enc_bytes[i];
 			}
+
 			sbv2->qfree    = usb_stat.qfree;
 			sbv2->tx_quse  = usb_stat.tx_quse;
 			sbv2->rx_quse  = usb_stat.rx_quse;

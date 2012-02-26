@@ -3,7 +3,7 @@ all:
 	$(CC) $(CFLAGS) -I./socket -c socket/obd_socket.c -o socket/socket.o
 	$(CC) $(CFLAGS) -I./serial -c serial/obd_serial.c -o serial/serial.o
 	$(CC) $(CFLAGS) -fno-builtin -I./socket -I./serial -c main.c -o main.o
-	$(CC) $(CFLAGS) tools/tools.o main.o socket/socket.o serial/serial.o -lpthread -lm -o obd-mips 
+	$(CC) $(CFLAGS) tools/tools.o main.o socket/socket.o serial/serial.o -lpthread -lm -o obd-mips
 
 install: obd-mips
 	cp obd-mips ../../local/bin/
@@ -13,4 +13,4 @@ clean:
 	@rm -f serial/serial.o
 	@rm -f tools/tools.o
 	@rm -f main.o main_test.o
-	@rm -f berg_obd obd_test
+	@rm -f berg_obd obd-mips

@@ -3,7 +3,11 @@
 #ifndef __OPENBEACON_COMUNICATION_H__
 #define __OPENBEACON_COMUNICATION_H__
 
-#include <time.h>
+#include <pthread.h>
+#include<stdio.h>
+#include <string.h>
+
+extern int begin_ports;
 
 struct device_data {
 	char device_name[50];
