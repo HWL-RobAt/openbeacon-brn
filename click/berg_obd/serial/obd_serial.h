@@ -9,8 +9,6 @@
 #define BAUDRATE B460800
 #define MODEMDEVICE "/dev/ttyACM0"
 #define _POSIX_SOURCE 1 /* POSIX compliant source */
-#define FALSE 0
-#define TRUE 1
 
 int open_obd_serial(char *device);
 int close_obd_serial(int fd);

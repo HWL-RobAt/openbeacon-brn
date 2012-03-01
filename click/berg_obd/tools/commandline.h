@@ -3,12 +3,16 @@
  *
  *
  */
+#ifndef COMMANDLINE_h
+#define COMMANDLINE_h
 
+#define FALSE 0
+#define TRUE 1
 
 // Zuordnung vom Parameternamen zu einer Funktion, die das Programm so konfiguriert wie es laufen soll
 struct param2func {
 	char* param;
-	int (*func)( int argc, char** argv );
+	int (*func)( int argc, char** argv, void* data );
 	char* help;
 };
 
@@ -18,5 +22,6 @@ struct hListe {
 	struct param2func *func_list; 
 };
 
-int processParameter(int argc, char** argv, struct hListe funcs );
+int processParameter(int argc, char** argv, struct hListe funcs, void* data );
 
+#endif
