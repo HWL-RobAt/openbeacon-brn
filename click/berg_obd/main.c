@@ -22,6 +22,29 @@
 #include "threads.h"
 #include "main.h"
 
+
+void write_to_obd_thread(void *p) {
+	struct device_data* dev = (struct device_data*)p;
+	unsigned char tmp_buffer[10000];
+	unsigned int put_len;
+	unsigned int tmp_len;
+
+	while( TRUE ) {
+		put_len = 0;
+		pthread_mutex_lock(&dev->usb_write_mutex);
+			if(dev->usb_write_buffer_length>0) {
+				memcpy(tmp_buffer, dev->usb_write_buffer, dev->usb_write_buffer_length);
+				put_len = dev->usb_write_buffer_length;
+				dev->usb_write_buffer_length = 0;
+			}
+		pthread_mutex_unlock(&dev->usb_write_mutex);
+
+		if(put_len>0) {
+			write_obd_serial( dev->fd, tmp_buffer, put_len );
+		}
+		usleep( 300 );
+	}
+}
 void reset_stat(struct statistic_data *stat) {
 	stat->usb_recive_packets		=	0;
 	stat->usb_recive_dec_bytes		=	0;
@@ -39,13 +62,14 @@ void print_stat(char begin, struct statistic_data *stat, FILE *file) {
 	struct timeval tmp_time;
 
 	if(begin==1) {
-		fprintf(file, "time\t\t\trxFailP\trxP\trxEnc\trxDec\ttxFailP\ttxP\ttxEnc\ttxDec\n");
+		fprintf(file, "time\t\t\trxFailP\trxP\trxEnc\trxDec\ttxFailP\ttxP\ttxEnc\ttxDec\ttxGenBytes\n");
 		fflush(file);
 	} else {
 		gettimeofday(&tmp_time, 0);
-		fprintf(file, "%d.%.6d:\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", tmp_time.tv_sec, tmp_time.tv_usec
+		fprintf(file, "%d.%.6d:\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", tmp_time.tv_sec, tmp_time.tv_usec
 				, stat->usb_fail_recive_packets, stat->usb_recive_packets, stat->usb_recive_enc_bytes, stat->usb_recive_dec_bytes
-				, stat->usb_fail_send_packets, stat->usb_send_packets, stat->usb_send_enc_bytes, stat->usb_send_dec_bytes);
+				, stat->usb_fail_send_packets, stat->usb_send_packets, stat->usb_send_enc_bytes, stat->usb_send_dec_bytes
+				, stat->usb_generate_send_bytes );
 		fflush(file);
 	}
 }
@@ -121,6 +145,11 @@ int create_dev( struct parameter *pCMDValue, struct device_data** pDevList, unsi
 							     ,  (pthread_attr_t*)NULL
 							     ,(void *)&rx_from_ob_to_click_thread
 							     ,(void*)&device_list[j]);
+
+		device_list[j].threadResult = pthread_create(  &(device_list[j].writeOBdThread )
+									     ,  (pthread_attr_t*)NULL
+									     ,(void *)&write_to_obd_thread
+									     ,(void*)&device_list[j]);
 
 		// WICHTIG ab hier sollten keine �nderungen mehr an device_list[j] gemacht werden.
 	}

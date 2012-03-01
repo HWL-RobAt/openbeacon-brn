@@ -34,8 +34,18 @@ static_buffer_info sbi_dev[10] = {
 						};
 
 unsigned int write_to_channel( portCHAR* out, portLONG len, struct device_data* dev ) {
-	write_obd_serial( dev->fd, out, len );
-	return len;
+	while( 1 ) {
+			pthread_mutex_lock(&dev->usb_write_mutex);
+			if( dev->usb_write_buffer_length<10000-len ) {
+				memcpy( dev->usb_write_buffer+dev->usb_write_buffer_length, out, len );
+				dev->usb_write_buffer_length += len;
+
+				pthread_mutex_unlock(&dev->usb_write_mutex);
+				return len;
+			}
+			pthread_mutex_unlock(&dev->usb_write_mutex);
+	}
+	return 0;
 }
 
 unsigned int  read_from_channel( portCHAR* out, portLONG len, struct device_data* dev ) {
@@ -64,6 +74,7 @@ portCHAR putDataToUSBChannel(struct device_data* dev,  unsigned portCHAR* buffer
 	unsigned portCHAR tmp_buffer[ 150];
 	unsigned int i, j;
 	unsigned portCHAR send_len = sizeof(OBD2HW_Header)+ph_sen->length ;
+	unsigned long tmp_enc=0, tmp_dec=0;
 
 	if(  USBCHANNEL_BUFFER_SIZE-sbi_dev[ dev->index ].putDataToUSBChannel_buffer_len>send_len) {
 		memcpy(sbi_dev[ dev->index ].putDataToUSBChannel_buffer+sbi_dev[ dev->index ].putDataToUSBChannel_buffer_len, buffer, send_len>blen?blen:send_len);
@@ -75,7 +86,7 @@ portCHAR putDataToUSBChannel(struct device_data* dev,  unsigned portCHAR* buffer
 			for(i=1; i<sizeof(OBD2HW_Header)+ph->length; i++) {
 				// encoding for usb-channel
 				if( sbi_dev[ dev->index ].putDataToUSBChannel_buffer[i]==0x00 || (sbi_dev[ dev->index ].putDataToUSBChannel_buffer[i]>0x00 && sbi_dev[ dev->index ].putDataToUSBChannel_buffer[i]<ENCODING_PARAMETER) ) {
-					main_stat_data.usb_send_enc_bytes++;
+					tmp_enc++;
 					tmp_buffer[j] = 0x01;
 					j++;
 					tmp_buffer[j] = sbi_dev[ dev->index ].putDataToUSBChannel_buffer[i]+ENCODING_PARAMETER;
@@ -83,13 +94,15 @@ portCHAR putDataToUSBChannel(struct device_data* dev,  unsigned portCHAR* buffer
 					tmp_buffer[j] = sbi_dev[ dev->index ].putDataToUSBChannel_buffer[i];
 				}
 				j++;
-				main_stat_data.usb_send_enc_bytes++;
-				main_stat_data.usb_send_dec_bytes++;
-				printf("musdb: %ld\n", main_stat_data.usb_send_dec_bytes);
+				tmp_enc++;
+				tmp_dec++;
 			}
 			tmp_buffer[j] = 0; j++;
-			main_stat_data.usb_send_packets++;
-			write_to_channel( (char*)tmp_buffer, j, dev );
+			if(write_to_channel( (char*)tmp_buffer, j, dev )>0) {
+				main_stat_data.usb_send_packets++;
+				main_stat_data.usb_send_enc_bytes+=tmp_enc;
+				main_stat_data.usb_send_dec_bytes+=tmp_dec;
+			}
 
 			sbi_dev[ dev->index ].putDataToUSBChannel_buffer_len -= sizeof(OBD2HW_Header)+ph->length;
 			if(sbi_dev[ dev->index ].putDataToUSBChannel_lastpacket<0) sbi_dev[ dev->index ].putDataToUSBChannel_lastpacket = 0;
