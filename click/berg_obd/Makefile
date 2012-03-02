@@ -1,3 +1,7 @@
+install_path=/share/projects/berg_studienarbeit/local/bin/
+
+
+
 all:
 	$(CC) $(CFLAGS) -I./tools -c tools/commandline.c -o tools/tools.o
 	$(CC) $(CFLAGS) -I./socket -c socket/obd_socket.c -o socket/socket.o
@@ -15,8 +19,7 @@ all:
 					-lpthread -lm -o obd-mips
 
 install: obd-mips
-	cp obd-mips ../../local/bin/
-
+	cp obd-mips $(install_path)
 clean:
 	@rm -f socket/socket.o
 	@rm -f serial/serial.o

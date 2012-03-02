@@ -30,7 +30,10 @@ void write_to_obd_thread(void *p) {
 	unsigned int tmp_len;
 
 	while( TRUE ) {
+		if(pCMDValue.exit_time>0 && pCMDValue.exit_time<time(0)) break;
+
 		put_len = 0;
+		// TODO: häpchen max. 64 (aber ganze Packete) senden
 		pthread_mutex_lock(&dev->usb_write_mutex);
 			if(dev->usb_write_buffer_length>0) {
 				memcpy(tmp_buffer, dev->usb_write_buffer, dev->usb_write_buffer_length);
@@ -42,8 +45,9 @@ void write_to_obd_thread(void *p) {
 		if(put_len>0) {
 			write_obd_serial( dev->fd, tmp_buffer, put_len );
 		}
-		usleep( 300 );
+		usleep( 100 );
 	}
+	printf("exit: write to ob\n");
 }
 void reset_stat(struct statistic_data *stat) {
 	stat->usb_recive_packets		=	0;
@@ -231,19 +235,21 @@ int main( int argc, char **argv) {
 		pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, &inp);
 	}
 
-	for(i=0; i<device_list_size; i++) {
-		pthread_join(dev->txThread,&dev->txThreadJoin);
-		pthread_join(dev->rxThread,&dev->rxThreadJoin);
-		pthread_join(dev->usbReadThread,&dev->usbThreadJoin);
-		pthread_join(dev->clickReadThread,&dev->clickReadThreadJoin);
-		dev++; 
+	while(TRUE) {
+		if(pCMDValue.exit_time>0 && pCMDValue.exit_time<time(0)) {
+//			for(i=0; i<device_list_size; i++) {
+//				pthread_join(dev->txThread,&dev->txThreadJoin);
+//				pthread_join(dev->rxThread,&dev->rxThreadJoin);
+//				pthread_join(dev->usbReadThread,&dev->usbThreadJoin);
+//				pthread_join(dev->clickReadThread,&dev->clickReadThreadJoin);
+//				dev++;
+//			}
+			break;
+		}
 	}
-
-	while( pCMDValue.exit_time==0 || pCMDValue.exit_time>time(0) ) usleep(100);
-
 	printf("exit finish!\n");
 	
-	exit_function( device_list, device_list_size );
+	exit_function( device_list, pCMDValue.device_list_size );
 	
 	return(0);
 }

@@ -42,7 +42,7 @@ void *rx_from_ob_to_click_thread(void *p)
 		status = getDataFromUSBChannel(dev,  buffer,  &hlen, 1 );
 
 		gettimeofday(&tmp_time, 0);
-		if(  time_diff(tmp_time, c_time)>=pCMDValue.print_intervall ) {
+		if(  time_diff(c_time, tmp_time )>=pCMDValue.print_intervall ) {
 			print_stat(0, &main_stat_data, dev->hostoutput_file);
 			reset_stat( &main_stat_data );
 			gettimeofday(&c_time, 0);
@@ -116,8 +116,8 @@ void *rx_from_ob_to_click_thread(void *p)
 			}
 		}
 
-		usleep( rOtoC_sleep_time );
-		if(rOtoC_sleep_time > THREAD_MAX_SLEEP_TIME) rOtoC_sleep_time += THREAD_SLEEP_TIME;
+		if(rOtoC_sleep_time > THREAD_SLEEP_TIME) usleep( rOtoC_sleep_time );
+		if(rOtoC_sleep_time < THREAD_MAX_SLEEP_TIME) rOtoC_sleep_time += THREAD_SLEEP_TIME;
 	}
 	printf("exit: obd -> click\n");
 	pthread_exit(p);

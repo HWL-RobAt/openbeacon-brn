@@ -67,9 +67,9 @@ void *tx_from_click_to_ob_thread(void *p)
 			}
 			gettimeofday(&se_time, 0);
 
-//			if( pCMDValue.packet_intervall > time_diff(se_time, sb_time)) {
-				usleep(  pCMDValue.packet_intervall );
-//			}
+			if( pCMDValue.packet_intervall > time_diff(sb_time, se_time)) {
+				usleep(  pCMDValue.packet_intervall-time_diff(sb_time, se_time) );
+			} else printf(".");
 		} else {
 			if(dev->click_read_buffer_length>sizeof(Click2OBD_header) ) { // read from click and send to beacon
 				pthread_mutex_lock(&dev->click_read_mutex);
@@ -95,8 +95,8 @@ void *tx_from_click_to_ob_thread(void *p)
 					}
 				pthread_mutex_unlock(&dev->click_read_mutex);
 			}
-			usleep( tCtoO_sleep_time );
-			if( tCtoO_sleep_time<THREAD_MAX_SLEEP_TIME ) tCtoO_sleep_time += THREAD_SLEEP_TIME;
+			if( tCtoO_sleep_time > THREAD_SLEEP_TIME) usleep( tCtoO_sleep_time );
+			if( tCtoO_sleep_time < THREAD_MAX_SLEEP_TIME ) tCtoO_sleep_time += THREAD_SLEEP_TIME;
 		}
 	}
 

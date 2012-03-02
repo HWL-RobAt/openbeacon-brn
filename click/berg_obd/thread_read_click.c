@@ -27,8 +27,8 @@ void read_from_click_thread(void *p) {
 			pthread_mutex_unlock(&dev->click_read_mutex);
 		}
 
-		usleep( rfc_sleep_time );
-		if(rfc_sleep_time<THREAD_MAX_SLEEP_TIME) rfc_sleep_time += rfc_sleep_time;
+		if(rfc_sleep_time > rfc_sleep_time) usleep( rfc_sleep_time );
+		if(rfc_sleep_time < THREAD_MAX_SLEEP_TIME) rfc_sleep_time += rfc_sleep_time;
 	}
 	printf("exit: click read\n");
 	pthread_exit(p);

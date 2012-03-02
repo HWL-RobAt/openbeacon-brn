@@ -23,11 +23,8 @@ void insertLONG(portCHAR* buffer, long l) {
 	}
 }
 
-unsigned long time_diff(struct timeval v1, struct timeval v2) {
-	if(v1.tv_sec>= v2.tv_sec) {
-		return (v1.tv_sec-v2.tv_sec)*1000000+(v1.tv_usec-v2.tv_usec);
-	}
-	return (v2.tv_sec-v1.tv_sec)*1000000+(v2.tv_usec-v1.tv_usec);
+long time_diff(struct timeval start, struct timeval end) {
+	return (end.tv_sec-start.tv_sec)*1000000+(end.tv_usec-start.tv_usec);
 }
 
 

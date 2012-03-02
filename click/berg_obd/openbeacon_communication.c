@@ -44,6 +44,7 @@ unsigned int write_to_channel( portCHAR* out, portLONG len, struct device_data* 
 				return len;
 			}
 			pthread_mutex_unlock(&dev->usb_write_mutex);
+			usleep(10);
 	}
 	return 0;
 }
