@@ -228,12 +228,10 @@ int main( int argc, char **argv) {
 	dev = device_list;
 
 	// Input-Thread
-	if( pCMDValue.use_daemon!=1 ) {
-		inp.device_list = device_list;
-		inp.device_list_size = pCMDValue.device_list_size;
-		inp.pCMDValue = &pCMDValue;
-		pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, &inp);
-	}
+	inp.device_list = device_list;
+	inp.device_list_size = pCMDValue.device_list_size;
+	inp.pCMDValue = &pCMDValue;
+	pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, &inp);
 
 	while(TRUE) {
 		if(pCMDValue.exit_time>0 && pCMDValue.exit_time<time(0)) {

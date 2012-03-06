@@ -44,35 +44,38 @@ int input_function(void *p) {
 		// konfiguriere Datenrate
 		SEND_CONFIG( inp->pCMDValue->hw_send_rate, 't' )
 	}
-	while(1) {
-		if(inp->pCMDValue->exit_time>0 && inp->pCMDValue->exit_time<time(0)) break;
 
-		while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
+	if( pCMDValue.use_daemon!=1 ) {
+		while(1) {
+			if(inp->pCMDValue->exit_time>0 && inp->pCMDValue->exit_time<time(0)) break;
 
-		switch( buffer[sizeof(OBD2HW_Header) ] ) {
-			case '\n':  break;
-			case 'd':
-					dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
+			while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
 
-					if(dev_num>=0 && dev_num<inp->device_list_size && default_index != dev_num) {
-						default_index = dev_num;
-						printf("switch device to: %d\n", default_index);
-					}
+			switch( buffer[sizeof(OBD2HW_Header) ] ) {
+				case '\n':  break;
+				case 'd':
+						dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
 
-					break;
-			case 'x':
-					// signal senden
-					inp->pCMDValue->exit_time = time(0)-1;
-					break;
-			default:
-					p_hwh->length = len;
-					putDataToUSBChannel(inp->device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
-					break;
+						if(dev_num>=0 && dev_num<inp->device_list_size && default_index != dev_num) {
+							default_index = dev_num;
+							printf("switch device to: %d\n", default_index);
+						}
+
+						break;
+				case 'x':
+						// signal senden
+						inp->pCMDValue->exit_time = time(0)-1;
+						break;
+				default:
+						p_hwh->length = len;
+						putDataToUSBChannel(inp->device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
+						break;
+			}
+			len=0;
+
+			// feste Schlafenszeit festlegen, um ressourcen zu schonen
+			usleep( INPUT_THREAD_SLEEP_TIME );
 		}
-		len=0;
-
-		// feste Schlafenszeit festlegen, um ressourcen zu schonen
-		usleep( INPUT_THREAD_SLEEP_TIME );
 	}
 	printf("exit: input\n");
 	pthread_exit(p);
