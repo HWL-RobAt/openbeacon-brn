@@ -4,8 +4,9 @@
 #define __OPENBEACON_COMUNICATION_H__
 
 #include <pthread.h>
-#include<stdio.h>
+#include <stdio.h>
 #include <string.h>
+#include "main.h"
 
 extern int begin_ports;
 
@@ -34,6 +35,8 @@ struct device_data {
 
 	int sendPort, recivePort;
 	FILE *beaconoutput_file, *hostoutput_file, *debug_file, *send_file_log, *recive_file_log;
+
+	struct statistic_data stat_data;
 };
 
 #define OPENBEACON_MACSIZE                    5

@@ -9,7 +9,6 @@ unsigned int default_index=0;
 #define SEND_CONFIG( type, z )  		if(type!=0) { \
 											buffer[ sizeof(OBD2HW_Header) ] = z; \
 											sprintf(buffer+sizeof(OBD2HW_Header)+1, "%d", type); \
-											printf("input_main 10 %c:\n", z); \
 											p_hwh->length = strlen( buffer+sizeof(OBD2HW_Header) ); \
 											while(putDataToUSBChannel(inp->device_list+dev_num,  buffer, sizeof(OBD2HW_Header)+p_hwh->length )!=STATUS_OK) usleep( 10 ); \
 											usleep( 2000 ); \
@@ -43,7 +42,7 @@ int input_function(void *p) {
 		SEND_CONFIG( inp->pCMDValue->wireless_rate, 'r' )
 
 		// konfiguriere Datenrate
-		SEND_CONFIG( inp->pCMDValue->hw_send_rate, 'r' )
+		SEND_CONFIG( inp->pCMDValue->hw_send_rate, 't' )
 	}
 	while(1) {
 		if(inp->pCMDValue->exit_time>0 && inp->pCMDValue->exit_time<time(0)) break;

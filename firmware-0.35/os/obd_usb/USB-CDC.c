@@ -287,7 +287,7 @@ void vUSBCDCTask (void *pvParameters)
 										case USB_MONITOR_INPUT:
 											// copy packet-data to usb_shell_input
 											if(usb_shell_input[0]=='\0') {
-												memcpy( usb_shell_input, recv_block->pValue+sizeof(USB_Chunk), 10);
+												memcpy( usb_shell_input, recv_block->pValue+sizeof(USB_Chunk), USB_SHELL_MAX_SIZE);
 											}
 										case USB_TEST_DATA:
 											pushFreeBlock(recv_block);

@@ -3,7 +3,7 @@
 #include <openbeacon.h>
 #include <openbeacon_communication.h>
 
-unsigned char usb_shell_input[10];
+unsigned char usb_shell_input[ USB_SHELL_MAX_SIZE ];
 usb_Mgmt usb_stat;
 
 // Hilferoutinen für das versenden von Daten
@@ -105,6 +105,7 @@ unsigned char get8BitInteger(unsigned char* buff, unsigned char size) {
 
 void useShell() {
 	unsigned char parm;
+	unsigned char nid_buffer[5];
 
 	if(usb_shell_input[0]!='\0') {
 		switch(usb_shell_input[0]) {
@@ -133,8 +134,54 @@ void useShell() {
 						}
 						break;
 			case 'n':
-			case 'N':
-						sendText("NetID soll verändert werden.", 29);
+			case 'N': {
+							unsigned char i=0,k=0, pc=0;
+							unsigned char valid=1;
+
+							for(k=0; k<USB_SHELL_MAX_SIZE && i<NETID_SIZE; k++) {
+								if(pc==3) pc=0;
+
+								switch(pc) {
+									case 0:
+											if( usb_shell_input[1+k]>='0' && usb_shell_input[1+k]<='9' ) {
+												// 0x0* - 0x9*
+												nid_buffer[i] = 0x10*( usb_shell_input[1+k]-'0');
+											} else if( usb_shell_input[1+k]>='A' && usb_shell_input[1+k]<='F' ) {
+												// 0xA* - 0xF*
+												nid_buffer[i] = 0x10*( usb_shell_input[1+k]-'A'+10);
+											} else if( usb_shell_input[1+k]>='a' && usb_shell_input[1+k]<='f' ) {
+												// 0xa* - 0xf*
+												nid_buffer[i] = 0x10*( usb_shell_input[1+k]-'a'+10);
+											} else valid=0;
+											break;
+									case 1:
+											if( usb_shell_input[1+k]>='0' && usb_shell_input[1+k]<='9' ) {
+												// 0x*0 - 0x*9
+												nid_buffer[i] += ( usb_shell_input[1+k]-'0');
+											} else 	if( usb_shell_input[1+k]>='A' && usb_shell_input[1+k]<='F' ) {
+												// 0x*A - 0x*F
+												nid_buffer[i] += ( usb_shell_input[1+k]-'A'+10);
+											} else if( usb_shell_input[1+k]>='a' && usb_shell_input[1+k]<='f' ) {
+												// 0x*a - 0x*f
+												nid_buffer[i] += ( usb_shell_input[1+k]-'a'+10);
+											} else valid=0;
+											i++;
+											break;
+									case 2: if(usb_shell_input[1+k]!=':') valid=0;
+											break;
+
+								}
+								pc++;
+							}
+							if(i<NETID_SIZE) valid=0;
+
+							if(valid>0) {
+								ob_setNetID( nid_buffer );
+								sendText_MAC("neue NID: AA:BB:CC:DD:EE ", 25, ob_int_mgmt.NetID, 10);
+							} else {
+								sendText("neue NID hat nicht dir Form: AA:BB:CC:DD:EE ", 44);
+							}
+						}
 						break;
 #ifdef OPENBEACON_TEST_AUTO_SEND
 			case 't':

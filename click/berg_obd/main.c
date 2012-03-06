@@ -78,7 +78,6 @@ void print_stat(char begin, struct statistic_data *stat, FILE *file) {
 	}
 }
 
-
 int create_dev( struct parameter *pCMDValue, struct device_data** pDevList, unsigned int* pDevSize ) {
 	unsigned int j=0;
 	struct device_data* device_list;
@@ -126,6 +125,9 @@ int create_dev( struct parameter *pCMDValue, struct device_data** pDevList, unsi
 			exit(-1);
 		}
 		
+		// statistic initialisieren
+		reset_stat( &device_list[j].stat_data );
+
 		pthread_mutex_init( &device_list[j].usb_read_mutex,  NULL);
 		pthread_mutex_init( &device_list[j].usb_write_mutex,  NULL);
 		
@@ -197,7 +199,6 @@ void exit_function(struct device_data* device_list, unsigned int device_list_siz
 
 
 static struct input_parameter inp;
-struct statistic_data main_stat_data;
 
 int main( int argc, char **argv) {
 	struct device_data* dev;
@@ -210,7 +211,6 @@ int main( int argc, char **argv) {
 	srand ( time(NULL) );
 
 	parameter_init( &pCMDValue );
-	reset_stat( &main_stat_data );
 	
 	pCMDValue.packet_intervall =  floor( (1000000.0*pCMDValue.packet_size)/pCMDValue.bytes_per_intervall );
 	if( argc==1 || processParameter(argc-1,argv+1, plist, &pCMDValue)!=0 ) {

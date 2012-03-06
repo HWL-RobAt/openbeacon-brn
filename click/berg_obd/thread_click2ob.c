@@ -42,7 +42,7 @@ void *tx_from_click_to_ob_thread(void *p)
 			p_hwh->reserved=0xFF;
 
 			gettimeofday(&sb_time, 0);
-			for(i=0; i<1 && main_stat_data.usb_generate_send_bytes<pCMDValue.bytes_per_intervall; i++) {
+			for(i=0; i<1 && dev->stat_data.usb_generate_send_bytes<pCMDValue.bytes_per_intervall; i++) {
 				coding_h = sizeof(OBD2HW_Header);
 				if(p_hwh->length<ENCODING_PARAMETER) coding_h++;
 
@@ -63,7 +63,7 @@ void *tx_from_click_to_ob_thread(void *p)
 				fflush(dev->send_file_log);
 
 				PacketID++;
-				main_stat_data.usb_generate_send_bytes += coding_h+coding_d;
+				dev->stat_data.usb_generate_send_bytes += coding_h+coding_d;
 			}
 			gettimeofday(&se_time, 0);
 

@@ -22,3 +22,5 @@
 #define OPENBEACON_SEND_WIRELESS			1   // sollte grösser als 0 sein ==> Packet wird alle 2 Ticks=2ms abgesetzt
 
 #define OPENBEACON_SEND_USB_PACKET_DATA
+
+#define DEFAULT_NID							{0xF1,0xB2,0xC3,0xD2,0xE1}

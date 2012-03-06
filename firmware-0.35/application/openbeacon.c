@@ -8,7 +8,7 @@ ob_Mgmt ob_int_mgmt;
 void ob_init( unsigned char power, unsigned char rate, unsigned char channel, unsigned char* nid ) {
 	char i;
 	ob_int_mgmt.Mode 			= 0;
-	ob_int_mgmt.Pipes			= 1;
+	ob_int_mgmt.Pipes			= 0;
 
     /* Inititalize nRF24L01 */
     if(!nRFAPI_Init(DEFAULT_CHANNEL, nid, NETID_SIZE ))
@@ -103,7 +103,9 @@ void ob_setChannel( unsigned char c ) {
 
 void ob_setNetID( unsigned char* nid ) {
 	char i;
-	for(i=0; i<NETID_SIZE; i++) ob_int_mgmt.NetID[i]=nid[i];
+	for(i=0; i<NETID_SIZE; i++) {
+		ob_int_mgmt.NetID[i]=nid[i];
+	}
 
 	nRFAPI_SetTxMAC( ob_int_mgmt.NetID, NETID_SIZE);
 	nRFAPI_SetRxMAC( ob_int_mgmt.NetID, NETID_SIZE, ob_int_mgmt.Pipes);

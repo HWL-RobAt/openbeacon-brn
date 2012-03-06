@@ -30,7 +30,7 @@ void *rx_from_ob_to_click_thread(void *p)
 	fprintf(dev->beaconoutput_file, "USB\tTime\t\t\tTX\tFailTX\tTXEncBs\tTXDecBs\tRX\tFailRX\tRXEncBs\tRXDecBs\tTXQu\tRXQu \tQuFree\n");
 	fflush(dev->beaconoutput_file);
 
-	print_stat(1, &main_stat_data, dev->hostoutput_file);
+	print_stat(1, &dev->stat_data, dev->hostoutput_file);
 
 	unsigned long send_count=0, send_count_fail=0;
 	unsigned long recv_count=0, recv_count_fail=0;
@@ -43,8 +43,8 @@ void *rx_from_ob_to_click_thread(void *p)
 
 		gettimeofday(&tmp_time, 0);
 		if(  time_diff(c_time, tmp_time )>=pCMDValue.print_intervall ) {
-			print_stat(0, &main_stat_data, dev->hostoutput_file);
-			reset_stat( &main_stat_data );
+			print_stat(0, &dev->stat_data, dev->hostoutput_file);
+			reset_stat( &dev->stat_data );
 			gettimeofday(&c_time, 0);
 		}
 
@@ -112,7 +112,7 @@ void *rx_from_ob_to_click_thread(void *p)
 				// send to click
 				send_to_peer(dev->con, buffer+sizeof(OBD2HW_Header),  p_hwh->length);
 			} else {
-				main_stat_data.usb_fail_recive_packets++;
+				dev->stat_data.usb_fail_recive_packets++;
 			}
 		}
 

@@ -18,6 +18,4 @@ struct statistic_data {
 void reset_stat(struct statistic_data *stat);
 void print_stat(char begin, struct statistic_data *stat, FILE *file);
 
-extern struct statistic_data main_stat_data;
-
 #endif

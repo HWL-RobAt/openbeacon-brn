@@ -100,9 +100,9 @@ portCHAR putDataToUSBChannel(struct device_data* dev,  unsigned portCHAR* buffer
 			}
 			tmp_buffer[j] = 0; j++;
 			if(write_to_channel( (char*)tmp_buffer, j, dev )>0) {
-				main_stat_data.usb_send_packets++;
-				main_stat_data.usb_send_enc_bytes+=tmp_enc;
-				main_stat_data.usb_send_dec_bytes+=tmp_dec;
+				dev->stat_data.usb_send_packets++;
+				dev->stat_data.usb_send_enc_bytes+=tmp_enc;
+				dev->stat_data.usb_send_dec_bytes+=tmp_dec;
 			}
 
 			sbi_dev[ dev->index ].putDataToUSBChannel_buffer_len -= sizeof(OBD2HW_Header)+ph->length;
@@ -111,7 +111,7 @@ portCHAR putDataToUSBChannel(struct device_data* dev,  unsigned portCHAR* buffer
 			memmove( sbi_dev[ dev->index ].putDataToUSBChannel_buffer, sbi_dev[ dev->index ].putDataToUSBChannel_buffer+sizeof(OBD2HW_Header)+ph->length, sbi_dev[ dev->index ].putDataToUSBChannel_buffer_len );
 		}
 	} else {
-		main_stat_data.usb_fail_send_packets;
+		dev->stat_data.usb_fail_send_packets;
 		ret=STATUS_ERROR_NO_DATA;
 	}
 	return ret;
@@ -158,13 +158,13 @@ portCHAR getDataFromUSBChannel( struct device_data* dev,  unsigned portCHAR* buf
 		for(tmp_i=0; tmp_i<pos; tmp_i++) {
 			if( sbi_dev[dev->index].tmp_buffer[tmp_i]==0x01 ) {
 				sbi_dev[dev->index].getDataFromUSBChannel_packet_enc =  ENCODING_PARAMETER;
-				main_stat_data.usb_recive_enc_bytes++;
+				dev->stat_data.usb_recive_enc_bytes++;
 			} else {
 				buffer[ dec_pos ] = sbi_dev[dev->index].tmp_buffer[ tmp_i ] - sbi_dev[dev->index].getDataFromUSBChannel_packet_enc;
 				sbi_dev[dev->index].getDataFromUSBChannel_packet_enc=0;
 				dec_pos++;
-				main_stat_data.usb_recive_dec_bytes++;
-				main_stat_data.usb_recive_enc_bytes++;
+				dev->stat_data.usb_recive_dec_bytes++;
+				dev->stat_data.usb_recive_enc_bytes++;
 			}
 		}
 		*blen=dec_pos;
@@ -176,11 +176,11 @@ portCHAR getDataFromUSBChannel( struct device_data* dev,  unsigned portCHAR* buf
 		// check the packet
 		ph = (OBD2HW_Header *)buffer;
 		if(ph->length+sizeof(OBD2HW_Header)!=*blen ) {
-			main_stat_data.usb_fail_recive_packets++;
+			dev->stat_data.usb_fail_recive_packets++;
 			*blen=0;
 			return STATUS_ERROR_NO_DATA;
 		}
-		main_stat_data.usb_recive_packets++;
+		dev->stat_data.usb_recive_packets++;
 
 		return STATUS_OK;
 	}

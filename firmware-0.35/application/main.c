@@ -57,8 +57,8 @@ static inline void prvSetupHardware (void)
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA;
     AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOB;
 
-    unsigned char mac[5] = {0xF1,0xB2,0xC3,0xD2,0xE1};
-    ob_init( 1, 2, DEFAULT_CHANNEL, mac );
+    unsigned char nid[5] = DEFAULT_NID;
+    ob_init( 1, 2, DEFAULT_CHANNEL, nid );
 
     /* Initialization done - Turn on green LED */
     AT91F_PIO_SetOutput( AT91C_BASE_PIOA, LED_GREEN );
