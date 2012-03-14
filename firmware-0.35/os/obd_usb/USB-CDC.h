@@ -43,6 +43,9 @@
 #define USB_CDC_QUEUE_SIZE_RX		35
 #define USB_CDC_QUEUE_SIZE_FREE		72
 
+#define USB_CDC_QUEUE_SIZE_PRI_TX	 4
+#define USB_CDC_QUEUE_SIZE_PRI_RX	 2
+
 #define USB_MAX_TRANSMIT_COUNT		64
 
 #define MEMBLOCK_TYPE_NORMAL		1
@@ -108,10 +111,13 @@ typedef struct
 /*-----------------------------------------------------------*/
 void vUSBCDCTask (void *pvParameters);
 
-/* Send cByte down the USB port.  Characters are simply buffered and not
-sent unless the port is connected. */
+// queue: send and recive normal blocks
 void vUSBSendPacket(MemBlock *daten, unsigned portBASE_TYPE length);
 unsigned portBASE_TYPE vUSBRecivePacket(MemBlock **pq);
+
+// queue: send and recive spezial blocks
+void vUSBSendPriPacket(MemBlock *daten, unsigned portBASE_TYPE length);
+unsigned portBASE_TYPE vUSBRecivePriPacket(MemBlock **pq);
 
 MemBlock *pullFreeBlock(void);
 void pushFreeBlock(MemBlock *b);
@@ -119,7 +125,5 @@ void pushFreeBlock(MemBlock *b);
 unsigned portBASE_TYPE getTXSize( void );
 unsigned portBASE_TYPE getRXSize( void );
 unsigned portBASE_TYPE getFreeSize( void );
-
-MemBlock *statusBlock, *debug_block;
 
 #endif

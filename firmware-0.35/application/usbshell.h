@@ -5,7 +5,6 @@
 #include <FreeRTOS.h>
 
 #define USB_SHELL_MAX_SIZE			20
-extern unsigned char usb_shell_input[];
 
 void useShell( void );
 
@@ -20,7 +19,6 @@ typedef struct {
 } usb_Mgmt;
 
 extern usb_Mgmt usb_stat;
-
 
 void sendUSBStat( portTickType diff );
 

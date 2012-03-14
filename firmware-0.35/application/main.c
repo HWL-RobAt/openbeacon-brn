@@ -210,9 +210,6 @@ int main (void)
 {
 	char i;
 
-	// shell init
-	usb_shell_input[0]='\0';
-
 	prvSetupHardware ();
 	for(i=0; i<sizeof(ob_data); i++) {
 		send_buffer.payload[i]=0;

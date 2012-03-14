@@ -214,7 +214,7 @@ void sendBeaconStat( portTickType diff) {
 				sbv1->fail_tx_beacons[i]	= ob_int_mgmt.fail_tx_beacons[i];
 			}
 
-			vUSBSendPacket(h, sizeof(OBD2HW_Header)+c2ob_h->length );
+			vUSBSendPriPacket(h, sizeof(OBD2HW_Header)+c2ob_h->length );
 			h=NULL;
 
 			// reset stat

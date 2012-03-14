@@ -3,7 +3,6 @@
 #include <openbeacon.h>
 #include <openbeacon_communication.h>
 
-unsigned char usb_shell_input[ USB_SHELL_MAX_SIZE ];
 usb_Mgmt usb_stat;
 
 // Hilferoutinen für das versenden von Daten
@@ -18,7 +17,7 @@ unsigned int pow(unsigned int base, unsigned int exp) {
         return ret;
 }
 
-void sendText(unsigned char* msg, unsigned char size) {
+void sendText(unsigned char* msg, unsigned char size, char pri) {
 	MemBlock *InputOutput = NULL;
 	OBD2HW_Header* p_hwh;
 
@@ -28,10 +27,14 @@ void sendText(unsigned char* msg, unsigned char size) {
 		p_hwh->type = MONITOR_PRINT;
 		p_hwh->length = size;
 		memcpy(InputOutput->pValue+sizeof(OBD2HW_Header), msg,  p_hwh->length);
-		vUSBSendPacket(InputOutput, p_hwh->length+sizeof(OBD2HW_Header));
+
+		InputOutput->length = p_hwh->length+sizeof(OBD2HW_Header);
+
+		if(pri==0) vUSBSendPacket(InputOutput, InputOutput->length);
+		else vUSBSendPriPacket(InputOutput, InputOutput->length);
 	}
 }
-void sendText_MAC(unsigned char* msg, unsigned char size, unsigned char* mac, unsigned int pos) {
+void sendText_MAC(unsigned char* msg, unsigned char size, unsigned char* mac, unsigned int pos, char pri) {
 	MemBlock *InputOutput = NULL;
 	OBD2HW_Header* p_hwh;
 	unsigned int i, h=0;
@@ -57,11 +60,13 @@ void sendText_MAC(unsigned char* msg, unsigned char size, unsigned char* mac, un
 		}
 
 		InputOutput->length = p_hwh->length+sizeof(OBD2HW_Header);
-		vUSBSendPacket(InputOutput, InputOutput->length);
+
+		if(pri==0) vUSBSendPacket(InputOutput, InputOutput->length);
+		else vUSBSendPriPacket(InputOutput, InputOutput->length);
 	}
 }
 
-void sendText_shortint(unsigned char* msg, unsigned char size, unsigned char value, unsigned int pos) {
+void sendText_shortint(unsigned char* msg, unsigned char size, unsigned char value, unsigned int pos, char pri) {
 	MemBlock *InputOutput = NULL;
 	OBD2HW_Header* p_hwh;
 	unsigned int i, h=0, hp;
@@ -87,7 +92,8 @@ void sendText_shortint(unsigned char* msg, unsigned char size, unsigned char val
 		if(InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+i-1]==' ') InputOutput->pValue[ sizeof(OBD2HW_Header)+pos+i-1 ]  = '0';
 
 		InputOutput->length = p_hwh->length+sizeof(OBD2HW_Header);
-		vUSBSendPacket(InputOutput, InputOutput->length);
+		if(pri==0) vUSBSendPacket(InputOutput, InputOutput->length);
+		else vUSBSendPriPacket(InputOutput, InputOutput->length);
 	}
 }
 
@@ -107,14 +113,19 @@ void useShell() {
 	unsigned char parm;
 	unsigned char nid_buffer[5];
 
-	if(usb_shell_input[0]!='\0') {
-		switch(usb_shell_input[0]) {
+	MemBlock* input = NULL;
+	unsigned char* usb_shell_input=NULL;
+
+	if(vUSBRecivePriPacket(&input)>0) {
+		usb_shell_input = input->pValue+sizeof(OBD2HW_Header);
+
+		switch( usb_shell_input[0] ) {
 			case 'c':
 			case 'C':
 						parm = ob_int_mgmt.TxChannel;
 						ob_setChannel( get8BitInteger( usb_shell_input+1, 3 ) );
 						if( parm!=ob_int_mgmt.TxChannel ) {
-							sendText_shortint("neuer Funkkanal:      ", 22, ob_int_mgmt.TxChannel, 17);
+							sendText_shortint("neuer Funkkanal:      ", 22, ob_int_mgmt.TxChannel, 17, 1);
 						}
 						break;
 			case 'r':
@@ -122,7 +133,7 @@ void useShell() {
 						parm = ob_int_mgmt.TxRate;
 						ob_setRate( get8BitInteger( usb_shell_input+1, 1 ) );
 						if( parm!=ob_int_mgmt.TxRate ) {
-							sendText_shortint("neue Bitrate:      ", 19, ob_int_mgmt.TxRate, 14);
+							sendText_shortint("neue Bitrate:      ", 19, ob_int_mgmt.TxRate, 14, 1);
 						}
 						break;
 			case 'p':
@@ -130,7 +141,7 @@ void useShell() {
 						parm = ob_int_mgmt.TxPowerLevel;
 						ob_setPower( get8BitInteger( usb_shell_input+1, 1 ) );
 						if( parm!=ob_int_mgmt.TxPowerLevel ) {
-							sendText_shortint("neue Power:      ", 19, ob_int_mgmt.TxPowerLevel, 12);
+							sendText_shortint("neue Power:      ", 19, ob_int_mgmt.TxPowerLevel, 12, 1);
 						}
 						break;
 			case 'n':
@@ -177,9 +188,9 @@ void useShell() {
 
 							if(valid>0) {
 								ob_setNetID( nid_buffer );
-								sendText_MAC("neue NID: AA:BB:CC:DD:EE ", 25, ob_int_mgmt.NetID, 10);
+								sendText_MAC("neue NID: AA:BB:CC:DD:EE ", 25, ob_int_mgmt.NetID, 10, 1);
 							} else {
-								sendText("neue NID hat nicht dir Form: AA:BB:CC:DD:EE ", 44);
+								sendText("neue NID hat nicht dir Form: AA:BB:CC:DD:EE ", 44, 1);
 							}
 						}
 						break;
@@ -191,40 +202,41 @@ void useShell() {
 						if( ob_int_mgmt.test_hw_diff>250 ) ob_int_mgmt.test_hw_diff=255;
 						if( parm!=ob_int_mgmt.test_hw_diff ) {
 							if( ob_int_mgmt.test_hw_diff==255 ) {
-								sendText("neue daten rate(hw test):   off ", 32);
+								sendText("neue daten rate(hw test):   off ", 32, 1);
 							} else {
-								sendText_shortint("neue daten rate(hw test):      ", 31, ob_int_mgmt.test_hw_diff, 26);
+								sendText_shortint("neue daten rate(hw test):      ", 31, ob_int_mgmt.test_hw_diff, 26, 1);
 							}
 						}
 						break;
 #endif
 			case 'h': case 'H': case '?':
 			default:
-				sendText("**********************************************************", 58);
-				sendText("*        OpenBeacon Version 0.2.0                        *", 58);
-				sendText("**********************************************************", 58);
-				sendText("*\t\t\t\t\t*                *", 25);
-				sendText_shortint("*   c[1-125]\t- channel\t\t*                *", 50, ob_int_mgmt.TxChannel, 32);
-				sendText_shortint("*   r[1-2]\t- rate\t\t\t*                *", 50, ob_int_mgmt.TxRate, 28);
-				sendText_shortint("*   p[1-4]\t- power\t\t\t*                *", 50, ob_int_mgmt.TxPowerLevel, 29);
-				sendText_MAC("*   n[#NetID]\t- set Netzadresse\t* AA:BB:CC:DD:EE *", 50, ob_int_mgmt.NetID, 34);
-				sendText("*\t\t\t\t\t*                *", 25);
+				sendText("**********************************************************", 58, 0);
+				sendText("*        OpenBeacon Version 0.2.0                        *", 58, 0);
+				sendText("**********************************************************", 58, 0);
+				sendText("*\t\t\t\t\t*                *", 25, 0);
+				sendText_shortint("*   c[1-125]\t- channel\t\t*                *", 50, ob_int_mgmt.TxChannel, 32, 0);
+				sendText_shortint("*   r[1-2]\t- rate\t\t\t*                *", 50, ob_int_mgmt.TxRate, 28, 0);
+				sendText_shortint("*   p[1-4]\t- power\t\t\t*                *", 50, ob_int_mgmt.TxPowerLevel, 29, 0);
+				sendText_MAC("*   n[#NetID]\t- set Netzadresse\t* AA:BB:CC:DD:EE *", 50, ob_int_mgmt.NetID, 34, 0);
+				sendText("*\t\t\t\t\t*                *", 25, 0);
 				#ifdef OPENBEACON_TEST_AUTO_SEND
 					if(ob_int_mgmt.test_hw_diff==255) {
-						sendText("*   t[TTC]\t- sende 1 Packet pro TTC*       off      *", 54);
+						sendText("*   t[TTC]\t- sende 1 Packet pro TTC*       off      *", 54, 0);
 					} else {
-						sendText_shortint("*   t[TTC]\t- sende 1 Packet pro TTC*                *", 54, ob_int_mgmt.test_hw_diff, 44);
+						sendText_shortint("*   t[TTC]\t- sende 1 Packet pro TTC*                *", 54, ob_int_mgmt.test_hw_diff, 44, 0);
 					}
-					sendText("*\t\t\t\t\t*                *", 25);
+					sendText("*\t\t\t\t\t*                *", 25, 0);
 				#endif
-				sendText("**********************************************************", 58);
-				sendText("*   h\t\t- hilfe                                  *", 50);
-				sendText("*   x\t\t- Exit                                   *", 50);
-				sendText("**********************************************************", 58);
+				sendText("**********************************************************", 58, 0);
+				sendText("*   h\t\t- hilfe                                  *", 50, 0);
+				sendText("*   x\t\t- Exit                                   *", 50, 0);
+				sendText("**********************************************************", 58, 0);
 				break;
 		}
-		usb_shell_input[0]='\0';
 	}
+	pushFreeBlock( input );
+	input=NULL;
 }
 
 void sendUSBStat( portTickType diff) {
@@ -278,7 +290,7 @@ void sendUSBStat( portTickType diff) {
 			usb_stat.tx_quse	=	0;
 			usb_stat.rx_quse	=	0;
 
-			vUSBSendPacket(h, sizeof(OBD2HW_Header)+c2ob_h->length );
+			vUSBSendPriPacket(h, sizeof(OBD2HW_Header)+c2ob_h->length );
 			h=NULL;
 			AT91F_PIO_ClearOutput( AT91C_BASE_PIOA, LED_GREEN );
 	    }

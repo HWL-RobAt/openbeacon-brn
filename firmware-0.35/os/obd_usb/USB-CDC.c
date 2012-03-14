@@ -125,6 +125,9 @@ transmitted.  Rx queue must be larger than FIFO size. */
 static xQueueHandle xRxCDC;
 static xQueueHandle xTxCDC;
 
+static xQueueHandle xRxPriCDC;
+static xQueueHandle xTxPriCDC;
+
 //static xQueueHandle xFreeSpace;
 
 /* Line coding - 115,200 baud, N-8-1 */
@@ -136,13 +139,7 @@ static unsigned portCHAR ucControlState;
 static unsigned int uiCurrentBank;
 
 static MemBlock memdata[ USB_CDC_QUEUE_SIZE_FREE ];
-  
-/*------------------------------------------------------------*/
-static unsigned portCHAR recive_packet_len;
-  
-MemBlock *statusBlock = NULL;
-  
-// TODO: USB Statistik pflegen und versenden für debugging
+
 void vUSBCDCTask (void *pvParameters)
 {
 	xISRStatus *pxMessage;
@@ -161,7 +158,6 @@ void vUSBCDCTask (void *pvParameters)
 
 	unsigned portCHAR i;
 
-	usb_shell_input[0]=='\0';
 	/* Disconnect USB device from hub.  For debugging - causes host to register reset */
 	portENTER_CRITICAL ();
 		vDetachUSBInterface ();
@@ -196,7 +192,7 @@ void vUSBCDCTask (void *pvParameters)
 		/* See if we're ready to send and receive data. */
 		if (eDriverState == eREADY_TO_SEND && ucControlState) {	
 			if( (!(AT91C_BASE_UDP->UDP_CSR[usbEND_POINT_2] & AT91C_UDP_TXPKTRDY)) 
-				&& (send_block!=NULL || uxQueueMessagesWaiting(xTxCDC)>0 || statusBlock!=NULL) && sleep_counter>0) {
+				&& (send_block!=NULL || uxQueueMessagesWaiting(xTxPriCDC)>0 || uxQueueMessagesWaiting(xTxCDC)>0 ) && sleep_counter>0) {
 						
 				// Release the FIFO 
 				portENTER_CRITICAL ();
@@ -204,10 +200,9 @@ void vUSBCDCTask (void *pvParameters)
 					// Got a byte (or more) to transmit. 
 					for (xByte=0; xByte<USB_MAX_TRANSMIT_COUNT; xByte++) 
 					{
-						if(send_block==NULL && statusBlock!=NULL) { 
-							send_block=statusBlock;
-							statusBlock=NULL;	
+						if( send_block==NULL && uxQueueMessagesWaiting(xTxPriCDC)>0 && xQueueReceive(xTxPriCDC, &send_block, usbNO_BLOCK) && send_block!=NULL) {
 							send_block->pos=0;
+							send_hdr = (USB_Chunk*)send_block->pValue;
 						}
 						if( send_block==NULL && uxQueueMessagesWaiting(xTxCDC)>0 && xQueueReceive(xTxCDC, &send_block, usbNO_BLOCK) && send_block!=NULL) {
 							send_block->pos=0;
@@ -285,24 +280,24 @@ void vUSBCDCTask (void *pvParameters)
 									// auswerten der Standard USB_Chunk Typen
 									switch(recv_hdr->type) {
 										case USB_MONITOR_INPUT:
-											// copy packet-data to usb_shell_input
-											if(usb_shell_input[0]=='\0') {
-												memcpy( usb_shell_input, recv_block->pValue+sizeof(USB_Chunk), USB_SHELL_MAX_SIZE);
-											}
-										case USB_TEST_DATA:
-											pushFreeBlock(recv_block);
+											if( xQueueSend(xRxPriCDC, &recv_block, usbNO_BLOCK)!=pdPASS ) pushFreeBlock(recv_block);
 											recv_block = NULL;
+											break;
+										case USB_TEST_DATA:
+												pushFreeBlock(recv_block);
+												recv_block = NULL;
 											break;
 										case USB_TEST_DATA_ECHO:
-											vUSBSendPacket(recv_block, recv_block->length );
-											recv_block = NULL;
+												vUSBSendPacket(recv_block, recv_block->length );
+												recv_block = NULL;
 											break;
 										default:
-											recv_block->length = recv_block->pos;
-											recv_hdr->length = recv_block->length-sizeof(USB_Chunk);
+												recv_block->length = recv_block->pos;
+												recv_hdr->length = recv_block->length-sizeof(USB_Chunk);
 										
-											if( xQueueSend(xRxCDC, &recv_block, usbNO_BLOCK)!=pdPASS ) pushFreeBlock(recv_block);
-											recv_block = NULL;
+												if( xQueueSend(xRxCDC, &recv_block, usbNO_BLOCK)!=pdPASS ) pushFreeBlock(recv_block);
+												recv_block = NULL;
+											break;
 									}
 									
 									recv_block = pullFreeBlock();
@@ -421,6 +416,49 @@ unsigned portBASE_TYPE vUSBRecivePacket(MemBlock **pq) {
 		xQueueReceive(xRxCDC, pq, 0);
 		ph = (USB_Chunk*)(*pq)->pValue;
 		
+		return (*pq)->length;
+	}
+	return 0;
+}
+
+void vUSBSendPriPacket(MemBlock *pq, unsigned portBASE_TYPE length) {
+	if(pq!=NULL) {
+		portENTER_CRITICAL ();
+			USB_Chunk* ph = (USB_Chunk*)pq->pValue;
+			int i=0;
+
+			pq->length = sizeof(USB_Chunk) + ph->length;
+			pq->pos = 0;
+
+			ph->start = 0;
+			ph->reserved = 0xFF;
+
+			if( pq->length<MEMBLOCK_MAX_SIZE+sizeof(USB_Chunk) && ph->length+sizeof(USB_Chunk)<=length && uxQueueMessagesWaiting(xTxPriCDC)<USB_CDC_QUEUE_SIZE_PRI_TX ) {
+				if( xQueueSend(xTxPriCDC, &pq, usbNO_BLOCK) != pdPASS ) pushFreeBlock(pq);
+
+				if( usb_stat.tx_quse < getTXSize() ) {
+					usb_stat.tx_quse = getTXSize();
+				}
+			} else {
+				increment(usb_stat.fail_tx_usb_packets, 4);
+				pushFreeBlock(pq);
+			}
+		portEXIT_CRITICAL ();
+	}
+}
+
+unsigned portBASE_TYPE vUSBRecivePriPacket(MemBlock **pq) {
+	unsigned portBASE_TYPE res = 0;
+	USB_Chunk* ph;
+
+	if( xRxPriCDC && uxQueueMessagesWaiting(xRxPriCDC)>0 ) {
+		if( usb_stat.rx_quse < getRXSize() ) {
+			usb_stat.rx_quse = getRXSize();
+		}
+
+		xQueueReceive(xRxPriCDC, pq, 0);
+		ph = (USB_Chunk*)(*pq)->pValue;
+
 		return (*pq)->length;
 	}
 	return 0;
@@ -699,11 +737,12 @@ prvProcessEndPoint0Interrupt (xISRStatus * pxMessage)
 
 	case usbCLASS_INTERFACE_REQUEST:
 	  /* Class Interface request */
-	  prvHandleClassInterfaceRequest (&xRequest);
+		prvHandleClassInterfaceRequest (&xRequest);
 	  break;
 
 	default:		/* This is not something we want to respond to. */
-	  prvSendStall ();
+		prvSendStall ();
+	  break;
 	}
     }
 }
@@ -951,7 +990,10 @@ vInitUSBInterface (void)
   xRxCDC = xQueueCreate( USB_CDC_QUEUE_SIZE_RX, sizeof(MemBlock*) );
   xTxCDC = xQueueCreate( USB_CDC_QUEUE_SIZE_TX, sizeof(MemBlock*) );
 
-  if ((!xUSBInterruptQueue) || (!xRxCDC) || (!xTxCDC) ) 
+  xRxPriCDC = xQueueCreate( USB_CDC_QUEUE_SIZE_PRI_RX, sizeof(MemBlock*) );
+  xTxPriCDC = xQueueCreate( USB_CDC_QUEUE_SIZE_PRI_TX, sizeof(MemBlock*) );
+
+  if ((!xUSBInterruptQueue) || (!xRxCDC) || (!xTxCDC) || (!xRxPriCDC) || (!xTxPriCDC) )
     {
       /* Not enough RAM to create queues!. */
       return;
