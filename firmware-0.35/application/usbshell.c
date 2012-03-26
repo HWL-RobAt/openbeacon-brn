@@ -117,13 +117,14 @@ void useShell() {
 	unsigned char* usb_shell_input=NULL;
 
 	if(vUSBRecivePriPacket(&input)>0) {
+		OBD2HW_Header* pusbshell = (OBD2HW_Header*)input->pValue;
 		usb_shell_input = input->pValue+sizeof(OBD2HW_Header);
 
 		switch( usb_shell_input[0] ) {
 			case 'c':
 			case 'C':
 						parm = ob_int_mgmt.TxChannel;
-						ob_setChannel( get8BitInteger( usb_shell_input+1, 3 ) );
+						ob_setChannel( get8BitInteger( usb_shell_input+1, pusbshell->length-1 ) );
 						if( parm!=ob_int_mgmt.TxChannel ) {
 							sendText_shortint("neuer Funkkanal:      ", 22, ob_int_mgmt.TxChannel, 17, 1);
 						}
@@ -131,7 +132,7 @@ void useShell() {
 			case 'r':
 			case 'R':
 						parm = ob_int_mgmt.TxRate;
-						ob_setRate( get8BitInteger( usb_shell_input+1, 1 ) );
+						ob_setRate( get8BitInteger( usb_shell_input+1, pusbshell->length-1 ) );
 						if( parm!=ob_int_mgmt.TxRate ) {
 							sendText_shortint("neue Bitrate:      ", 19, ob_int_mgmt.TxRate, 14, 1);
 						}
@@ -139,7 +140,7 @@ void useShell() {
 			case 'p':
 			case 'P':
 						parm = ob_int_mgmt.TxPowerLevel;
-						ob_setPower( get8BitInteger( usb_shell_input+1, 1 ) );
+						ob_setPower( get8BitInteger( usb_shell_input+1, pusbshell->length-1 ) );
 						if( parm!=ob_int_mgmt.TxPowerLevel ) {
 							sendText_shortint("neue Power:      ", 19, ob_int_mgmt.TxPowerLevel, 12, 1);
 						}
@@ -149,7 +150,7 @@ void useShell() {
 							unsigned char i=0,k=0, pc=0;
 							unsigned char valid=1;
 
-							for(k=0; k<USB_SHELL_MAX_SIZE && i<NETID_SIZE; k++) {
+							for(k=0; k<USB_SHELL_MAX_SIZE && k<pusbshell->length-1 && i<NETID_SIZE ; k++) {
 								if(pc==3) pc=0;
 
 								switch(pc) {
@@ -198,7 +199,7 @@ void useShell() {
 			case 't':
 			case 'T':
 						parm = ob_int_mgmt.test_hw_diff;
-						ob_int_mgmt.test_hw_diff = get8BitInteger( usb_shell_input+1, 3 );
+						ob_int_mgmt.test_hw_diff = get8BitInteger( usb_shell_input+1, pusbshell->length-1 );
 						if( ob_int_mgmt.test_hw_diff>250 ) ob_int_mgmt.test_hw_diff=255;
 						if( parm!=ob_int_mgmt.test_hw_diff ) {
 							if( ob_int_mgmt.test_hw_diff==255 ) {

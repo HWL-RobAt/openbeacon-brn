@@ -161,10 +161,26 @@ int create_dev( struct parameter *pCMDValue, struct device_data** pDevList, unsi
 	}
 	return 0;
 }
+static struct input_parameter inp;
 
 void exit_function(struct device_data* device_list, unsigned int device_list_size ) {
 	struct device_data* dev = device_list;
 	unsigned int i;
+	char buffer[100];
+
+	// stopping firmware sending
+	OBD2HW_Header* p_hwh =   (OBD2HW_Header*)buffer;
+	p_hwh->start=0;
+	p_hwh->length=5;
+	p_hwh->type=MONITOR_INPUT;
+	p_hwh->reserved=0xFF;
+
+	// send to all devices
+	inp.pCMDValue->exit_time = time(0)+1;
+	memcpy(buffer+sizeof(OBD2HW_Header), "t255\n", 5);
+	putDataToUSBChannel(inp.device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
+
+	sleep(1);
 
 	for(i=0; i<device_list_size; i++) {
 		printf("closing connection to %s\n", dev->device_name);
@@ -197,18 +213,23 @@ void exit_function(struct device_data* device_list, unsigned int device_list_siz
 	exit(0);
 }
 
+static struct device_data *device_list;
+static unsigned int device_list_size;
 
-static struct input_parameter inp;
+void signal_callback_handler(int signum) {
+	exit_function( device_list, pCMDValue.device_list_size );
+}
 
 int main( int argc, char **argv) {
 	struct device_data* dev;
 	unsigned int i=0;
 	pthread_t inputThread;
 	void* inputJoin;
-	static struct device_data *device_list;
-	static unsigned int device_list_size;
-
 	srand ( time(NULL) );
+
+	// Register signal and signal handler
+	signal(SIGINT, signal_callback_handler);
+	signal(SIGTERM, signal_callback_handler);
 
 	parameter_init( &pCMDValue );
 	

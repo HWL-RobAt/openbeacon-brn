@@ -8,7 +8,7 @@ unsigned int default_index=0;
 
 #define SEND_CONFIG( type, z )  		if(type!=0) { \
 											buffer[ sizeof(OBD2HW_Header) ] = z; \
-											sprintf(buffer+sizeof(OBD2HW_Header)+1, "%d", type); \
+											sprintf(buffer+sizeof(OBD2HW_Header)+1, "%d\n", type); \
 											p_hwh->length = strlen( buffer+sizeof(OBD2HW_Header) ); \
 											while(putDataToUSBChannel(inp->device_list+dev_num,  buffer, sizeof(OBD2HW_Header)+p_hwh->length )!=STATUS_OK) usleep( 10 ); \
 											usleep( 2000 ); \
@@ -45,10 +45,12 @@ int input_function(void *p) {
 		SEND_CONFIG( inp->pCMDValue->hw_send_rate, 't' )
 	}
 
-	if( pCMDValue.use_daemon!=1 ) {
-		while(1) {
-			if(inp->pCMDValue->exit_time>0 && inp->pCMDValue->exit_time<time(0)) break;
-
+	while(1) {
+		if(inp->pCMDValue->exit_time>0 && inp->pCMDValue->exit_time<time(0)-1 ) {
+			SEND_CONFIG( 255, 't' )
+			break;
+		}
+		if( pCMDValue.use_daemon!=1 ) {
 			while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
 
 			switch( buffer[sizeof(OBD2HW_Header) ] ) {
@@ -63,8 +65,8 @@ int input_function(void *p) {
 
 						break;
 				case 'x':
-						// signal senden
-						inp->pCMDValue->exit_time = time(0)-1;
+						// send to all devices
+						inp->pCMDValue->exit_time = time(0)+2;
 						break;
 				default:
 						p_hwh->length = len;
@@ -72,9 +74,10 @@ int input_function(void *p) {
 						break;
 			}
 			len=0;
-
 			// feste Schlafenszeit festlegen, um ressourcen zu schonen
 			usleep( INPUT_THREAD_SLEEP_TIME );
+		} else {
+			sleep(1);
 		}
 	}
 	printf("exit: input\n");

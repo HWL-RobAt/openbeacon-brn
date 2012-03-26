@@ -11,5 +11,6 @@ struct input_parameter {
 
 int input_function(void *p);
 
+extern unsigned int default_index;
 
 #endif
