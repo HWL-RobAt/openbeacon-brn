@@ -27,7 +27,6 @@ int input_function(void *p) {
 	p_hwh->type=MONITOR_INPUT;
 	p_hwh->reserved=0xFF;
 
-	sleep(1);
 	// Absetzen der initialen Parameter
 	// behandle es als virtuelle shell eingabe (so könnten auch .config später umgesetzt werden)
 
@@ -46,8 +45,7 @@ int input_function(void *p) {
 	}
 
 	while(1) {
-		if(inp->pCMDValue->exit_time>0 && inp->pCMDValue->exit_time<time(0)-1 ) {
-			SEND_CONFIG( 255, 't' )
+		if(inp->pCMDValue->exit_time>0 && inp->pCMDValue->exit_time<time(0) ) {
 			break;
 		}
 		if( pCMDValue.use_daemon!=1 ) {

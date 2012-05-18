@@ -176,10 +176,13 @@ void exit_function(struct device_data* device_list, unsigned int device_list_siz
 	p_hwh->reserved=0xFF;
 
 	// send to all devices
-	inp.pCMDValue->exit_time = time(0)+1;
-	memcpy(buffer+sizeof(OBD2HW_Header), "t255\n", 5);
-	putDataToUSBChannel(inp.device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
+	for(i=0; i<device_list_size; i++) {
+		memcpy(buffer+sizeof(OBD2HW_Header), "t255\n", 5);
+		putDataToUSBChannel(inp.device_list+i,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
+	}
 
+	sleep(1);
+	inp.pCMDValue->exit_time = time(0);
 	sleep(1);
 
 	for(i=0; i<device_list_size; i++) {
@@ -249,13 +252,17 @@ int main( int argc, char **argv) {
 	dev = device_list;
 
 	// Input-Thread
+	sleep(1);
+
 	inp.device_list = device_list;
 	inp.device_list_size = pCMDValue.device_list_size;
 	inp.pCMDValue = &pCMDValue;
 	pthread_create(  &inputThread,  (pthread_attr_t*)NULL, (void *)&input_function, &inp);
 
+	sleep(1);
+
 	while(TRUE) {
-		if(pCMDValue.exit_time>0 && pCMDValue.exit_time<time(0)) {
+		if(pCMDValue.exit_time>0 && pCMDValue.exit_time-2<time(0)) {
 //			for(i=0; i<device_list_size; i++) {
 //				pthread_join(dev->txThread,&dev->txThreadJoin);
 //				pthread_join(dev->rxThread,&dev->rxThreadJoin);
