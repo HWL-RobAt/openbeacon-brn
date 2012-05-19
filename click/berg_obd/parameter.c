@@ -128,7 +128,7 @@ int use_path(int argc, char** argv, void* data) {
 		struct parameter* pCMDValue = (struct parameter*)data;
 
 		// TODO: prüfen, ob das verzeichniss existiert
-		pCMDValue->path = argv[0];
+		sprintf(pCMDValue->path, "%s", argv[0]);
 		return 0;
 	}
 	return -1;
@@ -175,7 +175,7 @@ void parameter_init( struct parameter *pValue ) {
 		pValue->wireless_rate			=	  	0;
 		pValue->wireless_power			=	  	0;
 		memcpy(pValue->default_path, "/tmp/", 6);
-		pValue->path					= pValue->default_path;
+		sprintf(pValue->path, "%s", pValue->default_path);
 		pValue->noclick					= FALSE;
 		pValue->device_list				= NULL;
 		pValue->device_list_size		= 0;

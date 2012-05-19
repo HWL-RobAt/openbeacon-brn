@@ -4,6 +4,7 @@ install_path=/share/projects/berg_studienarbeit/local/bin/
 
 all:
 	$(CC) $(CFLAGS) -I./tools -c tools/commandline.c -o tools/tools.o
+	$(CC) $(CFLAGS) -I./tools -c tools/obd_config.c -o tools/obd_config.o
 	$(CC) $(CFLAGS) -I./socket -c socket/obd_socket.c -o socket/socket.o
 	$(CC) $(CFLAGS) -I./serial -c serial/obd_serial.c -o serial/serial.o
 	$(CC) $(CFLAGS) -fno-builtin -c parameter.c -o parameter.o
@@ -17,6 +18,7 @@ all:
 	$(CC) $(CFLAGS) tools/tools.o main.o socket/socket.o serial/serial.o parameter.o thread_click2ob.o \
 					openbeacon_communication.o usbshell.o thread_read_click.o thread_read_usb.o thread_ob2click.o \
 					-lpthread -lm -o obd-mips
+	$(CC) $(CFLAGS) tools/tools.o tools/obd_config.o socket/socket.o parameter.o -lpthread -lm -o obd-config					
 
 install: obd-mips
 	cp obd-mips $(install_path)

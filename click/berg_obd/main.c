@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <dlfcn.h>
-#include <pthread.h>
-#include <dirent.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/stat.h>
+#include "main.h"
 
 #define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
 #include "socket/obd_socket.h"
@@ -20,8 +11,6 @@
 #include "openbeacon_communication.h"
 #include "tools/helpful.h"
 #include "threads.h"
-#include "main.h"
-
 
 void write_to_obd_thread(void *p) {
 	struct device_data* dev = (struct device_data*)p;
@@ -78,6 +67,47 @@ void print_stat(char begin, struct statistic_data *stat, FILE *file) {
 	}
 }
 
+#define switch( f1, f2) htmp=f1; f1=f2; f2=htmp;
+
+int switch_files( struct parameter *pCMDValue, struct device_data** pDevList, unsigned int* pDevSize, char* path ) {
+
+	int j;
+	char filename[120];
+
+	for(j=0; j<pCMDValue->device_list_size; j++) {
+		int i;
+		int l = strlen(device_list[j].device_name);
+		for(i=l; i>=0 && device_list[j].device_name[i-1]!='/'; i-- )  ;
+
+		sprintf(filename,"%s%s", path, device_list[j].device_name+i);
+		l = strlen( filename );
+
+		FILE *hfile1, *hfile2, *hfile3, *hfile4, *hfile5, *htmp;
+
+		strncpy(filename+l, "_b.log", 7);		hfile1	   = fopen(filename, "a");
+		strncpy(filename+l, "_h.log", 7);		hfile2	   = fopen(filename, "a");
+		strncpy(filename+l, ".dat", 5);			hfile3	   = fopen(filename, "a");
+		strncpy(filename+l, "_send.log", 10);	hfile4 	   = fopen(filename, "a");
+		strncpy(filename+l, "_recv.log", 10);	hfile5 	   = fopen(filename, "a");
+
+		if( hfile1!=NULL && hfile2!=NULL && hfile3!=NULL && hfile4!=NULL && hfile5!=NULL ) {
+				switch( device_list[j].beaconoutput_file, hfile1);
+				switch( device_list[j].hostoutput_file, hfile2);
+				switch( device_list[j].debug_file, hfile3);
+				switch( device_list[j].send_file_log, hfile4);
+				switch( device_list[j].recive_file_log, hfile5);
+
+				sprintf(pCMDValue->path, "%s", path );
+		}
+
+		if(hfile1!=NULL) fclose(hfile1);
+		if(hfile2!=NULL) fclose(hfile2);
+		if(hfile3!=NULL) fclose(hfile3);
+		if(hfile4!=NULL) fclose(hfile4);
+		if(hfile5!=NULL) fclose(hfile5);
+	}
+}
+
 int create_dev( struct parameter *pCMDValue, struct device_data** pDevList, unsigned int* pDevSize ) {
 	unsigned int j=0;
 	struct device_data* device_list;
@@ -101,7 +131,7 @@ int create_dev( struct parameter *pCMDValue, struct device_data** pDevList, unsi
 		device_list[j].recivePort = PORT_BEGIN+j*2+1;
 
 		printf("open socket(localhost, %d, %d)\n", device_list[j].sendPort, device_list[j].recivePort );
-		device_list[j].con = open_socket_connection("localhost", device_list[j].sendPort, device_list[j].recivePort );
+		device_list[j].con    = open_socket_connection("localhost", device_list[j].sendPort, device_list[j].recivePort );
 		
 		char filename[120];
 		
@@ -216,8 +246,8 @@ void exit_function(struct device_data* device_list, unsigned int device_list_siz
 	exit(0);
 }
 
-static struct device_data *device_list;
-static unsigned int device_list_size;
+struct device_data *device_list;
+unsigned int device_list_size;
 
 void signal_callback_handler(int signum) {
 	exit_function( device_list, pCMDValue.device_list_size );

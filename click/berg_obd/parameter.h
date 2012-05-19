@@ -17,6 +17,7 @@
 #define MAX_GENERATOR_SLEEP_TIME 	300
 
 #define PORT_BEGIN					20000
+#define PORT_CONFIG					20100
 
 struct parameter {
 	time_t exit_time;
@@ -33,7 +34,7 @@ struct parameter {
 	unsigned char wireless_rate;
 	unsigned char wireless_power;
 	char default_path[6];
-	char* path;
+	char path[1000];
 	char noclick;
 
 	int* device_list;

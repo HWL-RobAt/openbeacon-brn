@@ -18,9 +18,9 @@ struct device_data {
 	int fd, index;
 	struct socket_connection *con;
 	
-	pthread_t rxThread, txThread, usbReadThread, clickReadThread, writeOBdThread;
+	pthread_t cThread, rxThread, txThread, usbReadThread, clickReadThread, writeOBdThread;
 	int threadResult;
-	void *rxThreadJoin,*txThreadJoin, *usbThreadJoin, *clickReadThreadJoin, *writeOBdThreadJoin;
+	void *cThreadJoin, *rxThreadJoin,*txThreadJoin, *usbThreadJoin, *clickReadThreadJoin, *writeOBdThreadJoin;
 	
 	char usb_write_buffer[10000], usb_write_tmp_buffer[100];
 	char usb_read_buffer[10000], usb_read_tmp_buffer[100];

@@ -1,6 +1,9 @@
 
 #include <pthread.h>
 #include "usbshell.h"
+#include "parameter.h"
+#include "main.h"
+
 #define __OPENBEACON_COMUNICATION_H__WITH_ENCODING
 #include "openbeacon_communication.h"
 
@@ -14,8 +17,13 @@ unsigned int default_index=0;
 											usleep( 2000 ); \
 										}
 
+
 int input_function(void *p) {
 	struct input_parameter *inp = (struct input_parameter*)p;
+
+	struct socket_connection *config;
+
+	config = (struct socket_connection *)open_socket_connection("localhost", PORT_CONFIG, PORT_CONFIG+1 );
 
 	char buffer[100];
 	unsigned char len = 0;
@@ -50,33 +58,48 @@ int input_function(void *p) {
 		}
 		if( pCMDValue.use_daemon!=1 ) {
 			while( (buffer[sizeof(OBD2HW_Header)+len]=getchar())!='\n' ) len++;
-
-			switch( buffer[sizeof(OBD2HW_Header) ] ) {
-				case '\n':  break;
-				case 'd':
-						dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
-
-						if(dev_num>=0 && dev_num<inp->device_list_size && default_index != dev_num) {
-							default_index = dev_num;
-							printf("switch device to: %d\n", default_index);
-						}
-
-						break;
-				case 'x':
-						// send to all devices
-						inp->pCMDValue->exit_time = time(0)+2;
-						break;
-				default:
-						p_hwh->length = len;
-						putDataToUSBChannel(inp->device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
-						break;
-			}
-			len=0;
-			// feste Schlafenszeit festlegen, um ressourcen zu schonen
-			usleep( INPUT_THREAD_SLEEP_TIME );
 		} else {
-			sleep(1);
+			if( config<=0 ) break;
+			// lesen von OBD_Config
+
+			while( len==0 || buffer[ sizeof(OBD2HW_Header)+len-1 ]!='\n' ) {
+				int hlen = recv_from_peer(config, buffer+sizeof(OBD2HW_Header)+len, 100);
+				if( hlen>0 ) {
+					len+=hlen;
+				}
+			}
+			len--;
 		}
+
+		switch( buffer[sizeof(OBD2HW_Header) ] ) {
+			case '\n':  break;
+			case 'd':
+					dev_num = atoi( buffer+sizeof(OBD2HW_Header)+1);
+
+					if(dev_num>=0 && dev_num<inp->device_list_size && default_index != dev_num) {
+						default_index = dev_num;
+						printf("switch device to: %d\n", default_index);
+					}
+
+					break;
+			case 'x':
+					inp->pCMDValue->exit_time = time(0)+2;
+					break;
+			case 'k':
+					buffer[sizeof(OBD2HW_Header)+len]=0;
+					if( strcmp(buffer+sizeof(OBD2HW_Header)+1, inp->pCMDValue->path)!=0 ) {
+						printf("PATH change: %s\n", buffer+sizeof(OBD2HW_Header)+1 );
+						switch_files( inp->pCMDValue, &inp->device_list, &inp->device_list_size, buffer+sizeof(OBD2HW_Header)+1 );
+					}
+					break;
+			default: // send to all devices
+					p_hwh->length = len;
+					putDataToUSBChannel(inp->device_list+default_index,  buffer, sizeof(OBD2HW_Header)+p_hwh->length );
+					break;
+		}
+		len=0;
+		// feste Schlafenszeit festlegen, um ressourcen zu schonen
+		usleep( INPUT_THREAD_SLEEP_TIME );
 	}
 	printf("exit: input\n");
 	pthread_exit(p);
