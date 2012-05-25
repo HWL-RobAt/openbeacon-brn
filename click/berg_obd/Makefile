@@ -20,8 +20,10 @@ all:
 					-lpthread -lm -o obd-mips
 	$(CC) $(CFLAGS) tools/tools.o tools/obd_config.o socket/socket.o parameter.o -lpthread -lm -o obd-config					
 
-install: obd-mips
+install: obd-mips obd-config
 	cp obd-mips $(install_path)
+	cp obd-config $(install_path)
+
 clean:
 	@rm -f socket/socket.o
 	@rm -f serial/serial.o

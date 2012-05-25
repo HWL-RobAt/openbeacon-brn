@@ -37,6 +37,7 @@ int use_packetsize(int argc, char** argv, void* data){
 
 		pCMDValue->packet_size = atoi( argv[0] );
 		if( !(pCMDValue->packet_size>=5 && pCMDValue->packet_size<96) ) return -1;
+		pCMDValue->status = pCMDValue->status | PARAM_SET_PACKETSIZE;
 		return 0;
 	}
 	return -1;
@@ -48,6 +49,7 @@ int use_packetintv(int argc, char** argv, void* data){
 		pCMDValue->bytes_per_intervall = atoi(argv[0]);
 		pCMDValue->packet_intervall =  floor(1000000/( pCMDValue->bytes_per_intervall/pCMDValue->packet_size ) );
 		printf("packet_interval = %ld\n", pCMDValue->packet_intervall);
+		pCMDValue->status = pCMDValue->status | PARAM_SET_PACKETINTERVALL;
 		return 0;
 	}
 	return -1;
@@ -57,6 +59,7 @@ int use_printinterval(int argc, char** argv, void* data){
 		struct parameter* pCMDValue = (struct parameter*)data;
 
 		pCMDValue->print_intervall = atoi(argv[0]);
+		pCMDValue->status = pCMDValue->status | PARAM_SET_PRINTINTERVALL;
 		return 0;
 	}
 	return -1;
@@ -65,6 +68,7 @@ int use_random(int argc, char** argv, void* data){
 	struct parameter* pCMDValue = (struct parameter*)data;
 
 	pCMDValue->use_rand = 1;
+	pCMDValue->status = pCMDValue->status | PARAM_SET_USERAND;
 	return 0;
 }
 
@@ -72,6 +76,7 @@ int use_generate(int argc, char** argv, void* data){
 	struct parameter* pCMDValue = (struct parameter*)data;
 
 	pCMDValue->use_gen = 1;
+	pCMDValue->status = pCMDValue->status | PARAM_SET_USEGEN;
 	return 0;
 }
 
@@ -79,12 +84,14 @@ int use_echo(int argc, char** argv, void* data){
 	struct parameter* pCMDValue = (struct parameter*)data;
 
 	pCMDValue->use_ech = 1;
+	pCMDValue->status = pCMDValue->status | PARAM_SET_USEECHO;
 	return 0;
 }
 int use_daemon_mode(int argc, char** argv, void* data){
 	struct parameter* pCMDValue = (struct parameter*)data;
 
 	pCMDValue->use_daemon = 1;
+	pCMDValue->status = pCMDValue->status | PARAM_SET_DEAMON;
 	return 0;
 }
 int set_hw_send_rate(int argc, char** argv, void* data){
@@ -92,6 +99,7 @@ int set_hw_send_rate(int argc, char** argv, void* data){
 		struct parameter* pCMDValue = (struct parameter*)data;
 
 		pCMDValue->hw_send_rate = atoi(argv[0]);
+		pCMDValue->status = pCMDValue->status | PARAM_SET_HWSENDRATE;
 		return 0;
 	}
 	return -1;
@@ -101,6 +109,7 @@ int set_channel(int argc, char** argv, void* data){
 		struct parameter* pCMDValue = (struct parameter*)data;
 
 		pCMDValue->wireless_channel = atoi(argv[0]);
+		pCMDValue->status = pCMDValue->status | PARAM_SET_WIRELESS_CHANNEL;
 		return 0;
 	}
 	return -1;
@@ -110,6 +119,7 @@ int set_power(int argc, char** argv, void* data){
 		struct parameter* pCMDValue = (struct parameter*)data;
 
 		pCMDValue->wireless_power = atoi(argv[0]);
+		pCMDValue->status = pCMDValue->status | PARAM_SET_WIRELESS_POWER;
 		return 0;
 	}
 	return -1;
@@ -119,6 +129,7 @@ int set_rate(int argc, char** argv, void* data){
 		struct parameter* pCMDValue = (struct parameter*)data;
 
 		pCMDValue->wireless_rate = atoi(argv[0]);
+		pCMDValue->status = pCMDValue->status | PARAM_SET_WIRELESS_RATE;
 		return 0;
 	}
 	return -1;
@@ -129,6 +140,7 @@ int use_path(int argc, char** argv, void* data) {
 
 		// TODO: prüfen, ob das verzeichniss existiert
 		sprintf(pCMDValue->path, "%s", argv[0]);
+		pCMDValue->status = pCMDValue->status | PARAM_SET_PATH;
 		return 0;
 	}
 	return -1;
@@ -137,6 +149,7 @@ int stop_c2ob(int argc, char** argv, void* data) {
 	struct parameter* pCMDValue = (struct parameter*)data;
 
 	pCMDValue->noclick = TRUE;
+	pCMDValue->status = pCMDValue->status | PARAM_SET_NOCLICK;
 	return 0;
 }
 
@@ -179,5 +192,6 @@ void parameter_init( struct parameter *pValue ) {
 		pValue->noclick					= FALSE;
 		pValue->device_list				= NULL;
 		pValue->device_list_size		= 0;
+		pValue->status					= 0;
 }
 

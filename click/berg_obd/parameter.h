@@ -19,6 +19,21 @@
 #define PORT_BEGIN					20000
 #define PORT_CONFIG					20100
 
+#define PARAM_SET_PACKETSIZE		  0x0001
+#define PARAM_SET_PACKETINTERVALL	  0x0002
+#define PARAM_SET_PRINTINTERVALL	  0x0004
+#define PARAM_SET_BYTESPERINTERVALL	  0x0008
+#define PARAM_SET_USERAND			  0x0010
+#define PARAM_SET_USEGEN			  0x0020
+#define PARAM_SET_USEECHO			  0x0040
+#define PARAM_SET_DEAMON			  0x0080
+#define PARAM_SET_HWSENDRATE		  0x0100
+#define PARAM_SET_WIRELESS_POWER	  0x0200
+#define PARAM_SET_WIRELESS_RATE		  0x0400
+#define PARAM_SET_WIRELESS_CHANNEL	  0x0800
+#define PARAM_SET_PATH				  0x1000
+#define PARAM_SET_NOCLICK			  0x2000
+
 struct parameter {
 	time_t exit_time;
 	unsigned char packet_size;
@@ -39,6 +54,7 @@ struct parameter {
 
 	int* device_list;
 	unsigned int device_list_size;
+	unsigned int status;
 };
 
 void parameter_init( struct parameter *pValue );

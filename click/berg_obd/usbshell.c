@@ -25,7 +25,7 @@ int input_function(void *p) {
 
 	config = (struct socket_connection *)open_socket_connection("localhost", PORT_CONFIG, PORT_CONFIG+1 );
 
-	char buffer[100];
+	char buffer[1000];
 	unsigned char len = 0;
 	OBD2HW_Header* p_hwh =   (OBD2HW_Header*)buffer;
 	unsigned int dev_num;
@@ -63,7 +63,7 @@ int input_function(void *p) {
 			// lesen von OBD_Config
 
 			while( len==0 || buffer[ sizeof(OBD2HW_Header)+len-1 ]!='\n' ) {
-				int hlen = recv_from_peer(config, buffer+sizeof(OBD2HW_Header)+len, 100);
+				int hlen = recv_from_peer(config, buffer+sizeof(OBD2HW_Header)+len, 1000);
 				if( hlen>0 ) {
 					len+=hlen;
 				}
